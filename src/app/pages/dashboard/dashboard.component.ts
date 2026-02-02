@@ -75,6 +75,7 @@ export class DashboardComponent {
                     return {
                         user: item.created_by,
                         id: isEntry ? item.id_logbook_entry : item.id_logbook_out,
+                        guide: item.shipping_guide,
                         type: isEntry ? 'entrada' : 'salida',
                         group: item.group_name,
                         date: item.created_at

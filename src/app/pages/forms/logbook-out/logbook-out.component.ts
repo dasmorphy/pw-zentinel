@@ -13,6 +13,7 @@ import { LogbookService } from 'src/app/services/logbook.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { DialogModule } from 'primeng/dialog';
 import { UserService } from 'src/app/services/user.service';
+import { FileUploadModule } from 'primeng/fileupload';
 
 @Component({
     selector: 'app-logbook-out',
@@ -29,6 +30,7 @@ import { UserService } from 'src/app/services/user.service';
         ToastModule,
         ProgressSpinnerModule,
         DialogModule,
+        FileUploadModule
     ],
     templateUrl: './logbook-out.component.html',
     styleUrls: ['./logbook-out.component.sass'],
@@ -42,6 +44,10 @@ export class LogbookOutComponent {
     unitiesWeight = computed(() => this.logbookService.unitiesWeight());
 
     logbookForm: FormGroup;
+
+    images: File[] = [];
+    imagesError: string | null = null;
+
 
     isLoading: boolean = false;
     showConfirmSave: boolean = false;
@@ -91,6 +97,27 @@ export class LogbookOutComponent {
         }
 
     }
+
+    onSelectImages(event: any) {
+        const selectedFiles: File[] = event.files;
+
+        // 🔄 acumular imágenes
+        this.images = [...this.images, ...selectedFiles];
+
+        if (this.images.length < 5) {
+            this.imagesError = 'Debe subir al menos 5 imágenes';
+            return;
+        }
+
+        if (this.images.length > 10) {
+            this.imagesError = 'No puede subir más de 10 imágenes';
+            this.images = this.images.slice(0, 10); // 👈 recorta exceso
+            return;
+        }
+
+        this.imagesError = null;
+    }
+
 
     saveLogbook() {
         this.isLoading = true;

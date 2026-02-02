@@ -120,6 +120,33 @@
                             <label htmlFor="username">Observaciones</label>
                             <input formControlName="observations" class="w-full mt-2" pInputText id="observations" />
                         </span>
+
+                        <span class="w-full mt-3">
+                            <label>Imágenes <span style="color: red;">*</span></label>
+
+                            <p-fileUpload
+                                name="images"
+                                mode="advanced"
+                                accept="image/*"
+                                [multiple]="true"
+                                [maxFileSize]="5000000"
+                                [showUploadButton]="false"
+                                [showCancelButton]="false"
+                                [auto]="true"
+                                (onSelect)="onSelectImages($event)"
+                                styleClass="w-full mt-2"
+                                chooseLabel="Subir imágenes"
+                            >
+                            </p-fileUpload>
+
+                            <small class="text-gray-500">
+                                Mínimo 5 imágenes / Máximo 10 imágenes
+                            </small>
+
+                            <div *ngIf="imagesError" class="validate-data">
+                                {{ imagesError }}
+                            </div>
+                        </span>
                     </div>
                 </form>
 
