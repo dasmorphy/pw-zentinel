@@ -1,0 +1,57 @@
+<div [class]="{ 'w-calc': toggle(), 'w-screen-dashboard': !toggle() }"
+  class="container xl:justify-content-evenly p-3-responsive border-box bg-white mt-dashboard flex-column">
+  <div class="flex w-full flex-column mb-3 px-4">
+    <h2>¡Hola {{user_session?.name ?? 'Desconocido'}}!</h2>
+  </div>
+
+  <div class="flex w-full">
+    <div class="flex flex-column align-items-center p-3-responsive xl:w-7 w-full h-funnel">
+
+      <app-doughnut class="w-full bg-funnel shadow-1 border-round-2xl"></app-doughnut>
+    </div>
+
+    <div style="max-height: 20rem;" class="flex flex-column align-items-center">
+      <div style="width: 40rem;" class="bg-funnel shadow-1 border-round-2xl">
+        <div class="p-5 flex flex-column">
+          <div class="flex">
+            <h2 style="color: #181618;" class="mt-0">Bitácoras recientes</h2>
+          </div>
+
+          <div class="w-full flex column-responsive">
+            <div class="recent-card flex flex-column w-full gap-3" style="overflow: scroll; height: 21rem;">
+              <ng-container *ngIf="dataHistory?.length > 0; else emptyState">
+                <div class="item w-full p-3 border-round-2xl" *ngFor="let log of dataHistory">
+                  <div class="icon">
+                    <i class="pi pi-file-edit"></i>
+                  </div>
+
+                  <div class="content w-full">
+                    <div class="title">{{ log.user }}</div>
+                    <div class="subtitle">
+                      Bitácora de {{ log.type }} en {{ log.group }}
+                    </div>
+                    <div class="date">
+                      {{ log.date | date:'dd/MM/yyyy HH:mm' }}
+                    </div>
+                  </div>
+
+                  <div class="chevron">›</div>
+                </div>
+              </ng-container>
+
+              <ng-template #emptyState>
+                <div class="w-full flex flex-column justify-content-center align-items-center text-center p-4 text-gray-500 h-full">
+                  <i class="pi pi-info-circle text-2xl mb-2"></i>
+                  <p class="mt-2">No hay registros en la bitácora</p>
+                </div>
+              </ng-template>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

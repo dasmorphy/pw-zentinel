@@ -1,0 +1,11 @@
+
+{
+    "id_category": "categoria",
+    "id_unity": "unidad",
+    "shipping_guide": "oc/guía de remisión",
+    "quantity": "cantidad",
+    "description": "descripción",
+    "provider": "proveedor",
+    "destiny_intern": "destino interno",
+    "authorized_by": "autorizado"
+}

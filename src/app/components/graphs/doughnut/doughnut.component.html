@@ -1,0 +1,22 @@
+<div class="p-5 flex flex-column">
+  <div class="flex justify-content-between mb-5">
+    <h2 style="color: #181618;" class="mt-0">Resumen</h2>
+    <p-dropdown [style]="{ boxShadow: 'none', width: '10rem' }" styleClass="border-round"
+      id="cuentaCliente" [options]="optionFilterCategory" optionLabel="label" optionValue="value"
+      (onChange)="onFilterChange($event)">
+    </p-dropdown>
+
+  </div>
+
+  <div class="w-full flex column-responsive justify-content-center"> 
+    <div class="flex ">
+      <div class="chart-container">
+        <canvas id="myDoughnutChart"></canvas>
+      </div>
+
+      <div class="chart-container">
+        <canvas id="categoryChart"></canvas>
+      </div>
+    </div>
+  </div>
+</div>

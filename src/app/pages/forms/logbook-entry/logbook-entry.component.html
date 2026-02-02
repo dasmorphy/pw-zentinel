@@ -1,0 +1,148 @@
+<p-toast></p-toast>
+
+<p-dialog header="Header" [closable]="false" [(visible)]="showConfirmSave" [draggable]="false" [modal]="true"
+    [style]="{ 'width': '23vw', 'border-radius': '32px'}">
+    <ng-template pTemplate="header">
+        <div style="display: grid; place-items: center;">
+            <i class="pi pi-exclamation-circle mt-4" style="color: #EB6506; font-size: 40px;"></i>
+            <h1 style="margin: 0; font-size: 22px;" class="text-center mt-3">
+                ¿Está seguro de continuar?
+            </h1>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-center gap-3 mt-3" style="font-size: 15px;">
+            <p-button label="Guardar" (onClick)="saveLogbook()"
+                styleClass="bg-btn-primary w-full">
+            </p-button>
+            <p-button label="Cancelar" (onClick)="showConfirmSave = false"
+                styleClass="bg-btn-cancel w-full">
+            </p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
+<div class="bg-bluegray-50 border-round-2xl flex justify-content-center mt-header min-h-screen">
+    <div class="bg-white w-12 flex flex-column border-round-md flex-wrap">
+        <div class="flex justify-content-start w-full">
+            <div class="flex flex-column card-form w-full">
+
+                <h2>Formulario de Entrada</h2>
+
+                <form [formGroup]="logbookForm">
+                    <div class="div-responsive">
+                        <span class="w-full mt-3">
+                            <label htmlFor="username">Categoria <span style="color: red;">*</span></label>
+                            <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" formControlName="id_category"
+                                id="cuentaCliente" [options]="categories()" optionLabel="name_category" optionValue="id_category"
+                                [emptyMessage]="messageEmpty" (onChange)="onChangeCategory()"></p-dropdown>
+                            <div *ngIf="logbookForm.get('id_category')?.hasError('campoVacio')">
+                                <span class="validate-data">El campo categoria es obligatorio</span>
+                            </div>
+                        </span>
+
+                        <span class="w-full mt-3">
+                            <label class="text-account" htmlFor="ciudad">Unidad <span
+                                    style="color: red;">*</span></label>
+                            <p-dropdown [style]="{ boxShadow: 'none', maxWidth: '100%' }"
+                                styleClass="border-round mt-2 w-full" id="id_unity" optionValue="id_unity"
+                                formControlName="id_unity" [options]="unitiesWeight()" optionLabel="name"
+                                [autoDisplayFirst]="false" [emptyMessage]="messageEmpty"></p-dropdown>
+                            <div *ngIf="logbookForm.get('id_unity')?.hasError('campoVacio')">
+                                <span class="validate-data">El campo unidad es obligatorio</span>
+                            </div>
+                        </span>
+
+                        <span class="w-full mt-3">
+                            <label htmlFor="shipping_guide">OC / Guía de remisión <span style="color: red;">*</span></label>
+                            <input class="border-round w-full mt-2" pInputText
+                                id="shipping_guide"
+                                formControlName="shipping_guide" inputmode="numeric" [maxlength]="10" />
+                            <div *ngIf="logbookForm.get('shippng_guide')?.hasError('campoVacio')">
+                                <span class="validate-data">Este campo es obligatorio</span>
+                            </div>
+                        </span>
+                        <span class="w-full mt-3">
+                            <label htmlFor="username">Descripción <span style="color: red;">*</span></label>
+                            <input class="border-round w-full mt-2" pInputText
+                                formControlName="description"
+                                oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');" id="descripcion"
+                            />
+                            <div *ngIf="logbookForm.get('description')?.hasError('campoVacio')">
+                                <span class="validate-data">Este campo es obligatorio</span>
+                            </div>
+                        </span>
+
+                        <span class="w-full mt-3">
+                            <label htmlFor="username">Cantidad <span style="color: red;">*</span></label>
+                            <p-inputNumber class="border-round w-full mt-2" formControlName="quantity" styleClass="w-full"></p-inputNumber>
+                            <div *ngIf="logbookForm.get('quantity')?.hasError('campoVacio')">
+                                <span class="validate-data">Este campo es obligatorio</span>
+                            </div>
+                        </span>
+                        <span class="w-full mt-3">
+                            <label htmlFor="weight">Peso</label>
+                            <p-inputNumber class="border-round w-full mt-2" formControlName="weight" [useGrouping]="false" styleClass="w-full"></p-inputNumber>
+                        </span>
+
+                        <span class="w-full mt-3">
+                            <label htmlFor="email">Proveedor / Origin <span style="color: red;">*</span></label>
+                            <input class="border-round w-full mt-2" pInputText type="text" id="provider" name="provider"
+                                formControlName="provider" />
+                            <div *ngIf="logbookForm.get('provider')?.hasError('campoVacio')">
+                                <span class="validate-data">Este campo es obligatorio</span>
+                            </div>
+                        </span>
+                        <span class="w-full mt-3">
+                            <label htmlFor="destiny_intern">Destino interno <span style="color: red;">*</span></label>
+                            <input class="border-round w-full mt-2" pInputText
+                                id="destiny_intern" maxlength="100"
+                                formControlName="destiny_intern" />
+                            <div *ngIf="logbookForm.get('destiny_intern')?.hasError('campoVacio')">
+                                <span class="validate-data">El campo destino interno es obligatorio</span>
+                            </div>
+                        </span>
+
+                        <span class="w-full mt-3 ">
+                            <label htmlFor="authorized_by">Autorizado por <span style="color: red;">*</span></label>
+                            <input class="border-round w-full mt-2" pInputText
+                                id="authorized_by"
+                                maxlength="20"
+                                formControlName="authorized_by" />
+
+                            <div *ngIf="logbookForm.get('authorized_by')?.hasError('campoVacio')">
+                                <span class="validate-data">El campo autorizado por es obligatorio</span>
+                            </div>
+                        </span>
+
+                        <span class="w-full mt-3 ">
+                            <label htmlFor="username">Observaciones</label>
+                            <input formControlName="observations" class="w-full mt-2" pInputText id="observations" />
+                        </span>
+                    </div>
+                </form>
+
+                <div class="flex justify-content-end">
+                  <p-button label="Guardar" class="mt-5" (onClick)="onSubmit()"
+                    styleClass="bg-btn-primary px-6 w-full" >
+                  </p-button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<div class="overlay" *ngIf="isLoading">
+    <p-progressSpinner
+    class="center-spinner"
+    [style]="{ width: '50px', height: '50px' }"
+    strokeWidth="8"
+    fill="#007bff"
+    animationDuration="2s"
+  ></p-progressSpinner>
+</div>

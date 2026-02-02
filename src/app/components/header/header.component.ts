@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit, inject } from '@angular/core';
+import { Component, Inject, OnInit, inject, ViewEncapsulation } from '@angular/core';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
@@ -15,7 +15,7 @@ import { MenuService } from 'src/app/services/menu.service';
     InputTextModule
   ],
   templateUrl: './header.component.html',
-  styleUrls: ['./header.component.sass']
+  styleUrls: ['./header.component.sass'],
 })
 export class HeaderComponent implements OnInit{
   private readonly menuService = inject(MenuService);
