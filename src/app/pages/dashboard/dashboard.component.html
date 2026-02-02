@@ -1,3 +1,87 @@
+<p-dialog header="Header" [closable]="false" [(visible)]="showDetail" [draggable]="false" [modal]="true"
+  [style]="{ 'width': '30vw', 'border-radius': '32px'}">
+  <ng-template pTemplate="header">
+    <div style="display: grid; place-items: center;">
+      <h1 style="margin: 0; font-size: 22px;" class="text-center mt-5">
+        Detalle bitácora
+      </h1>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="content">
+    <div class="div-responsive mt-4 gap-2">
+      <span class="w-full mt-1">
+        <label class="font-semibold" htmlFor="shipping_guide">Localidad: </label>
+        <label htmlFor="shipping_guide">{{log_selected?.group_name}}</label>
+      </span>
+
+      <span class="w-full mt-1">
+        <label class="font-semibold" htmlFor="shipping_guide">Creado por: </label>
+        <label htmlFor="shipping_guide">{{log_selected?.created_by}}</label>
+      </span>
+      
+      <span class="w-full mt-1">
+        <label class="font-semibold" htmlFor="shipping_guide">Destino: </label>
+        <label htmlFor="shipping_guide">{{log_selected?.destiny_intern ?? log_selected?.destiny}}</label>
+      </span>
+
+      <span class="w-full mt-1">
+        <label class="font-semibold" htmlFor="shipping_guide">Cantidad: </label>
+        <label htmlFor="shipping_guide">{{log_selected?.quantity}}</label>
+      </span>
+
+      <span class="w-full mt-1">
+        <label class="font-semibold" htmlFor="shipping_guide">Peso: </label>
+        <label htmlFor="shipping_guide">{{log_selected?.weight}}</label>
+      </span>
+
+      <span class="w-full mt-1">
+        <label class="font-semibold" htmlFor="shipping_guide">Fecha Registro: </label>
+        <label htmlFor="shipping_guide">{{ log_selected?.created_at | date:'dd/MM/yyyy':'UTC' }}</label>
+      </span>
+
+      @if (log_selected?.id_logbook_out) {
+        <span class="w-full mt-1">
+          <label class="font-semibold" htmlFor="shipping_guide">Nombre Chófer: </label>
+          <label htmlFor="shipping_guide">{{ log_selected?.name_driver }}</label>
+        </span>
+
+        <span class="w-full mt-1">
+          <label class="font-semibold" htmlFor="shipping_guide">Persona Custodia: </label>
+          <label htmlFor="shipping_guide">{{ log_selected?.person_withdraws }}</label>
+        </span>
+      }
+      @else {
+        <span class="w-full mt-1">
+          <label class="font-semibold" htmlFor="shipping_guide">Decripción: </label>
+          <label htmlFor="shipping_guide">{{log_selected?.description}}</label>
+        </span>
+
+        <span class="w-full mt-1">
+          <label class="font-semibold" htmlFor="shipping_guide">Proveedor: </label>
+          <label htmlFor="shipping_guide">{{log_selected?.provider}}</label>
+        </span>
+
+      }
+
+      <span class="w-full mt-1">
+        <label class="font-semibold" htmlFor="shipping_guide">Observaciones: </label>
+        <label htmlFor="shipping_guide">{{ log_selected?.observations === '' ? 'N/C' : log_selected?.observations }}</label>
+      </span>
+      
+    </div>
+
+  </ng-template>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-content-center gap-3 mt-5" style="font-size: 15px;">
+      <p-button label="Cerrar" (onClick)="showDetail = false" styleClass="bg-btn-cancel w-full">
+      </p-button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+
 <div [class]="{ 'w-calc': toggle(), 'w-screen-dashboard': !toggle() }"
   class="container xl:justify-content-evenly p-3-responsive border-box bg-white mt-dashboard flex-column">
   <div class="flex w-full flex-column mb-3 px-4">
@@ -13,14 +97,17 @@
     <div style="max-height: 20rem;" class="flex flex-column align-items-center">
       <div style="width: 40rem;" class="bg-funnel shadow-1 border-round-2xl">
         <div class="p-5 flex flex-column">
-          <div class="flex">
-            <h2 style="color: #181618;" class="mt-0">Bitácoras recientes</h2>
+          <div class="flex justify-content-between align-items-center mb-4">
+            <h2 style="color: #181618;" class="my-0 w-full">Bitácoras recientes</h2>
+            <p-button label="" icon="pi pi-sync" class="w-reload" (onClick)="reloadHistoryLogbook()"
+              styleClass="w-full bg-white text-primary--custom b-reload border-round-1xl h-full" >
+            </p-button>
           </div>
 
           <div class="w-full flex column-responsive">
-            <div class="recent-card flex flex-column w-full gap-3" style="overflow: scroll; height: 21rem;">
+            <div class="recent-card flex flex-column w-full gap-3" style="overflow: scroll; height: 20rem;">
               <ng-container *ngIf="dataHistory?.length > 0; else emptyState">
-                <div class="item w-full p-3 border-round-2xl" *ngFor="let log of dataHistory">
+                <div class="item w-full p-3 border-round-2xl" (click)="openModal(log)" *ngFor="let log of dataHistory">
                   <div class="icon">
                     <i class="pi pi-file-edit"></i>
                   </div>
@@ -31,7 +118,7 @@
                       Bitácora de {{ log.type }} en {{ log.group }}
                     </div>
                     <div class="date">
-                      {{ log.date | date:'dd/MM/yyyy HH:mm' }}
+                      {{ log?.date | date:'dd/MM/yyyy':'UTC' }}
                     </div>
                   </div>
 
@@ -54,4 +141,14 @@
     </div>
 
   </div>
+</div>
+
+<div class="overlay" *ngIf="isLoading">
+    <p-progressSpinner
+    class="center-spinner"
+    [style]="{ width: '50px', height: '50px' }"
+    strokeWidth="8"
+    fill="#007bff"
+    animationDuration="2s"
+  ></p-progressSpinner>
 </div>

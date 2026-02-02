@@ -23,7 +23,7 @@
     </ng-template>
 </p-dialog>
 
-<div class="bg-bluegray-50 border-round-2xl flex justify-content-center mt-header min-h-screen">
+<div class="bg-bluegray-50 border-round-2xl flex justify-content-center mt-header">
     <div class="bg-white w-12 flex flex-column border-round-md flex-wrap">
         <div class="flex justify-content-start w-full">
             <div class="flex flex-column card-form w-full">
@@ -58,7 +58,7 @@
                         <span class="w-full mt-3">
                             <label htmlFor="shipping_guide">Guía / Documento <span style="color: red;">*</span></label>
                             <input class="border-round w-full mt-2" pInputText id="shipping_guide"
-                                formControlName="shipping_guide" [maxlength]="20" 
+                                formControlName="shipping_guide" [maxlength]="50" 
                             />
                             <div *ngIf="logbookForm.get('shipping_guide')?.hasError('campoVacio')">
                                 <span class="validate-data">Este campo es obligatorio</span>

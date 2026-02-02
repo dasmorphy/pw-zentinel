@@ -1,21 +1,37 @@
 <div class="p-5 flex flex-column">
   <div class="flex justify-content-between mb-5">
     <h2 style="color: #181618;" class="mt-0">Resumen</h2>
-    <p-dropdown [style]="{ boxShadow: 'none', width: '10rem' }" styleClass="border-round"
-      id="cuentaCliente" [options]="optionFilterCategory" optionLabel="label" optionValue="value"
-      (onChange)="onFilterChange($event)">
-    </p-dropdown>
+    
+    <div class="flex gap-2">
+      <p-dropdown [style]="{ boxShadow: 'none', width: '10rem' }" styleClass="border-round"
+        id="cuentaCliente" [options]="optionFilterCategory" optionLabel="label" optionValue="value"
+        (onChange)="onFilterChange($event)">
+      </p-dropdown>
+  
+      <p-calendar
+        [(ngModel)]="dateRange"
+        selectionMode="range"
+        dateFormat="dd/mm/yy"
+        [showIcon]="true"
+        [readonlyInput]="true"
+        placeholder="Rango de fechas"
+        [style]="{ boxShadow: 'none', width: '14rem' }"
+        styleClass="border-round"
+        (onSelect)="onFilterDate()">
+      </p-calendar>
+    </div>
+
 
   </div>
 
   <div class="w-full flex column-responsive justify-content-center"> 
-    <div class="flex ">
+    <div class="flex w-full justify-content-center">
       <div class="chart-container">
         <canvas id="myDoughnutChart"></canvas>
       </div>
 
-      <div class="chart-container">
-        <canvas id="categoryChart"></canvas>
+      <div class="flex align-items-center">
+        <canvas style="width: 386px; height: 250px;" id="categoryChart"></canvas>
       </div>
     </div>
   </div>

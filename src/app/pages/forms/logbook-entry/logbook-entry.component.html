@@ -23,7 +23,7 @@
     </ng-template>
 </p-dialog>
 
-<div class="bg-bluegray-50 border-round-2xl flex justify-content-center mt-header min-h-screen">
+<div class="bg-bluegray-50 border-round-2xl flex justify-content-center mt-header">
     <div class="bg-white w-12 flex flex-column border-round-md flex-wrap">
         <div class="flex justify-content-start w-full">
             <div class="flex flex-column card-form w-full">
@@ -58,7 +58,7 @@
                             <label htmlFor="shipping_guide">OC / Guía de remisión <span style="color: red;">*</span></label>
                             <input class="border-round w-full mt-2" pInputText
                                 id="shipping_guide"
-                                formControlName="shipping_guide" inputmode="numeric" [maxlength]="10" />
+                                formControlName="shipping_guide" />
                             <div *ngIf="logbookForm.get('shippng_guide')?.hasError('campoVacio')">
                                 <span class="validate-data">Este campo es obligatorio</span>
                             </div>
@@ -67,7 +67,7 @@
                             <label htmlFor="username">Descripción <span style="color: red;">*</span></label>
                             <input class="border-round w-full mt-2" pInputText
                                 formControlName="description"
-                                oninput="this.value = this.value.replace(/[^a-zA-Z0-9]/g, '');" id="descripcion"
+                                id="descripcion"
                             />
                             <div *ngIf="logbookForm.get('description')?.hasError('campoVacio')">
                                 <span class="validate-data">Este campo es obligatorio</span>
@@ -108,7 +108,7 @@
                             <label htmlFor="authorized_by">Autorizado por <span style="color: red;">*</span></label>
                             <input class="border-round w-full mt-2" pInputText
                                 id="authorized_by"
-                                maxlength="20"
+                                maxlength="100"
                                 formControlName="authorized_by" />
 
                             <div *ngIf="logbookForm.get('authorized_by')?.hasError('campoVacio')">

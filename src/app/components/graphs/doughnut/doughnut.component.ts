@@ -4,11 +4,18 @@ import { Chart, ChartConfiguration } from 'chart.js/auto';
 import { DropdownModule } from 'primeng/dropdown';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { MenuService } from 'src/app/services/menu.service';
+import { CalendarModule } from 'primeng/calendar';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-doughnut',
   standalone: true,
-  imports: [CommonModule, DropdownModule],
+  imports: [
+    CommonModule,
+    DropdownModule,
+    CalendarModule,
+    FormsModule
+  ],
   templateUrl: './doughnut.component.html',
   styleUrls: ['./doughnut.component.sass'],
 })
@@ -20,7 +27,10 @@ export class DoughnutComponent {
   toggle = computed(() => this.menuService.toggle());
 
   categoriesData: any[] = [];
+  dateRange: Date[] | null = null;
   categoryChart!: Chart;
+  logbookChart!: Chart;
+
   optionFilterCategory = [
     { value: 'all', label: 'Todos' },
     { value: 'entrada', label: 'Entrada' },
@@ -28,11 +38,15 @@ export class DoughnutComponent {
   ]
 
   ngOnInit() {
-    this.dashboardService.getResumeChart().subscribe({
+    this.fetchDataGraphs()
+  }
+
+  fetchDataGraphs(filters?: any) {
+    this.dashboardService.getResumeChart(filters).subscribe({
       next: (resp: any) => {
         this.createLogbookChart(
-          resp?.data.porcentaje_entrada,
-          resp?.data.porcentaje_salida
+          resp?.data.total_entrada,
+          resp?.data.total_salida
         );
         this.categoriesData = resp.data.categorias;
         this.initCategoryChart('all'); // 🔥 carga inicial
@@ -41,17 +55,55 @@ export class DoughnutComponent {
     });
   }
 
+  onFilterDate() {
+    if (!Array.isArray(this.dateRange)) return;
+    if (this.dateRange.length !== 2) return;
+
+    const [startDate, endDate] = this.dateRange;
+
+    const start = new Date(startDate);
+    start.setHours(0, 0, 0, 0);
+
+    const end = new Date(endDate);
+    end.setHours(23, 59, 59, 999); // 👈 opcional pero MUY recomendado
+
+    const filter_date = {
+      start_date: this.formatLocalDate(start),
+      end_date: this.formatLocalDate(end)
+    };
+
+    if (startDate && endDate) {
+      this.fetchDataGraphs(filter_date);
+    }
+
+  }
+
+  formatLocalDate(date: Date): string {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, '0');
+    const d = String(date.getDate()).padStart(2, '0');
+    const h = String(date.getHours()).padStart(2, '0');
+    const min = String(date.getMinutes()).padStart(2, '0');
+    const s = String(date.getSeconds()).padStart(2, '0');
+
+    return `${y}-${m}-${d} ${h}:${min}:${s}`;
+  }
+
+
+
+
   // =====================
   // 📊 Inicializar chart
   // =====================
   initCategoryChart(filter: 'all' | 'entrada' | 'salida') {
     const { labels, values } = this.getChartData(filter);
 
-    const config: ChartConfiguration<'doughnut'> = {
-      type: 'doughnut',
+    const config: ChartConfiguration<'bar'> = {
+      type: 'bar',
       data: {
         labels,
         datasets: [{
+          label: this.getDatasetLabel(filter),
           data: values,
           backgroundColor: [
             '#42A5F5',
@@ -59,18 +111,33 @@ export class DoughnutComponent {
             '#FFA726',
             '#AB47BC',
             '#26C6DA'
-          ]
+          ],
+          borderRadius: 8, // 👈 barras redondeadas (opcional, se ve bonito)
+          maxBarThickness: 50
         }]
       },
       options: {
         responsive: true,
         plugins: {
-          legend: { position: 'bottom' }
+          legend: { display: true, position: 'bottom' }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              callback: (value) => value
+            }
+          }
         }
       }
     };
 
     const canvas = document.getElementById('categoryChart') as HTMLCanvasElement;
+
+    if (this.categoryChart) {
+      this.categoryChart.destroy();
+    }
+
     this.categoryChart = new Chart(canvas, config);
   }
 
@@ -96,7 +163,7 @@ export class DoughnutComponent {
     const values = this.categoriesData.map(c => {
       if (filter === 'entrada') return c.entrada;
       if (filter === 'salida') return c.salida;
-      return c.porcentaje_total;
+      return c.total;
     });
 
     return { labels, values };
@@ -123,6 +190,23 @@ export class DoughnutComponent {
     };
 
     const canvas = document.getElementById('myDoughnutChart') as HTMLCanvasElement;
-    new Chart(canvas, config);
+
+    if (this.logbookChart) {
+      this.logbookChart.destroy();
+    }
+
+    this.logbookChart = new Chart(canvas, config);
   }
+
+  getDatasetLabel(filter: 'all' | 'entrada' | 'salida'): string {
+    switch (filter) {
+      case 'entrada':
+        return 'Total de entradas';
+      case 'salida':
+        return 'Total de salidas';
+      default:
+        return 'Total total';
+    }
+  }
+
 }
