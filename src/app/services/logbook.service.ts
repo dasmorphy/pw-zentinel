@@ -40,10 +40,8 @@ export class LogbookService {
     }
 
 
-    saveLogbookOut(data: any) {
-        return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/post/logbook-out`, {
-            logbook_out: data
-        });
+    saveLogbookOut(formData: FormData) {
+        return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/post/logbook-out`, formData);
     }
 
     getHistoryLogbook(headers_json?: any) {

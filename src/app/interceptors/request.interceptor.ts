@@ -5,6 +5,8 @@ import { v4 as uuidv4} from 'uuid';
 
 export const httpInterceptorRequest: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn): Observable<HttpEvent<unknown>> => {
   if (req.url.includes('/rest/token-api/v1.0/generate')) return next(req)
+  if (req.url.includes('/rest/zent-logbook-api/v1.0/post/logbook-out')) return next(req)
+    
   let token = "";
   let idGroup = ""
   const user_session = localStorage.getItem('user');

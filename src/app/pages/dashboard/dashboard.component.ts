@@ -70,17 +70,7 @@ export class DashboardComponent {
             next: (data: any) => {
                 this.isLoading = false;
                 this.dataComplete = data?.data;
-                this.dataHistory = data?.data?.slice(0, 5)?.map((item: any) => {
-                    const isEntry = !!item.id_logbook_entry;
-                    return {
-                        user: item.created_by,
-                        id: isEntry ? item.id_logbook_entry : item.id_logbook_out,
-                        guide: item.shipping_guide,
-                        type: isEntry ? 'entrada' : 'salida',
-                        group: item.group_name,
-                        date: item.created_at
-                    };
-                });
+                this.dataHistory = this.mapHistory(this.dataComplete).slice(0, 5);
             },
             error: (error: any) => {
                 this.isLoading = false;
@@ -92,6 +82,44 @@ export class DashboardComponent {
     reloadHistoryLogbook() {
         this.fetchHistoryLogbook();
     }
+
+
+    onSearch(event: Event) {
+        const value = (event.target as HTMLInputElement).value.toLowerCase().trim();
+
+        if (!value) {
+            // si no hay búsqueda, vuelve a mostrar los últimos 5
+            this.dataHistory = this.mapHistory(this.dataComplete).slice(0, 5);
+            return;
+        }
+
+        const filtered = this.dataComplete.filter((item: any) => {
+            return (
+                item.shipping_guide?.toLowerCase().includes(value) ||
+                item.group_name?.toLowerCase().includes(value) ||
+                item.created_by?.toLowerCase().includes(value)
+            );
+        });
+
+        this.dataHistory = this.mapHistory(filtered);
+    }
+
+    mapHistory(data: any[]) {
+        return data.map((item: any) => {
+            const isEntry = !!item.id_logbook_entry;
+
+            return {
+                user: item.created_by,
+                id: isEntry ? item.id_logbook_entry : item.id_logbook_out,
+                guide: item.shipping_guide,
+                type: isEntry ? 'entrada' : 'salida',
+                group: item.group_name,
+                date: item.created_at
+            };
+        });
+    }
+
+
 
     openModal(log: any) {
         let log_found;

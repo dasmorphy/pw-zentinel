@@ -52,7 +52,7 @@ export class LogbookOutComponent {
     isLoading: boolean = false;
     showConfirmSave: boolean = false;
     messageEmpty: string = "No hay opciones disponibles";
-    optionWorkDay= [ 'Diurna', 'Nocturna']
+    optionWorkDay = ['Diurna', 'Nocturna']
 
     categoryOptions = []
 
@@ -124,8 +124,15 @@ export class LogbookOutComponent {
     saveLogbook() {
         this.isLoading = true;
         this.showConfirmSave = false;
-        const user_session = localStorage.getItem('sb_token')
+
+        const user_session = localStorage.getItem('sb_token');
         const user_json = user_session ? JSON.parse(user_session) : null;
+
+        if (this.images.length < 5) {
+            this.imagesError = 'Debes subir mínimo 5 imágenes';
+            this.isLoading = false;
+            return;
+        }
 
         const data_save = {
             ...this.logbookForm.value,
@@ -134,22 +141,42 @@ export class LogbookOutComponent {
             name_user: user_json?.name,
             id_unity: this.logbookForm.get('id_unity')?.value,
             weight: this.logbookForm.get('weight')?.value ?? 0
-        }
+        };
 
-        this.logbookService.saveLogbookOut(data_save).subscribe({
+        const formData = new FormData();
+
+        formData.append(
+            'logbook_out',
+            new Blob([JSON.stringify(data_save)], { type: 'application/json' })
+        );
+
+        this.images.forEach((file: File) => {
+            formData.append('images', file);
+        });
+
+        formData.append('channel', 'ZENTINEL WEB');
+        formData.append('external_transaction_id', crypto.randomUUID());
+
+        this.logbookService.saveLogbookOut(formData).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
-                const message = data?.message ?? 'Bitácora guardada'
-                this.utilsService.onSuccess(message)
-                this.logbookForm.reset()
+                const message = data?.message ?? 'Bitácora guardada';
+                this.utilsService.onSuccess(message);
+                this.logbookForm.reset();
+                this.images = [];
+                this.imagesError = '';
             },
             error: (error: any) => {
-                console.log(error);
+                console.error('Error completo:', error);
                 this.isLoading = false;
-                const error_message = error?.error?.message ?? 'Error al guardar la bitacora salida, por favor intente nuevamente'
-                this.utilsService.onError(error_message)
+                const error_message = error?.error?.message ??
+                    'Error al guardar la bitácora de salida, por favor intente nuevamente';
+                this.utilsService.onError(error_message);
             }
-        })
+        });
+
+
+
     }
 
     setUnityByCategory(name_category: string) {

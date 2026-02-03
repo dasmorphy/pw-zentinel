@@ -9,10 +9,9 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { BarChartComponent } from '../bar-chart/bar-chart.component';
 
 @Component({
-  selector: 'app-doughnut',
+  selector: 'app-bar-chart',
   standalone: true,
   imports: [
     CommonModule,
@@ -21,38 +20,23 @@ import { BarChartComponent } from '../bar-chart/bar-chart.component';
     FormsModule,
     DialogModule,
     OverlayPanelModule,
-    MultiSelectModule,
-    BarChartComponent
+    MultiSelectModule
   ],
-  templateUrl: './doughnut.component.html',
-  styleUrls: ['./doughnut.component.sass'],
+  templateUrl: './bar-chart.component.html',
+  styleUrls: ['./bar-chart.component.sass'],
 })
-export class DoughnutComponent {
-
-  private readonly menuService = inject(MenuService);
+export class BarChartComponent {
   private readonly dashboardService = inject(DashboardService);
 
-  toggle = computed(() => this.menuService.toggle());
-
   categoriesData: any[] = [];
-  dateRange: Date[] | null = null;
   categoryChart!: Chart;
-  logbookChart!: Chart;
-
-  showImageDialog = false;
-  optionSector: any = [];
-  optionGroupBusiness: any = [];
-  selectedGroupBusiness: number[] = [];
-  selectedSector: number[] = [];
-  selectedTime: string[] = ['Diurna', 'Nocturna'];
 
   optionFilterCategory = [
     { value: 'all', label: 'Todos' },
     { value: 'entrada', label: 'Entrada' },
     { value: 'salida', label: 'Salida' }
   ]
-
-  optionTime= [ 'Diurna', 'Nocturna']
+  
   user_session: any;
 
   ngOnInit() {
@@ -60,91 +44,18 @@ export class DoughnutComponent {
     const user_json = user_session ? JSON.parse(user_session) : null;
     this.user_session = user_json;
     this.fetchDataGraphs()
-    this.fetchSectorByBusiness();
-    this.fetchGroupBusinessByBusiness();
   }
 
-  fetchSectorByBusiness() {
-    this.dashboardService.getSectorByBusiness(this.user_session?.id_business).subscribe({
-      next: (resp: any) => {
-        this.optionSector = resp?.data
-        // this.selectedSector = this.optionSector?.map((sector: any) => sector.id_sector)
-      },
-      error: (err) => console.error(err)
-    });
-  }
-
-  fetchGroupBusinessByBusiness() {
-    this.dashboardService.getGroupBusinessByBusiness(this.user_session?.id_business).subscribe({
-      next: (resp: any) => {
-        this.optionGroupBusiness = resp?.data
-        // this.selectedGroupBusiness  = this.optionGroupBusiness?.map((group_business: any) => group_business.id_group_business)
-      },
-      error: (err) => console.error(err)
-    });
-  }
 
   fetchDataGraphs(filters?: any) {
     this.dashboardService.getResumeChart(filters).subscribe({
       next: (resp: any) => {
-        this.createLogbookChart(
-          resp?.data.total_entrada,
-          resp?.data.total_salida
-        );
         this.categoriesData = resp.data.categorias;
         this.initCategoryChart('all'); // 🔥 carga inicial
       },
       error: (err) => console.error(err)
     });
   }
-
-  onFilterDate(imagePanel: any) {
-    imagePanel.hide()
-    let filter_date: any = {}
-
-    if (Array.isArray(this.dateRange)) {
-      if (this.dateRange.length === 2) {
-        const [startDate, endDate] = this.dateRange;
-    
-        const start = new Date(startDate);
-        start.setHours(0, 0, 0, 0);
-    
-        const end = new Date(endDate);
-        end.setHours(23, 59, 59, 999);
-    
-        filter_date.start_date = this.formatLocalDate(start);
-        filter_date.end_date = this.formatLocalDate(end);
-      };
-    };
-
-    if (this.selectedGroupBusiness.length > 0) {
-      filter_date.groups_business_id = this.selectedGroupBusiness.join(',');
-    }
-
-    if (this.selectedSector.length > 0) {
-      filter_date.sectors = this.selectedSector.join(',');
-    }
-
-    if (this.selectedTime.length > 0) {
-      filter_date.workday = this.selectedTime.join(',');;
-    }
-
-    this.fetchDataGraphs(filter_date);
-  }
-
-  formatLocalDate(date: Date): string {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const d = String(date.getDate()).padStart(2, '0');
-    const h = String(date.getHours()).padStart(2, '0');
-    const min = String(date.getMinutes()).padStart(2, '0');
-    const s = String(date.getSeconds()).padStart(2, '0');
-
-    return `${y}-${m}-${d} ${h}:${min}:${s}`;
-  }
-
-
-
 
   // =====================
   // 📊 Inicializar chart
@@ -221,35 +132,6 @@ export class DoughnutComponent {
     });
 
     return { labels, values };
-  }
-
-
-  createLogbookChart(entrada: number, salida: number) {
-    const config: ChartConfiguration<'doughnut'> = {
-      type: 'doughnut',
-      data: {
-        labels: ['Bitácoras entrada', 'Bitácoras salida'],
-        datasets: [{
-          data: [entrada, salida],
-          backgroundColor: ['#42A5F5', '#66BB6A'],
-          hoverBackgroundColor: ['#1E88E5', '#43A047'],
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { position: 'bottom' }
-        }
-      }
-    };
-
-    const canvas = document.getElementById('myDoughnutChart') as HTMLCanvasElement;
-
-    if (this.logbookChart) {
-      this.logbookChart.destroy();
-    }
-
-    this.logbookChart = new Chart(canvas, config);
   }
 
   getDatasetLabel(filter: 'all' | 'entrada' | 'salida'): string {
