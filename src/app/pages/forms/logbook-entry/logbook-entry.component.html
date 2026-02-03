@@ -33,6 +33,16 @@
                 <form [formGroup]="logbookForm">
                     <div class="div-responsive">
                         <span class="w-full mt-3">
+                            <label htmlFor="username">Jornada <span style="color: red;">*</span></label>
+                            <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2"
+                                id="workday" [options]="optionWorkDay" formControlName="workday"
+                            ></p-dropdown>
+                            <div *ngIf="logbookForm.get('workday')?.hasError('campoVacio')">
+                                <span class="validate-data">Este campo es obligatorio</span>
+                            </div>
+                        </span>
+
+                        <span class="w-full mt-3">
                             <label htmlFor="username">Categoria <span style="color: red;">*</span></label>
                             <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" formControlName="id_category"
                                 id="cuentaCliente" [options]="categories()" optionLabel="name_category" optionValue="id_category"

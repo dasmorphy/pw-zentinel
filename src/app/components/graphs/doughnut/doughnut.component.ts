@@ -6,6 +6,9 @@ import { DashboardService } from 'src/app/services/dashboard.service';
 import { MenuService } from 'src/app/services/menu.service';
 import { CalendarModule } from 'primeng/calendar';
 import { FormsModule } from '@angular/forms';
+import { DialogModule } from 'primeng/dialog';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
   selector: 'app-doughnut',
@@ -14,7 +17,10 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     DropdownModule,
     CalendarModule,
-    FormsModule
+    FormsModule,
+    DialogModule,
+    OverlayPanelModule,
+    MultiSelectModule
   ],
   templateUrl: './doughnut.component.html',
   styleUrls: ['./doughnut.component.sass'],
@@ -31,14 +37,49 @@ export class DoughnutComponent {
   categoryChart!: Chart;
   logbookChart!: Chart;
 
+  showImageDialog = false;
+  optionSector: any = [];
+  optionGroupBusiness: any = [];
+  selectedGroupBusiness: number[] = [];
+  selectedSector: number[] = [];
+  selectedTime: string[] = ['Diurna', 'Nocturna'];
+
   optionFilterCategory = [
     { value: 'all', label: 'Todos' },
     { value: 'entrada', label: 'Entrada' },
     { value: 'salida', label: 'Salida' }
   ]
 
+  optionTime= [ 'Diurna', 'Nocturna']
+  user_session: any;
+
   ngOnInit() {
+    const user_session = localStorage.getItem('sb_token')
+    const user_json = user_session ? JSON.parse(user_session) : null;
+    this.user_session = user_json;
     this.fetchDataGraphs()
+    this.fetchSectorByBusiness();
+    this.fetchGroupBusinessByBusiness();
+  }
+
+  fetchSectorByBusiness() {
+    this.dashboardService.getSectorByBusiness(this.user_session?.id_business).subscribe({
+      next: (resp: any) => {
+        this.optionSector = resp?.data
+        // this.selectedSector = this.optionSector?.map((sector: any) => sector.id_sector)
+      },
+      error: (err) => console.error(err)
+    });
+  }
+
+  fetchGroupBusinessByBusiness() {
+    this.dashboardService.getGroupBusinessByBusiness(this.user_session?.id_business).subscribe({
+      next: (resp: any) => {
+        this.optionGroupBusiness = resp?.data
+        // this.selectedGroupBusiness  = this.optionGroupBusiness?.map((group_business: any) => group_business.id_group_business)
+      },
+      error: (err) => console.error(err)
+    });
   }
 
   fetchDataGraphs(filters?: any) {
@@ -55,27 +96,38 @@ export class DoughnutComponent {
     });
   }
 
-  onFilterDate() {
-    if (!Array.isArray(this.dateRange)) return;
-    if (this.dateRange.length !== 2) return;
+  onFilterDate(imagePanel: any) {
+    imagePanel.hide()
+    let filter_date: any = {}
 
-    const [startDate, endDate] = this.dateRange;
-
-    const start = new Date(startDate);
-    start.setHours(0, 0, 0, 0);
-
-    const end = new Date(endDate);
-    end.setHours(23, 59, 59, 999); // 👈 opcional pero MUY recomendado
-
-    const filter_date = {
-      start_date: this.formatLocalDate(start),
-      end_date: this.formatLocalDate(end)
+    if (Array.isArray(this.dateRange)) {
+      if (this.dateRange.length === 2) {
+        const [startDate, endDate] = this.dateRange;
+    
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+    
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+    
+        filter_date.start_date = this.formatLocalDate(start);
+        filter_date.end_date = this.formatLocalDate(end);
+      };
     };
 
-    if (startDate && endDate) {
-      this.fetchDataGraphs(filter_date);
+    if (this.selectedGroupBusiness.length > 0) {
+      filter_date.groups_business_id = this.selectedGroupBusiness.join(',');
     }
 
+    if (this.selectedSector.length > 0) {
+      filter_date.sectors = this.selectedSector.join(',');
+    }
+
+    if (this.selectedTime.length > 0) {
+      filter_date.workday = this.selectedTime.join(',');;
+    }
+
+    this.fetchDataGraphs(filter_date);
   }
 
   formatLocalDate(date: Date): string {
@@ -205,7 +257,7 @@ export class DoughnutComponent {
       case 'salida':
         return 'Total de salidas';
       default:
-        return 'Total total';
+        return 'Total';
     }
   }
 

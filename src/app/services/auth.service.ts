@@ -23,6 +23,7 @@ export class AuthService {
                 'user': user,
                 'role': 'admin',
                 'business': 'Expalsa',
+                'id_business': 1,
                 'group_business': 1,
                 'name_group_business': 'Camanglar 1',
             };

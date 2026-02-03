@@ -52,11 +52,13 @@ export class LogbookOutComponent {
     isLoading: boolean = false;
     showConfirmSave: boolean = false;
     messageEmpty: string = "No hay opciones disponibles";
+    optionWorkDay= [ 'Diurna', 'Nocturna']
 
     categoryOptions = []
 
     constructor(private fb: FormBuilder,) {
         this.logbookForm = this.fb.group({
+            workday: ['', Validators.required],
             id_category: ['', Validators.required],
             id_unity: ['', Validators.required],
             shipping_guide: ['', Validators.required],

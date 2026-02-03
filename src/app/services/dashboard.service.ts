@@ -12,6 +12,7 @@ export class DashboardService {
 
     getResumeChart(filter?: any) {
         let params = new HttpParams();
+        let headers = new HttpHeaders();
 
         if (filter?.start_date) {
             params = params.set('start_date', filter.start_date);
@@ -21,9 +22,33 @@ export class DashboardService {
             params = params.set('end_date', filter.end_date);
         }
 
+        if (filter?.groups_business_id) {
+            headers = headers.set('groups_business_id', filter?.groups_business_id)
+        }
+
+        if (filter?.workday) {
+            headers = headers.set('workday', filter?.workday)
+        }
+
+        if (filter?.sectors) {
+            headers = headers.set('sectors', filter?.sectors)
+        }
+
         return this.http.get(
             `${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/resume_graphs`,
-            { params }
+            { headers, params }
+        );
+    }
+
+    getSectorByBusiness(id_business: number) {
+        return this.http.get(
+            `${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/sector-by-business/${id_business}`,
+        );
+    }
+
+    getGroupBusinessByBusiness(id_business: number) {
+        return this.http.get(
+            `${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/group-business-by-id-business/${id_business}`,
         );
     }
 
