@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, EventEmitter, inject, Output } from '@angular/core';
 import { Chart, ChartConfiguration } from 'chart.js/auto';
 import { DropdownModule } from 'primeng/dropdown';
 import { DashboardService } from 'src/app/services/dashboard.service';
@@ -9,7 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { MultiSelectModule } from 'primeng/multiselect';
-import { BarChartComponent } from '../bar-chart/bar-chart.component';
+import { PolarChartComponent } from '../polar-chart/polar-chart.component';
 
 @Component({
   selector: 'app-doughnut',
@@ -22,18 +22,19 @@ import { BarChartComponent } from '../bar-chart/bar-chart.component';
     DialogModule,
     OverlayPanelModule,
     MultiSelectModule,
-    BarChartComponent
+    PolarChartComponent
   ],
   templateUrl: './doughnut.component.html',
   styleUrls: ['./doughnut.component.sass'],
 })
 export class DoughnutComponent {
-
+  
   private readonly menuService = inject(MenuService);
   private readonly dashboardService = inject(DashboardService);
-
+  
   toggle = computed(() => this.menuService.toggle());
-
+  
+  dataCategoryQuantity: any = [];
   categoriesData: any[] = [];
   dateRange: Date[] | null = null;
   categoryChart!: Chart;
@@ -92,7 +93,9 @@ export class DoughnutComponent {
           resp?.data.total_salida
         );
         this.categoriesData = resp.data.categorias;
-        this.initCategoryChart('all'); // 🔥 carga inicial
+        this.dataCategoryQuantity = resp.data.categorias_cantidad;
+        this.initCategoryChart('all');
+        console.log('jkkjjkkj')
       },
       error: (err) => console.error(err)
     });

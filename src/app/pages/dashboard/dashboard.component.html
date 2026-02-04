@@ -118,7 +118,7 @@
           </div>
 
           <div class="w-full flex column-responsive">
-            <div class="recent-card flex flex-column w-full gap-3" style="overflow: scroll; height: 20rem;">
+            <div class="recent-card flex flex-column w-full gap-3" style="overflow: scroll;">
               <ng-container *ngIf="dataHistory?.length > 0; else emptyState">
                 <div class="item w-full p-3 border-round-2xl" (click)="openModal(log)" *ngFor="let log of dataHistory">
                   <div class="icon">

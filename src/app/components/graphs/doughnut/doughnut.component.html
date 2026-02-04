@@ -67,14 +67,22 @@
   </div>
 
   <div class="w-full flex column-responsive justify-content-center">
-    <div class="flex w-full justify-content-center column-responsive">
-      <div class="h-dona w-full flex justify-content-center">
-        <canvas class="dona" id="myDoughnutChart"></canvas>
+    <div class="flex w-full justify-content-center flex-column ">
+
+      <div class="flex column-responsive">
+        <div class="h-dona w-full flex justify-content-center">
+          <canvas class="dona" id="myDoughnutChart"></canvas>
+        </div>
+  
+        <div class="flex w-full h-full align-items-center">
+          <canvas class="categoryChart" id="categoryChart"></canvas>
+        </div>
       </div>
 
-      <div class="flex w-full h-full align-items-center">
-        <canvas class="categoryChart" id="categoryChart"></canvas>
+      <div class="flex w-full align-items-center justify-content-center" style="height: 500px">
+        <app-polar-chart [dataPolar]="dataCategoryQuantity"></app-polar-chart>
       </div>
+
     </div>
   </div>
 </div>
