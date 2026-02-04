@@ -66,10 +66,24 @@
 
       <span class="w-full mt-1">
         <label class="font-semibold" htmlFor="shipping_guide">Observaciones: </label>
-        <label htmlFor="shipping_guide">{{ log_selected?.observations === '' ? 'N/C' : log_selected?.observations }}</label>
+        <label htmlFor="shipping_guide">{{ !log_selected?.observations || log_selected?.observations === '' ? 'N/C' : log_selected?.observations }}</label>
       </span>
       
     </div>
+
+    @if (log_selected?.images.length > 0) {
+      <div class="flex flex-column mt-2">
+        <label class="font-semibold" htmlFor="shipping_guide">Imágenes: </label>
+  
+        <div class="div-responsive mt-3">
+          <div class="flex justify-content-center" *ngFor="let image of log_selected?.images">
+            <img style="object-fit: contain;" [src]="'http://st.telearseg.net' + image" alt="imagenes" loading="lazy" height="190" width="180">
+          </div>
+        </div>
+  
+  
+      </div>
+    }
 
   </ng-template>
 

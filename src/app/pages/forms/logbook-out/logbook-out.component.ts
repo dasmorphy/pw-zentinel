@@ -14,6 +14,7 @@ import { UtilsService } from 'src/app/services/utils.service';
 import { DialogModule } from 'primeng/dialog';
 import { UserService } from 'src/app/services/user.service';
 import { FileUploadModule } from 'primeng/fileupload';
+import { v4 as uuidv4} from 'uuid';
 
 @Component({
     selector: 'app-logbook-out',
@@ -140,7 +141,9 @@ export class LogbookOutComponent {
             created_by: user_json?.user,
             name_user: user_json?.name,
             id_unity: this.logbookForm.get('id_unity')?.value,
-            weight: this.logbookForm.get('weight')?.value ?? 0
+            weight: this.logbookForm.get('weight')?.value ?? 0,
+            channel: 'ZENTINEL_WEB',
+            external_transaction_id: uuidv4()
         };
 
         const formData = new FormData();
@@ -154,8 +157,8 @@ export class LogbookOutComponent {
             formData.append('images', file);
         });
 
-        formData.append('channel', 'ZENTINEL WEB');
-        formData.append('external_transaction_id', crypto.randomUUID());
+        // formData.append('channel', 'ZENTINEL WEB');
+        // formData.append('external_transaction_id', crypto.randomUUID());
 
         this.logbookService.saveLogbookOut(formData).subscribe({
             next: (data: any) => {

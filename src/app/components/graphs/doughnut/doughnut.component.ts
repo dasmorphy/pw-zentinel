@@ -95,7 +95,6 @@ export class DoughnutComponent {
         this.categoriesData = resp.data.categorias;
         this.dataCategoryQuantity = resp.data.categorias_cantidad;
         this.initCategoryChart('all');
-        console.log('jkkjjkkj')
       },
       error: (err) => console.error(err)
     });
