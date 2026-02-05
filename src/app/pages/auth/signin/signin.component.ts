@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, ElementRef, HostListener, OnInit, ViewChild, computed, inject, signal, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 import { InputTextModule } from 'primeng/inputtext';
@@ -34,6 +34,7 @@ export class SigninComponent implements OnInit {
 
   private utilsService = inject(UtilsService);
   private authService = inject(AuthService);
+  private readonly router = inject(Router)
 
   email: string = '';
   password: string = '';
@@ -63,11 +64,27 @@ export class SigninComponent implements OnInit {
     }
     
     this.isLoading = true;
+
+
+    this.authService.signIn(this.email, this.password).subscribe({
+      next: (data: any) => {
+        this.isLoading = false;
+        localStorage.setItem('sb_token', JSON.stringify(data?.data) )
+        this.router.navigate(['/dashboard']);
+      },
+      error: (error: any) => {
+        this.isLoading = false;
+        console.log(error);
+        const message = error?.error?.message ?? 'Error al iniciar sesión'
+        this.utilsService.onError(message)
+      }
+    })
+
     
-    setTimeout(() => {
-      this.authService.signIn(this.email, this.password);
-      this.isLoading = false;
-    }, 3500);
+    // setTimeout(() => {
+    //   this.authService.signIn(this.email, this.password);
+    //   this.isLoading = false;
+    // }, 3500);
   }
 
 }

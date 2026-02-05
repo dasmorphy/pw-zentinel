@@ -16,9 +16,8 @@ export const httpInterceptorResponse: HttpInterceptorFn = (req: HttpRequest<unkn
         localStorage.removeItem('time_expiration');
         localStorage.removeItem('time_session');
 
-        if (!req.url.includes('/rest/cw-auth-api/v1.0/login') && 
-        !req.url.includes('/rest/cw-user-manager-api/v1.0/dfa_code')) {
-          messageService.clear();
+        if (!req.url.includes('/rest/zent-logbook-api/v1.0/post/login')) {
+          // messageService.clear();
           messageService.add({
             severity: 'warn',
             summary: 'Aviso',

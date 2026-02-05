@@ -66,7 +66,8 @@ export class DoughnutComponent {
   }
 
   fetchSectorByBusiness() {
-    this.dashboardService.getSectorByBusiness(this.user_session?.id_business).subscribe({
+    const id_business = this.user_session?.attributes?.id_business
+    this.dashboardService.getSectorByBusiness(id_business).subscribe({
       next: (resp: any) => {
         this.optionSector = resp?.data
         // this.selectedSector = this.optionSector?.map((sector: any) => sector.id_sector)
@@ -76,7 +77,8 @@ export class DoughnutComponent {
   }
 
   fetchGroupBusinessByBusiness() {
-    this.dashboardService.getGroupBusinessByBusiness(this.user_session?.id_business).subscribe({
+    const id_business = this.user_session?.attributes?.id_business
+    this.dashboardService.getGroupBusinessByBusiness(id_business).subscribe({
       next: (resp: any) => {
         this.optionGroupBusiness = resp?.data
         // this.selectedGroupBusiness  = this.optionGroupBusiness?.map((group_business: any) => group_business.id_group_business)
