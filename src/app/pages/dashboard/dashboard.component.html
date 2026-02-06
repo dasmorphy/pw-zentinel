@@ -145,6 +145,9 @@
                       Bitácora de {{ log.type }} en {{ log.group }}
                     </div>
                     <div class="date">
+                      {{ log?.truck_license }}
+                    </div>
+                    <div class="date">
                       {{ log?.date | date:'dd/MM/yyyy':'UTC' }}
                     </div>
                   </div>

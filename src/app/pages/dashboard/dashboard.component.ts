@@ -97,7 +97,8 @@ export class DashboardComponent {
             return (
                 item.shipping_guide?.toLowerCase().includes(value) ||
                 item.group_name?.toLowerCase().includes(value) ||
-                item.created_by?.toLowerCase().includes(value)
+                item.created_by?.toLowerCase().includes(value) ||
+                item.truck_license?.toLowerCase().includes(value)
             );
         });
 
@@ -114,6 +115,7 @@ export class DashboardComponent {
                 guide: item.shipping_guide,
                 type: isEntry ? 'entrada' : 'salida',
                 group: item.group_name,
+                truck_license: item.truck_license,
                 date: item.created_at
             };
         });

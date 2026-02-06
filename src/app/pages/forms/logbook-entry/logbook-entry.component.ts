@@ -18,6 +18,7 @@ import { UtilsService } from 'src/app/services/utils.service';
 import { DialogModule } from 'primeng/dialog';
 import { UserService } from 'src/app/services/user.service';
 import { FileUploadModule } from 'primeng/fileupload';
+import { v4 as uuidv4} from 'uuid';
 
 @Component({
     selector: 'app-logbook-entry',
@@ -125,17 +126,37 @@ export class LogbookEntryComponent {
         this.showConfirmSave = false;
         const user_session = localStorage.getItem('sb_token')
         const user_json = user_session ? JSON.parse(user_session) : null;
+
+        if (this.images.length < 5) {
+            this.imagesError = 'Debes subir mínimo 5 imágenes';
+            this.isLoading = false;
+            return;
+        }
         
+ 
         const data_save = {
             ...this.logbookForm.value,
             id_group_business: user_json?.group_business,
             created_by: user_json?.user,
             name_user: user_json?.name,
             id_unity: this.logbookForm.get('id_unity')?.value,
-            weight: this.logbookForm.get('weight')?.value ?? 0
-        }
+            weight: this.logbookForm.get('weight')?.value ?? 0,
+            channel: 'ZENTINEL_WEB',
+            external_transaction_id: uuidv4()
+        };
 
-        this.logbookService.saveLogbookEntry(data_save).subscribe({
+        const formData = new FormData();
+
+        formData.append(
+            'logbook_entry',
+            new Blob([JSON.stringify(data_save)], { type: 'application/json' })
+        );
+
+        this.images.forEach((file: File) => {
+            formData.append('images', file);
+        });
+
+        this.logbookService.saveLogbookEntry(formData).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
                 const message = data?.message ?? 'Bitácora guardada'

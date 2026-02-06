@@ -157,9 +157,6 @@ export class LogbookOutComponent {
             formData.append('images', file);
         });
 
-        // formData.append('channel', 'ZENTINEL WEB');
-        // formData.append('external_transaction_id', crypto.randomUUID());
-
         this.logbookService.saveLogbookOut(formData).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
