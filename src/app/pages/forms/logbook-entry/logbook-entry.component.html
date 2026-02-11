@@ -31,8 +31,24 @@
                 <h2>Formulario de Entrada</h2>
 
                 <form [formGroup]="logbookForm">
-                    <div class="div-responsive">
-                        <span class="w-full mt-3">
+                    @if(user_json?.attributes['name_group_business'])  {
+                        <label for="location"><i style="color: red;" class="pi pi-map-marker"></i> {{user_json?.attributes['name_group_business']}}</label>
+                    }
+                    <div class="div-responsive mt-3">
+                        @if(!user_json?.attributes['name_group_business'])  {
+                            <span class="w-full">
+                                <label htmlFor="username">Localidad <span style="color: red;">*</span></label>
+                                <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2"
+                                    id="group_business" [options]="optionGroupBusiness" formControlName="id_group_business" 
+                                    optionLabel="name" optionValue="id_group_business"
+                                ></p-dropdown>
+                                <div *ngIf="logbookForm.get('id_group_business')?.hasError('campoVacio')">
+                                    <span class="validate-data">Este campo es obligatorio</span>
+                                </div>
+                            </span>
+                        }
+
+                        <span class="w-full">
                             <label htmlFor="username">Jornada <span style="color: red;">*</span></label>
                             <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2"
                                 id="workday" [options]="optionWorkDay" formControlName="workday"
@@ -42,17 +58,17 @@
                             </div>
                         </span>
 
-                        <span class="w-full mt-3">
+                        <span class="w-full">
                             <label htmlFor="username">Categoria <span style="color: red;">*</span></label>
                             <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" formControlName="id_category"
                                 id="cuentaCliente" [options]="categories()" optionLabel="name_category" optionValue="id_category"
-                                [emptyMessage]="messageEmpty" (onChange)="onChangeCategory()"></p-dropdown>
+                                [emptyMessage]="messageEmpty"></p-dropdown>
                             <div *ngIf="logbookForm.get('id_category')?.hasError('campoVacio')">
                                 <span class="validate-data">El campo categoria es obligatorio</span>
                             </div>
                         </span>
 
-                        <span class="w-full mt-3">
+                        <span class="w-full">
                             <label class="text-account" htmlFor="ciudad">Unidad <span
                                     style="color: red;">*</span></label>
                             <p-dropdown [style]="{ boxShadow: 'none', maxWidth: '100%' }"
@@ -64,16 +80,16 @@
                             </div>
                         </span>
 
-                        <span class="w-full mt-3">
+                        <span class="w-full">
                             <label htmlFor="shipping_guide">OC / Guía de remisión <span style="color: red;">*</span></label>
                             <input class="border-round w-full mt-2" pInputText
                                 id="shipping_guide"
                                 formControlName="shipping_guide" />
-                            <div *ngIf="logbookForm.get('shippng_guide')?.hasError('campoVacio')">
+                            <div *ngIf="logbookForm.get('shipping_guide')?.hasError('campoVacio')">
                                 <span class="validate-data">Este campo es obligatorio</span>
                             </div>
                         </span>
-                        <span class="w-full mt-3">
+                        <span class="w-full">
                             <label htmlFor="username">Descripción <span style="color: red;">*</span></label>
                             <input class="border-round w-full mt-2" pInputText
                                 formControlName="description"
@@ -84,19 +100,37 @@
                             </div>
                         </span>
 
-                        <span class="w-full mt-3">
+                        <span class="w-full">
                             <label htmlFor="username">Cantidad <span style="color: red;">*</span></label>
                             <p-inputNumber class="border-round w-full mt-2" formControlName="quantity" styleClass="w-full"></p-inputNumber>
                             <div *ngIf="logbookForm.get('quantity')?.hasError('campoVacio')">
                                 <span class="validate-data">Este campo es obligatorio</span>
                             </div>
                         </span>
-                        <span class="w-full mt-3">
+                        <span class="w-full">
                             <label htmlFor="weight">Peso</label>
                             <p-inputNumber class="border-round w-full mt-2" formControlName="weight" [useGrouping]="false" styleClass="w-full"></p-inputNumber>
                         </span>
 
-                        <span class="w-full mt-3">
+                        <span class="w-full">
+                            <label htmlFor="truck_license">Placa del camión <span style="color: red;">*</span></label>
+                            <input class="border-round w-full mt-2" pInputText type="text" id="truck_license"
+                                name="truck_license" formControlName="truck_license" />
+                            <div *ngIf="logbookForm.get('truck_license')?.hasError('campoVacio')">
+                                <span class="validate-data">Este campo es obligatorio</span>
+                            </div>
+                        </span>
+
+                        <span class="w-full">
+                            <label htmlFor="name_driver">Nombre del chofer <span style="color: red;">*</span></label>
+                            <input class="border-round w-full mt-2" pInputText id="name_driver" maxlength="100"
+                                formControlName="name_driver" />
+                            <div *ngIf="logbookForm.get('name_driver')?.hasError('campoVacio')">
+                                <span class="validate-data">Este campo es obligatorio</span>
+                            </div>
+                        </span>
+
+                        <span class="w-full">
                             <label htmlFor="email">Proveedor / Origin <span style="color: red;">*</span></label>
                             <input class="border-round w-full mt-2" pInputText type="text" id="provider" name="provider"
                                 formControlName="provider" />
@@ -104,7 +138,7 @@
                                 <span class="validate-data">Este campo es obligatorio</span>
                             </div>
                         </span>
-                        <span class="w-full mt-3">
+                        <span class="w-full">
                             <label htmlFor="destiny_intern">Destino interno <span style="color: red;">*</span></label>
                             <input class="border-round w-full mt-2" pInputText
                                 id="destiny_intern" maxlength="100"
@@ -114,7 +148,7 @@
                             </div>
                         </span>
 
-                        <span class="w-full mt-3 ">
+                        <span class="w-full">
                             <label htmlFor="authorized_by">Autorizado por <span style="color: red;">*</span></label>
                             <input class="border-round w-full mt-2" pInputText
                                 id="authorized_by"
@@ -126,15 +160,16 @@
                             </div>
                         </span>
 
-                        <span class="w-full mt-3 ">
+                        <span class="w-full">
                             <label htmlFor="username">Observaciones</label>
                             <input formControlName="observations" class="w-full mt-2" pInputText id="observations" />
                         </span>
 
-                        <span class="w-full mt-3">
+                        <span class="w-full">
                             <label>Imágenes <span style="color: red;">*</span></label>
 
                             <p-fileUpload
+                                #fileUpload
                                 name="images"
                                 mode="advanced"
                                 accept="image/*"
@@ -144,6 +179,7 @@
                                 [showCancelButton]="false"
                                 [auto]="true"
                                 (onSelect)="onSelectImages($event)"
+                                (onRemove)="onRemoveImages($event)"
                                 styleClass="w-full mt-2"
                                 chooseLabel="Subir imágenes"
                             >

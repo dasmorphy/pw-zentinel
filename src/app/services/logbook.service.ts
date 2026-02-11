@@ -33,10 +33,10 @@ export class LogbookService {
             })
     }
 
-    saveLogbookEntry(data: any) {
-        return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/post/logbook-entry`, {
-            logbook_entry: data
-        });
+    saveLogbookEntry(formData: FormData) {
+        return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/post/logbook-entry`,
+            formData
+        );
     }
 
 

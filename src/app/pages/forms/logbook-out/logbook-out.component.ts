@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed } from '@angular/core';
+import { Component, computed, ViewChild } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -12,9 +12,9 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { LogbookService } from 'src/app/services/logbook.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { DialogModule } from 'primeng/dialog';
-import { UserService } from 'src/app/services/user.service';
-import { FileUploadModule } from 'primeng/fileupload';
+import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { v4 as uuidv4} from 'uuid';
+import { DashboardService } from 'src/app/services/dashboard.service';
 
 @Component({
     selector: 'app-logbook-out',
@@ -37,9 +37,12 @@ import { v4 as uuidv4} from 'uuid';
     styleUrls: ['./logbook-out.component.sass'],
 })
 export class LogbookOutComponent {
+    @ViewChild('fileUpload') fileUpload!: FileUpload;
+    
     private logbookService = new LogbookService();
     private utilsService = new UtilsService();
-    private userService = new UserService();
+    private dashboardService = new DashboardService();
+    
 
     categories = computed(() => this.logbookService.categories());
     unitiesWeight = computed(() => this.logbookService.unitiesWeight());
@@ -54,11 +57,14 @@ export class LogbookOutComponent {
     showConfirmSave: boolean = false;
     messageEmpty: string = "No hay opciones disponibles";
     optionWorkDay = ['Diurna', 'Nocturna']
+    optionGroupBusiness= []
+    user_json: any;
 
     categoryOptions = []
 
     constructor(private fb: FormBuilder,) {
         this.logbookForm = this.fb.group({
+            id_group_business: ['', Validators.required],
             workday: ['', Validators.required],
             id_category: ['', Validators.required],
             id_unity: ['', Validators.required],
@@ -72,28 +78,40 @@ export class LogbookOutComponent {
             authorized_by: ['', Validators.required],
             observations: [''],
         });
-        this.logbookForm.get('id_unity')?.disable();
     }
 
     ngOnInit() {
+        const user_session = localStorage.getItem('sb_token')
+        this.user_json = user_session ? JSON.parse(user_session) : null;
+
+        if (this.user_json?.attributes['group_business']) {
+            this.logbookForm.get('id_group_business')?.setValue(this.user_json?.attributes['group_business']);
+        }
+
         this.logbookService.getAllCategories();
         this.logbookService.getAllUnitiesWeight();
+        this.fetchGroupBusinessByBusiness();
     }
 
-    onChangeCategory() {
-        const id_category = this.logbookForm.get('id_category')?.value;
-        const object_category = this.categories()?.find((category: any) => category.id_category === id_category);
-
-        if (object_category) {
-            this.setUnityByCategory(object_category?.name_category);
-        } else {
-            this.utilsService.onWarn('No se encontrado la categoría seleccionada')
-        }
+    fetchGroupBusinessByBusiness() {
+        const id_business = this.user_json?.attributes?.id_business
+        this.dashboardService.getGroupBusinessByBusiness(id_business).subscribe({
+        next: (resp: any) => {
+            this.optionGroupBusiness = resp?.data
+        },
+        error: (err) => console.error(err)
+        });
     }
 
     onSubmit() {
         this.utilsService.validateControlsForms(this.logbookForm, ['weight', 'observations']);
         this.utilsService.showControlVoiled();
+
+        if (this.images.length < 5) {
+            this.imagesError = 'Debes subir mínimo 5 imágenes';
+            this.isLoading = false;
+            return;
+        }
 
         if (this.logbookForm.valid) {
             this.showConfirmSave = true;
@@ -121,26 +139,30 @@ export class LogbookOutComponent {
         this.imagesError = null;
     }
 
+    onRemoveImages(event: any) {
+        const removedFile = event.file;
+
+        const index = this.images.findIndex(
+            file => file.name === removedFile.name &&
+            file.size === removedFile.size &&
+            file.lastModified === removedFile.lastModified
+        );
+
+        if (index !== -1) {
+            this.images.splice(index, 1);
+        }
+    }
+
+
 
     saveLogbook() {
         this.isLoading = true;
         this.showConfirmSave = false;
 
-        const user_session = localStorage.getItem('sb_token');
-        const user_json = user_session ? JSON.parse(user_session) : null;
-
-        if (this.images.length < 5) {
-            this.imagesError = 'Debes subir mínimo 5 imágenes';
-            this.isLoading = false;
-            return;
-        }
-
         const data_save = {
             ...this.logbookForm.value,
-            id_group_business: user_json?.group_business,
-            created_by: user_json?.user,
-            name_user: user_json?.name,
-            id_unity: this.logbookForm.get('id_unity')?.value,
+            created_by: this.user_json?.user,
+            name_user: this.user_json?.attributes?.fullname,
             weight: this.logbookForm.get('weight')?.value ?? 0,
             channel: 'ZENTINEL_WEB',
             external_transaction_id: uuidv4()
@@ -164,6 +186,7 @@ export class LogbookOutComponent {
                 this.utilsService.onSuccess(message);
                 this.logbookForm.reset();
                 this.images = [];
+                this.fileUpload.clear();
                 this.imagesError = '';
             },
             error: (error: any) => {
@@ -177,44 +200,6 @@ export class LogbookOutComponent {
 
 
 
-    }
-
-    setUnityByCategory(name_category: string) {
-        let id_unity = 1;
-
-        switch (name_category) {
-            case 'Suministros':
-                id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'UNIDAD')?.id_unity;
-                break;
-            case 'Repuestos':
-                id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'UNIDAD')?.id_unity;
-                break;
-            case 'Balanceado':
-                id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'SACOS')?.id_unity;
-                break;
-            case 'Larvas':
-                id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'UNIDAD')?.id_unity;
-                break;
-            case 'Maquinaria':
-                id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'UNIDAD')?.id_unity;
-                break;
-            case 'Combustibles /lubricantes':
-                id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'GALONES')?.id_unity;
-                break;
-            case 'Otros':
-                id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'BINES')?.id_unity;
-                break;
-            case 'Camarón':
-                id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'LIBRAS')?.id_unity;
-                break;
-            case 'Tilapia':
-                id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'LIBRAS')?.id_unity;
-                break;
-            default:
-                id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'LIBRAS')?.id_unity;
-                break;
-        }
-        this.logbookForm.get('id_unity')?.setValue(id_unity);
     }
 
 }

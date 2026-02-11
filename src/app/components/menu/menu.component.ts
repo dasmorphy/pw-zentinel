@@ -60,6 +60,13 @@ export class MenuComponent implements OnInit {
         command: () => { this.clickHiddenToggle(true) },
         items: [
           {
+            label: 'Todas las bitácoras',
+            icon: 'pi pi-list-check',
+            // visible: this.user_permissions?.includes('VENTAS_VER_TODAS'),
+            routerLink: ['reporte-entrada'],
+            command: () => { this.clickHiddenToggle() }
+          },
+          {
             label: 'Nuevo registro de entrada',
             icon: 'pi pi-file-check',
             // visible: this.user_permissions?.includes('VENTAS_VER_TODAS'),
