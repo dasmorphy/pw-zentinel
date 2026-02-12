@@ -17,6 +17,7 @@ import { DoughnutComponent } from 'src/app/components/graphs/doughnut/doughnut.c
 import { LogbookService } from 'src/app/services/logbook.service';
 import { UserService } from 'src/app/services/user.service';
 import { DialogModule } from 'primeng/dialog';
+import { LogbookRecentComponent } from 'src/app/components/logbook-recent/logbook-recent.component';
 
 @Component({
     selector: 'app-dashboard',
@@ -33,111 +34,23 @@ import { DialogModule } from 'primeng/dialog';
         ToastModule,
         ProgressSpinnerModule,
         DoughnutComponent,
-        DialogModule
+        DialogModule,
+        LogbookRecentComponent
     ],
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.sass'],
 })
 export class DashboardComponent {
     private readonly menuService = inject(MenuService);
-    private readonly logbookService = inject(LogbookService);
-    private readonly userService = inject(UserService);
 
     toggle = computed(() => this.menuService.toggle());
-    dataHistory: any = [];
-    dataComplete: any = [];
     user_session: any;
-    showDetail: boolean = false;
     isLoading: boolean = false;
-    log_selected: any;
 
     ngOnInit() {
-        this.fetchHistoryLogbook();
-    }
-
-    fetchHistoryLogbook() {
-        this.isLoading = true;
-        const headers: any = {}
         const user_session = localStorage.getItem('sb_token')
         const user_json = user_session ? JSON.parse(user_session) : null;
         this.user_session = user_json;
-
-        if (user_json?.role !== 'admin') {
-            headers['user'] = user_json?.user
-        }
-
-        this.logbookService.getHistoryLogbook(headers).subscribe({
-            next: (data: any) => {
-                this.isLoading = false;
-                this.dataComplete = data?.data;
-                this.dataHistory = this.mapHistory(this.dataComplete).slice(0, 5);
-            },
-            error: (error: any) => {
-                this.isLoading = false;
-                console.log(error)
-            }
-        })
-    }
-
-    reloadHistoryLogbook() {
-        this.fetchHistoryLogbook();
-    }
-
-
-    onSearch(event: Event) {
-        const value = (event.target as HTMLInputElement).value.toLowerCase().trim();
-
-        if (!value) {
-            // si no hay búsqueda, vuelve a mostrar los últimos 5
-            this.dataHistory = this.mapHistory(this.dataComplete).slice(0, 5);
-            return;
-        }
-
-        const filtered = this.dataComplete.filter((item: any) => {
-            return (
-                item.shipping_guide?.toLowerCase().includes(value) ||
-                item.group_name?.toLowerCase().includes(value) ||
-                item.created_by?.toLowerCase().includes(value) ||
-                item.truck_license?.toLowerCase().includes(value)
-            );
-        });
-
-        this.dataHistory = this.mapHistory(filtered);
-    }
-
-    mapHistory(data: any[]) {
-        return data.map((item: any) => {
-            const isEntry = !!item.id_logbook_entry;
-
-            return {
-                user: item.created_by,
-                id: isEntry ? item.id_logbook_entry : item.id_logbook_out,
-                guide: item.shipping_guide,
-                type: isEntry ? 'entrada' : 'salida',
-                group: item.group_name,
-                truck_license: item.truck_license,
-                date: item.created_at
-            };
-        });
-    }
-
-
-
-    openModal(log: any) {
-        let log_found;
-
-        if (log.type === 'entrada') {
-            log_found = this.dataComplete.find(
-                (item: any) => item.id_logbook_entry === log.id
-            );
-        } else {
-            log_found = this.dataComplete.find(
-                (item: any) => item.id_logbook_out === log.id
-            );
-        }
-
-        this.log_selected = log_found;
-        this.showDetail = true;
     }
 
 
