@@ -1,0 +1,100 @@
+<p-toast></p-toast>
+
+<div
+    class="bg-bluegray-50 mt-header border-round-2xl flex flex-column flex-no-wrap justify-content-center align-items-end">
+    
+    <div class="bg-white w-12 flex flex-column p-responsive py-5 border-round-md flex-wrap" style="overflow: auto">
+        <h1 class="font-verdana text-primary--custom pl-responsive">Total bitácoras</h1>
+        <div class="card w-full pd-table" id="table-logbooks">
+            <p-table  #dt_logbooks
+                [value]="dataLogbooks"
+                [paginator]="true"
+                [rows]="5"
+                [loading]="isLoading"
+                [globalFilterFields]="['nombre_cli','apellido_cli','identificacion', 'account', 'id_vendedor']"
+                [rowsPerPageOptions]="[5, 10, 25, 50]"
+                [showCurrentPageReport]="false"
+                [tableStyle]="{ 'max-width': '100%' }"
+                rowStyleClass="custom-row-height"
+                dataKey="id"
+            >
+                <ng-template pTemplate="caption">
+                    
+                    <div class="w-full flex justify-content-between align-items-center">
+                        <div
+                        class="p-inputgroup flex h-3rem p-input-icon-left border-round-2xl w-search-table"
+                    >
+                        <i style="z-index: 2;" class="pi pi-search text-primary--custom"></i>
+                        <input 
+                            class="border-none shadow-none--custom border-round-left-2xl border-round-right-2xl" 
+                            type="text"
+                            pInputText 
+                            (input)="dt_logbooks.filterGlobal($any($event.target).value, 'contains')" 
+                        />         
+                        <p-columnFilter id="dateFilter" style="position: relative; z-index: 3; right: 3rem; margin-top: 7px;" type="date" field="date" display="menu">
+                            <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                            
+                                
+
+                                <div class="buttons-filter flex" style="justify-content: space-between; align-items: center; margin-top: 1rem;">
+                                    <button (click)="applyFilter()" 
+                                    style="margin-right: 8px; background: linear-gradient(0deg, #773282 0%, #AF3BB1 100%)!important; border: transparent;"
+                                    type="button" pbutton="" pripple="" class="p-element p-button-sm p-button p-component" ng-reflect-label="Apply">
+                                        <span style="font-size: 12px;" class="p-button-label b-apply">Aplicar</span>
+                                    </button>
+                                    <button (click)="clearFilter()" type="button" pbutton="" pripple="" 
+                                    style="background: white !important; border: 1px solid #773282; color: #773282;"
+                                    class="p-element p-button-outlined p-button-sm p-button p-component" ng-reflect-label="Clear">
+                                        <span style="font-size: 12px;" class="p-button-label">Limpiar</span>
+                                    </button>
+                                </div>
+                            </ng-template>
+                    </p-columnFilter>
+                    </div>
+                        <p-button label="" icon="pi pi-sync" class="b-reload"
+                            styleClass="w-full bg-white text-primary--custom border-round-1xl h-full" (onClick)="reloadHistoryLogbook()">
+                        </p-button>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th scope="col">Opciones</th>
+                        <th scope="col">Fecha</th>
+                        <th scope="col">Guia / documento</th>
+                        <th scope="col">Nombre conductor</th>
+                        <th scope="col">Placa</th>
+                        <th scope="col">Jornada</th>
+                    </tr>
+                </ng-template>                
+                <ng-template pTemplate="body" let-loogbook>
+                    <tr>                
+                        <td data-titulo="Opciones:" class="flex h-options">
+                            <i class="pi pi-ellipsis-h" style="color: #83378f;"></i>
+                        </td>
+                        <td  data-titulo="Fecha:" [ngxTippy]="'Hora de registro: ' + (loogbook?.created_at | date:'HH:mm':'UTC')">{{ loogbook?.created_at | date:'dd/MM/yyyy':'UTC' }}</td>
+                        <td  data-titulo="Contrato:">{{ loogbook?.name_category ?? 'N/C' }}</td>
+                        <td  data-titulo="Cuenta:">{{ loogbook?.name_driver }}</td>
+                        <td  data-titulo="Identificación:">{{ loogbook?.truck_license }}</td>
+                        <td  data-titulo="Ciudad:">{{ loogbook?.workdday }}</td>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="emptymessage">
+                    <tr>
+                        <td colspan="8" class="text-center" style="font-size: 18px; color: #83378f; font-weight: 700;">No hay datos disponibles</td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    </div>
+</div>
+
+<div class="overlayModal" *ngIf="isLoading">
+    <p-progressSpinner
+      class="center-spinner"
+      [style]="{ width: '50px', height: '50px' }"
+      strokeWidth="8"
+      fill="#007bff"
+      animationDuration="2s"
+    ></p-progressSpinner>
+</div>
+

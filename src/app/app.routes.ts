@@ -6,6 +6,7 @@ import { LogbookOutComponent } from './pages/forms/logbook-out/logbook-out.compo
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { NoAuthGuard } from './guards/noAuth.guard';
 import { AuthGuard } from './guards/auth.guard';
+import { AllLogbookComponent } from './pages/tables/all-logbooks/all-logbooks.component';
 
 export const routes: Routes = [
 
@@ -26,6 +27,11 @@ export const routes: Routes = [
             {
                 path: "dashboard",
                 loadComponent: () => DashboardComponent,
+                canActivate: [AuthGuard]
+            },
+            {
+                path: "tablero-bitacoras",
+                loadComponent: () => AllLogbookComponent,
                 canActivate: [AuthGuard]
             },
             {

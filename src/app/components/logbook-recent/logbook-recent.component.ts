@@ -10,6 +10,7 @@ import { InputTextModule } from "primeng/inputtext";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { EventSourceService } from "src/app/services/event-source.service";
 import { LogbookService } from "src/app/services/logbook.service";
+import { UtilsService } from "src/app/services/utils.service";
 
 @Component({
     selector: 'app-logbook-recent',
@@ -33,6 +34,7 @@ import { LogbookService } from "src/app/services/logbook.service";
 export class LogbookRecentComponent {
     private readonly logbookService = inject(LogbookService);
     private readonly eventSourceService = inject(EventSourceService);
+    private readonly utilsService = inject(UtilsService);
 
     dataHistory: any = [];
     dataComplete: any[] = [];
@@ -46,6 +48,7 @@ export class LogbookRecentComponent {
 
         this.eventSourceService.connect(0).subscribe({
             next: (data: any) => {
+                this.utilsService.onWarn('Se ha recibido una nueva bitácora')
                 console.log('Nuevo mensaje:', data);
                 this.dataComplete.unshift(data?.logbook);
                 this.dataHistory = this.mapHistory(this.dataComplete).slice(0, 5);

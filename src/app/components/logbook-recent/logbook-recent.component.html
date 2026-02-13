@@ -16,6 +16,11 @@
       </span>
 
       <span class="w-full mt-1">
+        <label class="font-semibold" htmlFor="shipping_guide">Coordenadas: </label>
+        <label htmlFor="shipping_guide">{{log_selected?.lat}},{{log_selected?.long}}  </label>
+      </span>
+
+      <span class="w-full mt-1">
         <label class="font-semibold" htmlFor="shipping_guide">Creado por: </label>
         <label htmlFor="shipping_guide">{{log_selected?.created_by}}</label>
       </span>
@@ -71,7 +76,7 @@
       
     </div>
 
-    @if (log_selected?.images.length > 0) {
+    @if (log_selected?.images?.length > 0) {
       <div class="flex flex-column mt-2">
         <label class="font-semibold" htmlFor="shipping_guide">Imágenes: </label>
   
