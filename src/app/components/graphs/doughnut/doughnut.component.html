@@ -1,3 +1,8 @@
+
+@if (modalDetailsGraphs) {
+  <app-logbook-details-graphs [filtersLogbook]="filters" (close)="modalDetailsGraphs = false"></app-logbook-details-graphs>
+}
+
 <div class="p-5 flex flex-column">
   <div class="flex justify-content-between">
     <h2 style="color: #181618;" class="mt-0">Resumen</h2>

@@ -42,6 +42,7 @@ import { LogbookRecentComponent } from 'src/app/components/logbook-recent/logboo
 })
 export class DashboardComponent {
     private readonly menuService = inject(MenuService);
+    private readonly logbookService = inject(LogbookService);
 
     toggle = computed(() => this.menuService.toggle());
     user_session: any;
@@ -51,6 +52,7 @@ export class DashboardComponent {
         const user_session = localStorage.getItem('sb_token')
         const user_json = user_session ? JSON.parse(user_session) : null;
         this.user_session = user_json;
+        this.logbookService.getAllCategories();
     }
 
 

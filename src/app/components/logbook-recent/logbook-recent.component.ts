@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject } from "@angular/core";
+import { Component, computed, inject, OnDestroy, OnInit } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { AvatarModule } from "primeng/avatar";
 import { ButtonModule } from "primeng/button";
@@ -11,6 +11,8 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { EventSourceService } from "src/app/services/event-source.service";
 import { LogbookService } from "src/app/services/logbook.service";
 import { UtilsService } from "src/app/services/utils.service";
+import { LogBookDetailsModalComponent } from "../modals/logbook-details-modal/logbook-details-modal.component";
+import { Subscription } from "rxjs";
 
 @Component({
     selector: 'app-logbook-recent',
@@ -25,28 +27,33 @@ import { UtilsService } from "src/app/services/utils.service";
         FormsModule,
         ReactiveFormsModule,
         ProgressSpinnerModule,
-        DialogModule
+        DialogModule,
+        LogBookDetailsModalComponent
     ],
     templateUrl: './logbook-recent.component.html',
     styleUrls: ['./logbook-recent.component.sass'],
 })
 
-export class LogbookRecentComponent {
+export class LogbookRecentComponent implements OnInit, OnDestroy {
     private readonly logbookService = inject(LogbookService);
     private readonly eventSourceService = inject(EventSourceService);
     private readonly utilsService = inject(UtilsService);
 
+    logbookSelected = computed(() => this.logbookService.showModalSummary());
+
+    private sseSub?: Subscription;
+
     dataHistory: any = [];
     dataComplete: any[] = [];
     user_session: any;
-    showDetail: boolean = false;
+    // showDetail: boolean = false;
     isLoading: boolean = false;
     log_selected: any;
 
     ngOnInit() {
         this.fetchHistoryLogbook();
 
-        this.eventSourceService.connect(0).subscribe({
+        this.sseSub = this.eventSourceService.connect(0).subscribe({
             next: (data: any) => {
                 this.utilsService.onWarn('Se ha recibido una nueva bitácora')
                 console.log('Nuevo mensaje:', data);
@@ -60,6 +67,11 @@ export class LogbookRecentComponent {
         });
     }
 
+    ngOnDestroy() {
+        this.sseSub?.unsubscribe();
+    }
+
+
     fetchHistoryLogbook() {
         this.isLoading = true;
         const headers: any = {}
@@ -71,7 +83,7 @@ export class LogbookRecentComponent {
             headers['user'] = user_json?.user
         }
 
-        this.logbookService.getHistoryLogbook(headers).subscribe({
+        this.logbookService.getHistoryLogbook(headers, null).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
                 this.dataComplete = data?.data;
@@ -134,7 +146,7 @@ export class LogbookRecentComponent {
 
 
 
-    openModal(log: any) {
+    viewLogbookDetails(log: any) {
         let log_found;
 
         if (log.type === 'entrada') {
@@ -148,8 +160,17 @@ export class LogbookRecentComponent {
         }
 
         this.log_selected = log_found;
-        this.showDetail = true;
+        this.logbookService.openSummary(log_found);
+        // this.showDetail = true;
     }
+
+    // viewContractDetails(logbook: any) {
+    //     if (!this.selectedLogbook) {
+    //         this.utilsService.onWarn('Registro no seleccionado');
+    //         return;
+    //     }
+    //     this.logbookService.openSummary(logbook);
+    // }
 
     
     

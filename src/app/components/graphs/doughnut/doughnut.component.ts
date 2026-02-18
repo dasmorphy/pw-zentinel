@@ -10,6 +10,8 @@ import { DialogModule } from 'primeng/dialog';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PolarChartComponent } from '../polar-chart/polar-chart.component';
+import { LogbookDetailsGraphsComponent } from '../../modals/logbook-details-graphs/logbook-details-graphs.component';
+import { LogbookService } from 'src/app/services/logbook.service';
 
 @Component({
   selector: 'app-doughnut',
@@ -22,7 +24,8 @@ import { PolarChartComponent } from '../polar-chart/polar-chart.component';
     DialogModule,
     OverlayPanelModule,
     MultiSelectModule,
-    PolarChartComponent
+    PolarChartComponent,
+    LogbookDetailsGraphsComponent
   ],
   templateUrl: './doughnut.component.html',
   styleUrls: ['./doughnut.component.sass'],
@@ -31,8 +34,10 @@ export class DoughnutComponent {
   
   private readonly menuService = inject(MenuService);
   private readonly dashboardService = inject(DashboardService);
+  private readonly logbookService = inject(LogbookService);
   
   toggle = computed(() => this.menuService.toggle());
+  categories = computed(() => this.logbookService.categories());
   
   dataCategoryQuantity: any = [];
   categoriesData: any[] = [];
@@ -46,6 +51,8 @@ export class DoughnutComponent {
   selectedGroupBusiness: number[] = [];
   selectedSector: number[] = [];
   selectedTime: string[] = ['Diurna', 'Nocturna'];
+  filters: any;
+  modalDetailsGraphs: boolean = false;
 
   optionFilterCategory = [
     { value: 'all', label: 'Todos' },
@@ -133,6 +140,7 @@ export class DoughnutComponent {
       filter_date.workday = this.selectedTime.join(',');;
     }
 
+    this.filters = filter_date;
     this.fetchDataGraphs(filter_date);
   }
 
@@ -176,6 +184,38 @@ export class DoughnutComponent {
       },
       options: {
         responsive: true,
+        onClick: (event, elements, chart) => {
+          if (!elements.length) return;
+
+          const element = elements[0];
+          const index = element.index;
+
+          const label = chart.data.labels?.[index];
+          const value = chart.data.datasets[0].data[index];
+
+          console.log('Barra clickeada:', {
+            index,
+            label,
+            value
+          });
+
+          this.filters = this.filters || {};
+
+          // 👇 guarda como string
+          
+          // o si tu backend espera lista:
+          // this.filters.name_categories = [label];
+          
+          const categoryFound = this.categories()?.find((cat: any) => cat.name_category === label)
+          
+          this.filters.ids_categories = [categoryFound?.id_category];
+
+          console.log('jkjhkjkjkjk', categoryFound)
+
+          this.modalDetailsGraphs = true;
+
+          
+        },
         plugins: {
           legend: { display: true, position: 'bottom' }
         },
@@ -197,6 +237,10 @@ export class DoughnutComponent {
     }
 
     this.categoryChart = new Chart(canvas, config);
+  }
+
+  fetchHistoryLogbooks() {
+    
   }
 
   // =====================
@@ -241,6 +285,23 @@ export class DoughnutComponent {
       },
       options: {
         responsive: true,
+        onClick: (event, elements, chart) => {
+          if (!elements.length) return;
+
+          const element = elements[0];
+          const index = element.index;
+
+          const label = chart.data.labels?.[index];
+          const value = chart.data.datasets[0].data[index];
+
+          console.log('doughnut clickeada:', {
+            index,
+            label,
+            value
+          });
+
+          
+        },
         plugins: {
           legend: { position: 'bottom' }
         }

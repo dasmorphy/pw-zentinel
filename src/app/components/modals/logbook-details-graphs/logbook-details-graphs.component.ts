@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, inject, Input, ViewChild } from '@angular/core';
+import { Component, computed, effect, ElementRef, EventEmitter, inject, Input, Output, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MenuItem, SelectItem } from 'primeng/api';
@@ -18,14 +18,12 @@ import { SplitButtonModule } from 'primeng/splitbutton';
 import { NgxTippyModule } from 'ngx-tippy-wrapper';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { UserService } from 'src/app/services/user.service';
-import { validate } from 'uuid';
 import { TieredMenuModule } from 'primeng/tieredmenu';
 import { LogbookService } from 'src/app/services/logbook.service';
 import { UtilsService } from 'src/app/services/utils.service';
-import { LogBookDetailsModalComponent } from 'src/app/components/modals/logbook-details-modal/logbook-details-modal.component';
 
 @Component({
-    selector: 'app-logbooks-table',
+    selector: 'app-logbook-details-graphs',
     standalone: true,
     imports: [
         CommonModule,
@@ -45,13 +43,13 @@ import { LogBookDetailsModalComponent } from 'src/app/components/modals/logbook-
         SplitButtonModule,
         NgxTippyModule,
         TieredMenuModule,
-        LogBookDetailsModalComponent
     ],
-    templateUrl: './all-logbooks.component.html',
-    styleUrls: ['./all-logbooks.component.sass']
+    templateUrl: './logbook-details-graphs.component.html',
+    styleUrls: ['./logbook-details-graphs.component.sass']
 })
-export class AllLogbookComponent {
-    @Input() dataModal: any = null;
+export class LogbookDetailsGraphsComponent {
+    @Input() filtersLogbook: any = null;
+    @Output() close = new EventEmitter<boolean>();
     
     public readonly dashboardService = inject(DashboardService);
     public readonly userService = inject(UserService);
@@ -60,10 +58,10 @@ export class AllLogbookComponent {
 
     logbookSelected = computed(() => this.logbookService.showModalSummary());
 
-
-    dataLogbooks: any = [];
+    showModal: boolean = false;
     selectedLogbook: any = null;
     isLoading: boolean = true;
+    dataLogbooks: any[] = []
 
     user_session: any
 
@@ -81,51 +79,10 @@ export class AllLogbookComponent {
         },
     ];
 
-
     ngOnInit() {
-        if (!this.dataModal) {
-            console.log('sin data de entrada')
-            this.fetchHistoryLogbook();
-        }else {
-            console.log('data de entrada')
-            this.dataLogbooks = this.dataModal
-        }
-    }
-
-    fetchHistoryLogbook() {
-        this.isLoading = true;
-        const headers: any = {}
-        const user_session = localStorage.getItem('sb_token')
-        const user_json = user_session ? JSON.parse(user_session) : null;
-        this.user_session = user_json;
-
-        if (user_json?.role !== 'admin') {
-            headers['user'] = user_json?.user
-        }
-
-        this.logbookService.getHistoryLogbook(headers, null).subscribe({
-            next: (data: any) => {
-                this.isLoading = false;
-                this.dataLogbooks = data?.data;
-            },
-            error: (error: any) => {
-                this.isLoading = false;
-                console.log(error)
-            }
-        })
-    }
-
-    reloadHistoryLogbook() {
         this.fetchHistoryLogbook();
     }
 
-    applyFilter() {
-
-    }
-
-    clearFilter() {
-
-    }
 
     optionsLogbook(loogbook: any) {
         this.selectedLogbook = loogbook
@@ -145,4 +102,38 @@ export class AllLogbookComponent {
         }
         this.logbookService.openSummary(log_found);
     }
+
+    fetchHistoryLogbook() {
+        this.isLoading = true;
+        const headers: any = {}
+          console.log('fdsffffdffff')
+
+        const user_session = localStorage.getItem('sb_token')
+        const user_json = user_session ? JSON.parse(user_session) : null;
+        this.user_session = user_json;
+
+        if (user_json?.role !== 'admin') {
+            headers['user'] = user_json?.user
+        }
+
+        headers['ids_categories'] = this.filtersLogbook['ids_categories']
+
+        this.logbookService.getHistoryLogbook(headers, this.filtersLogbook).subscribe({
+            next: (data: any) => {
+                this.isLoading = false;
+                this.dataLogbooks = data?.data;
+                this.showModal = true;
+
+            },
+            error: (error: any) => {
+                this.isLoading = false;
+                console.log(error)
+            }
+        })
+    }
+
+    closeModal() {
+        this.close.emit(false);
+    }
+
 }

@@ -12,6 +12,15 @@ export class LogbookService {
 
     categories: WritableSignal<any[]> = signal<any[]>([]);
     unitiesWeight: WritableSignal<any[]> = signal<any[]>([]);
+    showModalSummary: WritableSignal<any> = signal<any>(null);
+
+    openSummary(datLogbook: any) {
+        this.showModalSummary.set(datLogbook);
+    }
+
+    closeSummary() {
+        this.showModalSummary.set(null);
+    }
 
     getAllCategories() {
         this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/allCategories`)
@@ -44,15 +53,28 @@ export class LogbookService {
         return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/post/logbook-out`, formData);
     }
 
-    getHistoryLogbook(headers_json?: any) {
+    getHistoryLogbook(headers_json?: any, filters?: any) {
         let headers = new HttpHeaders();
+        let params: any = {};
 
         if (headers_json?.user) {
             headers = headers.set('user', headers_json?.user);
         }
 
+        if (headers_json?.ids_categories) {
+            headers = headers.set('ids-categories', headers_json?.ids_categories);
+        }
+
+        if (filters) {
+            if (filters.dateRange && filters.dateRange.length === 2) {
+                params.start_date = filters.dateRange[0].toISOString().split('T')[0];
+                params.end_date = filters.dateRange[1].toISOString().split('T')[0];
+            }
+            // Add other filters as needed
+        }
+
         return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/history-logbook`,
-            { headers }
+            { headers, params }
         )
     }
 
