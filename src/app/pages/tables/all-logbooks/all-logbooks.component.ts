@@ -99,11 +99,14 @@ export class AllLogbookComponent {
         const user_json = user_session ? JSON.parse(user_session) : null;
         this.user_session = user_json;
 
+        let filters: any = {};
+
         if (user_json?.role !== 'admin') {
             headers['user'] = user_json?.user
+            filters.user = user_json?.user
         }
 
-        this.logbookService.getHistoryLogbook(headers, null).subscribe({
+        this.logbookService.getHistoryLogbook(filters).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
                 this.dataLogbooks = data?.data;

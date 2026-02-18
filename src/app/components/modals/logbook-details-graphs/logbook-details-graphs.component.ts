@@ -112,13 +112,10 @@ export class LogbookDetailsGraphsComponent {
         const user_json = user_session ? JSON.parse(user_session) : null;
         this.user_session = user_json;
 
-        if (user_json?.role !== 'admin') {
-            headers['user'] = user_json?.user
-        }
 
-        headers['ids_categories'] = this.filtersLogbook['ids_categories']
+        console.log(this.filtersLogbook)
 
-        this.logbookService.getHistoryLogbook(headers, this.filtersLogbook).subscribe({
+        this.logbookService.getHistoryLogbook(this.filtersLogbook).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
                 this.dataLogbooks = data?.data;

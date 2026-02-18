@@ -12,7 +12,7 @@ import { EventSourceService } from "src/app/services/event-source.service";
 import { LogbookService } from "src/app/services/logbook.service";
 import { UtilsService } from "src/app/services/utils.service";
 import { LogBookDetailsModalComponent } from "../modals/logbook-details-modal/logbook-details-modal.component";
-import { Subscription } from "rxjs";
+import { filter, Subscription } from "rxjs";
 
 @Component({
     selector: 'app-logbook-recent',
@@ -78,12 +78,14 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
         const user_session = localStorage.getItem('sb_token')
         const user_json = user_session ? JSON.parse(user_session) : null;
         this.user_session = user_json;
+        let filters: any = {};
 
         if (user_json?.role !== 'admin') {
             headers['user'] = user_json?.user
+            filters.user = user_json?.user
         }
 
-        this.logbookService.getHistoryLogbook(headers, null).subscribe({
+        this.logbookService.getHistoryLogbook(filters).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
                 this.dataComplete = data?.data;

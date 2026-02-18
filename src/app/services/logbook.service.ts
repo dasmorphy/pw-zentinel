@@ -1,4 +1,4 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable, WritableSignal, computed, effect, inject, signal } from '@angular/core';
 import { MessageService } from 'primeng/api';
 import { environment } from 'src/environments/environment.development';
@@ -53,24 +53,32 @@ export class LogbookService {
         return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/post/logbook-out`, formData);
     }
 
-    getHistoryLogbook(headers_json?: any, filters?: any) {
+    getHistoryLogbook(filter?: any) {
+        let params = new HttpParams();
         let headers = new HttpHeaders();
-        let params: any = {};
 
-        if (headers_json?.user) {
-            headers = headers.set('user', headers_json?.user);
+        if (filter?.start_date) {
+            params = params.set('start_date', filter.start_date);
         }
 
-        if (headers_json?.ids_categories) {
-            headers = headers.set('ids-categories', headers_json?.ids_categories);
+        if (filter?.end_date) {
+            params = params.set('end_date', filter.end_date);
         }
 
-        if (filters) {
-            if (filters.dateRange && filters.dateRange.length === 2) {
-                params.start_date = filters.dateRange[0].toISOString().split('T')[0];
-                params.end_date = filters.dateRange[1].toISOString().split('T')[0];
-            }
-            // Add other filters as needed
+        if (filter?.groups_business_id) {
+            headers = headers.set('groups-business-id', filter?.groups_business_id)
+        }
+
+        if (filter?.workday) {
+            headers = headers.set('workday', filter?.workday)
+        }
+
+        if (filter?.sectors) {
+            headers = headers.set('sectors', filter?.sectors)
+        }
+
+        if (filter?.ids_categories) {
+            headers = headers.set('ids-categories', filter?.ids_categories)
         }
 
         return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/history-logbook`,
