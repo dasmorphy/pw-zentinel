@@ -91,15 +91,16 @@ export class LogbookDetailsGraphsComponent {
     viewLogbookDetails(log: any) {
         let log_found;
 
-        if (log.type === 'entrada') {
+        if (log?.id_logbook_entry) {
             log_found = this.dataLogbooks.find(
-                (item: any) => item.id_logbook_entry === log.id
+                (item: any) => item.id_logbook_entry === log.id_logbook_entry
             );
         } else {
             log_found = this.dataLogbooks.find(
-                (item: any) => item.id_logbook_out === log.id
+                (item: any) => item.id_logbook_out === log.id_logbook_out
             );
         }
+
         this.logbookService.openSummary(log_found);
     }
 

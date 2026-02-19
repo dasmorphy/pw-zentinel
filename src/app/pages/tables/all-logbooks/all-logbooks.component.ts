@@ -23,6 +23,7 @@ import { TieredMenuModule } from 'primeng/tieredmenu';
 import { LogbookService } from 'src/app/services/logbook.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { LogBookDetailsModalComponent } from 'src/app/components/modals/logbook-details-modal/logbook-details-modal.component';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 @Component({
     selector: 'app-logbooks-table',
@@ -45,7 +46,8 @@ import { LogBookDetailsModalComponent } from 'src/app/components/modals/logbook-
         SplitButtonModule,
         NgxTippyModule,
         TieredMenuModule,
-        LogBookDetailsModalComponent
+        LogBookDetailsModalComponent,
+        OverlayPanelModule
     ],
     templateUrl: './all-logbooks.component.html',
     styleUrls: ['./all-logbooks.component.sass']
@@ -134,17 +136,14 @@ export class AllLogbookComponent {
         });
     }
 
-    fetchHistoryLogbook() {
+    fetchHistoryLogbook(filters = this.filters) {
         this.isLoading = true;
-        const headers: any = {}
         const user_session = localStorage.getItem('sb_token')
         const user_json = user_session ? JSON.parse(user_session) : null;
         this.user_session = user_json;
 
-        let filters: any = {};
 
         if (user_json?.role !== 'admin') {
-            headers['user'] = user_json?.user
             filters.user = user_json?.user
         }
 
@@ -164,8 +163,51 @@ export class AllLogbookComponent {
         this.fetchHistoryLogbook();
     }
 
-    applyFilter() {
+    formatLocalDate(date: Date): string {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        const h = String(date.getHours()).padStart(2, '0');
+        const min = String(date.getMinutes()).padStart(2, '0');
+        const s = String(date.getSeconds()).padStart(2, '0');
 
+        return `${y}-${m}-${d} ${h}:${min}:${s}`;
+    }
+
+    applyFilter(imagePanel: any) {
+        imagePanel.hide()
+        let filter_date: any = {}
+
+        if (Array.isArray(this.dateRange)) {
+            if (this.dateRange.length === 2) {
+                const [startDate, endDate] = this.dateRange;
+            
+                const start = new Date(startDate);
+                start.setHours(0, 0, 0, 0);
+            
+                const end = new Date(endDate);
+                end.setHours(23, 59, 59, 999);
+            
+                filter_date.start_date = this.formatLocalDate(start);
+                filter_date.end_date = this.formatLocalDate(end);
+            };
+        };
+
+        if (this.selectedGroupBusiness.length > 0) {
+            filter_date.groups_business_id = this.selectedGroupBusiness.join(',');
+        }
+
+        if (this.selectedSector.length > 0) {
+            filter_date.sectors = this.selectedSector.join(',');
+        }
+
+        if (this.selectedTime.length > 0) {
+            filter_date.workday = this.selectedTime.join(',');;
+        }
+
+        this.filters = filter_date;
+        console.log(this.filters)
+        this.fetchHistoryLogbook();
     }
 
     clearFilter() {

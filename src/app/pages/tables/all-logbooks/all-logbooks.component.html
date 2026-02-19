@@ -34,13 +34,13 @@
                                 pInputText 
                                 (input)="dt_logbooks.filterGlobal($any($event.target).value, 'contains')" 
                             />         
-                            <p-columnFilter id="dateFilter" style="position: relative; z-index: 3; right: 3rem; margin-top: 7px;" type="date" field="date" display="menu">
+                            <p-columnFilter #imagePanel id="dateFilter" style="position: relative; z-index: 3; right: 3rem; margin-top: 7px;" type="date" field="date" display="menu">
                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
                                     <div class="flex w-full flex-column gap-3">
 
-                                        <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full" id="cuentaCliente"
-                                            [options]="optionFilterCategory" optionLabel="label" optionValue="value" (onChange)="onFilterChange($event)">
-                                        </p-dropdown>
+                                        <!-- <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full" id="cuentaCliente"
+                                            [options]="optionFilterCategory" optionLabel="label" optionValue="value" >
+                                        </p-dropdown> -->
 
                                         <p-multiSelect 
                                             [style]="{ boxShadow: 'none' }"
@@ -79,13 +79,13 @@
                                         </p-calendar>
 
                                         <div class="flex gap-2">
-                                            <button (click)="applyFilter()" 
-                                            style="background: linear-gradient(0deg, #773282 0%, #AF3BB1 100%)!important; border: transparent;"
+                                            <button (click)="applyFilter(imagePanel)" 
+                                            style="background: linear-gradient(0deg, #22a183 0%, #1f9f63 100%) !important; border: transparent;"
                                             type="button" pbutton="" pripple="" class="p-element p-button-sm p-button p-component" ng-reflect-label="Apply">
                                                 <span style="font-size: 12px;" class="p-button-label b-apply">Aplicar</span>
                                             </button>
                                             <button (click)="clearFilter()" type="button" pbutton="" pripple="" 
-                                            style="background: white !important; border: 1px solid #773282; color: #773282;"
+                                            style="background: white !important; border: 1px solid #038945; color: #129578;"
                                             class="p-element p-button-outlined p-button-sm p-button p-component" ng-reflect-label="Clear">
                                                 <span style="font-size: 12px;" class="p-button-label">Limpiar</span>
                                             </button>
