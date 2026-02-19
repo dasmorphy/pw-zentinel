@@ -14,7 +14,6 @@
                 [value]="dataLogbooks"
                 [paginator]="true"
                 [rows]="5"
-                [loading]="isLoading"
                 [globalFilterFields]="['workdday','truck_license','name_driver', 'shipping_guide']"
                 [rowsPerPageOptions]="[5, 10, 25, 50]"
                 [showCurrentPageReport]="false"
@@ -37,17 +36,60 @@
                             />         
                             <p-columnFilter id="dateFilter" style="position: relative; z-index: 3; right: 3rem; margin-top: 7px;" type="date" field="date" display="menu">
                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-                                    <div class="buttons-filter flex" style="justify-content: space-between; align-items: center; margin-top: 1rem;">
-                                        <button (click)="applyFilter()" 
-                                        style="margin-right: 8px; background: linear-gradient(0deg, #773282 0%, #AF3BB1 100%)!important; border: transparent;"
-                                        type="button" pbutton="" pripple="" class="p-element p-button-sm p-button p-component" ng-reflect-label="Apply">
-                                            <span style="font-size: 12px;" class="p-button-label b-apply">Aplicar</span>
-                                        </button>
-                                        <button (click)="clearFilter()" type="button" pbutton="" pripple="" 
-                                        style="background: white !important; border: 1px solid #773282; color: #773282;"
-                                        class="p-element p-button-outlined p-button-sm p-button p-component" ng-reflect-label="Clear">
-                                            <span style="font-size: 12px;" class="p-button-label">Limpiar</span>
-                                        </button>
+                                    <div class="flex w-full flex-column gap-3">
+
+                                        <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full" id="cuentaCliente"
+                                            [options]="optionFilterCategory" optionLabel="label" optionValue="value" (onChange)="onFilterChange($event)">
+                                        </p-dropdown>
+
+                                        <p-multiSelect 
+                                            [style]="{ boxShadow: 'none' }"
+                                            styleClass="border-round w-full"
+                                            id="optionGroupBusiness"  
+                                            [options]="optionSector"
+                                            [(ngModel)]="selectedSector"
+                                            optionLabel="name"
+                                            optionValue="id_sector"
+                                            placeholder="Seleccione una opción"
+                                        ></p-multiSelect>
+
+                                        <p-multiSelect 
+                                            [style]="{ boxShadow: 'none' }"
+                                            styleClass="border-round w-full"
+                                            id="optionGroupBusiness"  
+                                            [options]="optionGroupBusiness"
+                                            [(ngModel)]="selectedGroupBusiness"
+                                            optionLabel="name"
+                                            optionValue="id_group_business"
+                                            placeholder="Seleccione una opción"
+                                        ></p-multiSelect>
+
+                                        <p-multiSelect 
+                                            [style]="{ boxShadow: 'none' }"
+                                            styleClass="border-round w-full"
+                                            id="optionGroupBusiness"  
+                                            [options]="optionTime"
+                                            [(ngModel)]="selectedTime"
+                                            placeholder="Seleccione una opción"
+                                        ></p-multiSelect>
+
+                                        <p-calendar [(ngModel)]="dateRange" selectionMode="range" dateFormat="dd/mm/yy" [showIcon]="true"
+                                            [readonlyInput]="true" placeholder="Rango de fechas" [style]="{ boxShadow: 'none' }"
+                                            styleClass="border-round w-full">
+                                        </p-calendar>
+
+                                        <div class="flex gap-2">
+                                            <button (click)="applyFilter()" 
+                                            style="background: linear-gradient(0deg, #773282 0%, #AF3BB1 100%)!important; border: transparent;"
+                                            type="button" pbutton="" pripple="" class="p-element p-button-sm p-button p-component" ng-reflect-label="Apply">
+                                                <span style="font-size: 12px;" class="p-button-label b-apply">Aplicar</span>
+                                            </button>
+                                            <button (click)="clearFilter()" type="button" pbutton="" pripple="" 
+                                            style="background: white !important; border: 1px solid #773282; color: #773282;"
+                                            class="p-element p-button-outlined p-button-sm p-button p-component" ng-reflect-label="Clear">
+                                                <span style="font-size: 12px;" class="p-button-label">Limpiar</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </ng-template>
                             </p-columnFilter>
@@ -95,7 +137,7 @@
     </div>
 </div>
 
-<div class="overlayModal" *ngIf="isLoading">
+<div class="overlay" *ngIf="isLoading">
     <p-progressSpinner
       class="center-spinner"
       [style]="{ width: '50px', height: '50px' }"

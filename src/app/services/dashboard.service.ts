@@ -23,7 +23,7 @@ export class DashboardService {
         }
 
         if (filter?.groups_business_id) {
-            headers = headers.set('groups_business_id', filter?.groups_business_id)
+            headers = headers.set('groups-business-id', filter?.groups_business_id)
         }
 
         if (filter?.workday) {

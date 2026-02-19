@@ -65,6 +65,23 @@ export class AllLogbookComponent {
     selectedLogbook: any = null;
     isLoading: boolean = true;
 
+    optionSector: any = [];
+    optionGroupBusiness: any = [];
+    selectedGroupBusiness: number[] = [];
+    selectedSector: number[] = [];
+    selectedTime: string[] = ['Diurna', 'Nocturna'];
+    filters: any;
+    dateRange: Date[] | null = null;
+
+
+    optionFilterCategory = [
+        { value: 'all', label: 'Todos' },
+        { value: 'entrada', label: 'Entrada' },
+        { value: 'salida', label: 'Salida' }
+    ]
+
+    optionTime= [ 'Diurna', 'Nocturna']
+
     user_session: any
 
 
@@ -90,6 +107,31 @@ export class AllLogbookComponent {
             console.log('data de entrada')
             this.dataLogbooks = this.dataModal
         }
+
+        this.fetchGroupBusinessByBusiness();
+        this.fetchSectorByBusiness();
+    }
+
+    fetchSectorByBusiness() {
+        const id_business = this.user_session?.attributes?.id_business
+        this.dashboardService.getSectorByBusiness(id_business).subscribe({
+        next: (resp: any) => {
+            this.optionSector = resp?.data
+            // this.selectedSector = this.optionSector?.map((sector: any) => sector.id_sector)
+        },
+        error: (err) => console.error(err)
+        });
+    }
+
+    fetchGroupBusinessByBusiness() {
+        const id_business = this.user_session?.attributes?.id_business
+        this.dashboardService.getGroupBusinessByBusiness(id_business).subscribe({
+        next: (resp: any) => {
+            this.optionGroupBusiness = resp?.data
+            // this.selectedGroupBusiness  = this.optionGroupBusiness?.map((group_business: any) => group_business.id_group_business)
+        },
+        error: (err) => console.error(err)
+        });
     }
 
     fetchHistoryLogbook() {
@@ -130,6 +172,10 @@ export class AllLogbookComponent {
 
     }
 
+    onFilterChange(event: any) {
+        console.log(event)
+    }
+
     optionsLogbook(loogbook: any) {
         this.selectedLogbook = loogbook
     }
@@ -137,15 +183,16 @@ export class AllLogbookComponent {
     viewLogbookDetails(log: any) {
         let log_found;
 
-        if (log.type === 'entrada') {
+        if (log?.id_logbook_entry) {
             log_found = this.dataLogbooks.find(
-                (item: any) => item.id_logbook_entry === log.id
+                (item: any) => item.id_logbook_entry === log.id_logbook_entry
             );
         } else {
             log_found = this.dataLogbooks.find(
-                (item: any) => item.id_logbook_out === log.id
+                (item: any) => item.id_logbook_out === log.id_logbook_out
             );
         }
+
         this.logbookService.openSummary(log_found);
     }
 }
