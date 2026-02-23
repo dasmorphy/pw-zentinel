@@ -11,6 +11,8 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { MultiSelectModule } from 'primeng/multiselect';
 import annotationPlugin from "chartjs-plugin-annotation";
 import { PolarAreaController } from 'chart.js';
+import { LogbookService } from 'src/app/services/logbook.service';
+import { LogbookDetailsGraphsComponent } from '../../modals/logbook-details-graphs/logbook-details-graphs.component';
 
 @Component({
     selector: 'app-polar-chart',
@@ -23,15 +25,22 @@ import { PolarAreaController } from 'chart.js';
         DialogModule,
         OverlayPanelModule,
         MultiSelectModule,
+        LogbookDetailsGraphsComponent
     ],
     templateUrl: './polar-chart.component.html',
     styleUrls: ['./polar-chart.component.sass'],
 })
 export class PolarChartComponent implements OnChanges {
-
     @Input() dataPolar: any = [];
+    @Input() filters: any = null;
+
+    private readonly logbookService = inject(LogbookService);
+    
+    categories = computed(() => this.logbookService.categories());
+
 
     polarChart!: Chart;
+    modalDetailsGraphs: boolean = false;
 
 
     constructor() {
@@ -111,6 +120,20 @@ export class PolarChartComponent implements OnChanges {
             },
             options: {
                 responsive: true,
+                onClick: (event, elements, chart) => {
+                    if (!elements.length) return;
+
+                    const element = elements[0];
+                    const index = element.index;
+
+                    const label = chart.data.labels?.[index];
+                    // const value = chart.data.datasets[0].data[index];
+
+                    this.filters = this.filters || {};
+                    const categoryFound = this.categories()?.find((cat: any) => cat.name_category === label)
+                    this.filters.ids_categories = [categoryFound?.id_category];
+                    this.modalDetailsGraphs = true;
+                },
                 plugins: {
                     tooltip: {
                         callbacks: {

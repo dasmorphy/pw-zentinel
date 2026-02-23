@@ -191,30 +191,12 @@ export class DoughnutComponent {
           const index = element.index;
 
           const label = chart.data.labels?.[index];
-          const value = chart.data.datasets[0].data[index];
-
-          console.log('Barra clickeada:', {
-            index,
-            label,
-            value
-          });
+          // const value = chart.data.datasets[0].data[index];
 
           this.filters = this.filters || {};
-
-          // 👇 guarda como string
-          
-          // o si tu backend espera lista:
-          // this.filters.name_categories = [label];
-          
           const categoryFound = this.categories()?.find((cat: any) => cat.name_category === label)
-          
           this.filters.ids_categories = [categoryFound?.id_category];
-
-          console.log('jkjhkjkjkjk', categoryFound)
-
           this.modalDetailsGraphs = true;
-
-          
         },
         plugins: {
           legend: { display: true, position: 'bottom' }
@@ -285,23 +267,6 @@ export class DoughnutComponent {
       },
       options: {
         responsive: true,
-        onClick: (event, elements, chart) => {
-          if (!elements.length) return;
-
-          const element = elements[0];
-          const index = element.index;
-
-          const label = chart.data.labels?.[index];
-          const value = chart.data.datasets[0].data[index];
-
-          console.log('doughnut clickeada:', {
-            index,
-            label,
-            value
-          });
-
-          
-        },
         plugins: {
           legend: { position: 'bottom' }
         }

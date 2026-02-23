@@ -106,15 +106,9 @@ export class LogbookDetailsGraphsComponent {
 
     fetchHistoryLogbook() {
         this.isLoading = true;
-        const headers: any = {}
-          console.log('fdsffffdffff')
-
         const user_session = localStorage.getItem('sb_token')
         const user_json = user_session ? JSON.parse(user_session) : null;
         this.user_session = user_json;
-
-
-        console.log(this.filtersLogbook)
 
         this.logbookService.getHistoryLogbook(this.filtersLogbook).subscribe({
             next: (data: any) => {
