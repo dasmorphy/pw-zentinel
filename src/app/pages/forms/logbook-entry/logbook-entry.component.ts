@@ -45,6 +45,7 @@ export class LogbookEntryComponent {
     @ViewChild('fileUpload') fileUpload!: FileUpload;
 
     private logbookService = new LogbookService();
+    private userService = new UserService();
     private utilsService = new UtilsService();
     private dashboardService = new DashboardService();
 
@@ -85,8 +86,7 @@ export class LogbookEntryComponent {
     }
 
     ngOnInit() {
-        const user_session = localStorage.getItem('sb_token')
-        this.user_json = user_session ? JSON.parse(user_session) : null;
+        this.user_json = this.userService.getUserStorage();
 
         if (this.user_json?.attributes['group_business']) {
             this.logbookForm.get('id_group_business')?.setValue(this.user_json?.attributes['group_business']);

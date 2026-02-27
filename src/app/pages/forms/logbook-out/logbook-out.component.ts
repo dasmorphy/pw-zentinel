@@ -15,6 +15,7 @@ import { DialogModule } from 'primeng/dialog';
 import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { v4 as uuidv4} from 'uuid';
 import { DashboardService } from 'src/app/services/dashboard.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
     selector: 'app-logbook-out',
@@ -40,6 +41,7 @@ export class LogbookOutComponent {
     @ViewChild('fileUpload') fileUpload!: FileUpload;
     
     private logbookService = new LogbookService();
+    private userService = new UserService();
     private utilsService = new UtilsService();
     private dashboardService = new DashboardService();
     
@@ -81,8 +83,7 @@ export class LogbookOutComponent {
     }
 
     ngOnInit() {
-        const user_session = localStorage.getItem('sb_token')
-        this.user_json = user_session ? JSON.parse(user_session) : null;
+        this.user_json = this.userService.getUserStorage();
 
         if (this.user_json?.attributes['group_business']) {
             this.logbookForm.get('id_group_business')?.setValue(this.user_json?.attributes['group_business']);

@@ -69,7 +69,7 @@ export class SigninComponent implements OnInit {
     this.authService.signIn(this.email, this.password).subscribe({
       next: (data: any) => {
         this.isLoading = false;
-        localStorage.setItem('sb_token', JSON.stringify(data?.data) )
+        localStorage.setItem('sb_token', JSON.stringify(data?.access_token))
         this.router.navigate(['/dashboard']);
       },
       error: (error: any) => {

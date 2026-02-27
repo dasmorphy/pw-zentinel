@@ -9,6 +9,7 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-bar-chart',
@@ -27,6 +28,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 })
 export class BarChartComponent {
   private readonly dashboardService = inject(DashboardService);
+  private readonly userService = inject(UserService);
 
   categoriesData: any[] = [];
   categoryChart!: Chart;
@@ -40,9 +42,7 @@ export class BarChartComponent {
   user_session: any;
 
   ngOnInit() {
-    const user_session = localStorage.getItem('sb_token')
-    const user_json = user_session ? JSON.parse(user_session) : null;
-    this.user_session = user_json;
+    this.user_session = this.userService.getUserStorage();
     this.fetchDataGraphs()
   }
 

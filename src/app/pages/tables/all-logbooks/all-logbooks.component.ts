@@ -72,7 +72,7 @@ export class AllLogbookComponent {
     selectedGroupBusiness: number[] = [];
     selectedSector: number[] = [];
     selectedTime: string[] = ['Diurna', 'Nocturna'];
-    filters: any;
+    filters: any = {};
     dateRange: Date[] | null = null;
 
 
@@ -138,13 +138,12 @@ export class AllLogbookComponent {
 
     fetchHistoryLogbook(filters = this.filters) {
         this.isLoading = true;
-        const user_session = localStorage.getItem('sb_token')
-        const user_json = user_session ? JSON.parse(user_session) : null;
-        this.user_session = user_json;
+        this.user_session = this.userService.getUserStorage();
 
 
-        if (user_json?.role !== 'admin') {
-            filters.user = user_json?.user
+
+        if (this.user_session?.role !== 'admin') {
+            filters.user = this.user_session?.user
         }
 
         this.logbookService.getHistoryLogbook(filters).subscribe({

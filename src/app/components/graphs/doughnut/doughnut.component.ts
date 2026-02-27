@@ -12,6 +12,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { PolarChartComponent } from '../polar-chart/polar-chart.component';
 import { LogbookDetailsGraphsComponent } from '../../modals/logbook-details-graphs/logbook-details-graphs.component';
 import { LogbookService } from 'src/app/services/logbook.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-doughnut',
@@ -35,6 +36,7 @@ export class DoughnutComponent {
   private readonly menuService = inject(MenuService);
   private readonly dashboardService = inject(DashboardService);
   private readonly logbookService = inject(LogbookService);
+  private readonly userService = inject(UserService);
   
   toggle = computed(() => this.menuService.toggle());
   categories = computed(() => this.logbookService.categories());
@@ -64,9 +66,7 @@ export class DoughnutComponent {
   user_session: any;
 
   ngOnInit() {
-    const user_session = localStorage.getItem('sb_token')
-    const user_json = user_session ? JSON.parse(user_session) : null;
-    this.user_session = user_json;
+    this.user_session = this.userService.getUserStorage();
     this.fetchDataGraphs()
     this.fetchSectorByBusiness();
     this.fetchGroupBusinessByBusiness();

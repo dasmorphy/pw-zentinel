@@ -13,6 +13,7 @@ import { LogbookService } from "src/app/services/logbook.service";
 import { UtilsService } from "src/app/services/utils.service";
 import { LogBookDetailsModalComponent } from "../modals/logbook-details-modal/logbook-details-modal.component";
 import { filter, Subscription } from "rxjs";
+import { UserService } from "src/app/services/user.service";
 
 @Component({
     selector: 'app-logbook-recent',
@@ -38,6 +39,7 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
     private readonly logbookService = inject(LogbookService);
     private readonly eventSourceService = inject(EventSourceService);
     private readonly utilsService = inject(UtilsService);
+    private readonly userService = inject(UserService);
 
     logbookSelected = computed(() => this.logbookService.showModalSummary());
 
@@ -75,14 +77,12 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
     fetchHistoryLogbook() {
         this.isLoading = true;
         const headers: any = {}
-        const user_session = localStorage.getItem('sb_token')
-        const user_json = user_session ? JSON.parse(user_session) : null;
-        this.user_session = user_json;
+        this.user_session = this.userService.getUserStorage();
         let filters: any = {};
 
-        if (user_json?.role !== 'admin') {
-            headers['user'] = user_json?.user
-            filters.user = user_json?.user
+        if (this.user_session?.role !== 'admin') {
+            headers['user'] = this.user_session?.user
+            filters.user = this.user_session?.user
         }
 
         this.logbookService.getHistoryLogbook(filters).subscribe({
