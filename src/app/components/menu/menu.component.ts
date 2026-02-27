@@ -203,7 +203,7 @@ export class MenuComponent implements OnInit {
     request$.subscribe({
       next: (response: any) => {
         this.isLoading = false;
-        this.downloadFile(response, defaultName);
+        this.utilsService.downloadFile(response, defaultName);
       },
       error: () => {
         this.isLoading = false;
@@ -211,30 +211,6 @@ export class MenuComponent implements OnInit {
       }
     });
   }
-
-  private downloadFile(response: any, defaultName: string) {
-    const blob = response.body as Blob;
-
-    const contentDisposition = response.headers.get('content-disposition');
-    let fileName = defaultName;
-
-    if (contentDisposition) {
-      const match = contentDisposition.match(/filename="?(.+)"?/);
-      if (match?.[1]) {
-        fileName = match[1];
-      }
-    }
-
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = fileName;
-    a.click();
-
-    window.URL.revokeObjectURL(url);
-  }
-
-
 
   logout() {
     this.authService.logout()

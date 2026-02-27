@@ -94,9 +94,16 @@
                                 </ng-template>
                             </p-columnFilter>
                         </div>
-                        <p-button label="" icon="pi pi-sync" class="w-reload" (onClick)="reloadHistoryLogbook()"
-                            styleClass="w-full bg-white text-primary--custom b-reload border-round-1xl h-full">
-                        </p-button>
+
+                        <div class="flex gap-2">
+                            <p-button label="" icon="pi pi-file-excel" class="w-reload" (onClick)="generateReportHistory()"
+                                styleClass="w-full bg-white text-primary--custom b-reload border-round-1xl h-full">
+                            </p-button>
+                            <p-button label="" icon="pi pi-sync" class="w-reload" (onClick)="reloadHistoryLogbook()"
+                                styleClass="w-full bg-white text-primary--custom b-reload border-round-1xl h-full">
+                            </p-button>
+                        </div>
+
                     </div>
                 </ng-template>
                 <ng-template pTemplate="header">

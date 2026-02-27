@@ -159,8 +159,35 @@ export class AllLogbookComponent {
         })
     }
 
+    fetchReportHistory(filters = this.filters) {
+        this.isLoading = true;
+        const user_session = localStorage.getItem('sb_token')
+        const user_json = user_session ? JSON.parse(user_session) : null;
+        this.user_session = user_json;
+
+
+        if (user_json?.role !== 'admin') {
+            filters.user = user_json?.user
+        }
+
+        this.logbookService.getReportHistory(filters).subscribe({
+            next: (data: any) => {
+                this.isLoading = false;
+                this.utilsService.downloadFile(data, 'reporte_excel');
+            },
+            error: (error: any) => {
+                this.isLoading = false;
+                console.log(error)
+            }
+        })
+    }
+
     reloadHistoryLogbook() {
         this.fetchHistoryLogbook();
+    }
+
+    generateReportHistory() {
+        this.fetchReportHistory();
     }
 
     formatLocalDate(date: Date): string {

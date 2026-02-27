@@ -86,6 +86,44 @@ export class LogbookService {
         )
     }
 
+    getReportHistory(filter?: any) {
+        let params = new HttpParams();
+        let headers = new HttpHeaders();
+
+        if (filter?.start_date) {
+            params = params.set('start_date', filter.start_date);
+        }
+
+        if (filter?.end_date) {
+            params = params.set('end_date', filter.end_date);
+        }
+
+        if (filter?.groups_business_id) {
+            headers = headers.set('groups-business-id', filter?.groups_business_id)
+        }
+
+        if (filter?.workday) {
+            headers = headers.set('workday', filter?.workday)
+        }
+
+        if (filter?.sectors) {
+            headers = headers.set('sectors', filter?.sectors)
+        }
+
+        if (filter?.ids_categories) {
+            headers = headers.set('ids-categories', filter?.ids_categories)
+        }
+
+
+        return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/generate_report_history`,
+            {
+                headers, params,
+                responseType: 'blob',
+                observe: 'response'
+            }
+        )
+    }
+
     getGenerateReportExcel() {
         return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/generate_report`,
             {
