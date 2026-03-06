@@ -11,6 +11,7 @@ export class LogbookService {
     private readonly messageService = inject(MessageService);
 
     categories: WritableSignal<any[]> = signal<any[]>([]);
+    authorized: WritableSignal<any[]> = signal<any[]>([]);
     unitiesWeight: WritableSignal<any[]> = signal<any[]>([]);
     showModalSummary: WritableSignal<any> = signal<any>(null);
 
@@ -27,6 +28,16 @@ export class LogbookService {
             .subscribe({
                 next: (data: any) => {
                     this.categories.set(data?.data || []);
+                },
+                error: ({ error }: any) => this.onError(error.message)
+            })
+    }
+
+    getAllAuthorized() {
+        this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/allAuthorized`)
+            .subscribe({
+                next: (data: any) => {
+                    this.authorized.set(data?.data || []);
                 },
                 error: ({ error }: any) => this.onError(error.message)
             })

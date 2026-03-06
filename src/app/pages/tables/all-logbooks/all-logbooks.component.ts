@@ -61,6 +61,7 @@ export class AllLogbookComponent {
     public readonly utilsService = inject(UtilsService);
 
     logbookSelected = computed(() => this.logbookService.showModalSummary());
+    categories = computed(() => this.logbookService.categories());
 
 
     dataLogbooks: any = [];
@@ -71,8 +72,9 @@ export class AllLogbookComponent {
     optionGroupBusiness: any = [];
     selectedGroupBusiness: number[] = [];
     selectedSector: number[] = [];
+    selectedCategories: number[] = [];
     selectedTime: string[] = ['Diurna', 'Nocturna'];
-    filters: any;
+    filters: any = {};
     dateRange: Date[] | null = null;
 
 
@@ -112,6 +114,7 @@ export class AllLogbookComponent {
 
         this.fetchGroupBusinessByBusiness();
         this.fetchSectorByBusiness();
+        this.logbookService.getAllCategories();
     }
 
     fetchSectorByBusiness() {
@@ -136,12 +139,12 @@ export class AllLogbookComponent {
         });
     }
 
-    fetchHistoryLogbook(filters = this.filters) {
+    fetchHistoryLogbook() {
         this.isLoading = true;
         const user_session = localStorage.getItem('sb_token')
         const user_json = user_session ? JSON.parse(user_session) : null;
         this.user_session = user_json;
-
+        const filters = { ...this.filters };
 
         if (user_json?.role !== 'admin') {
             filters.user = user_json?.user
@@ -159,11 +162,12 @@ export class AllLogbookComponent {
         })
     }
 
-    fetchReportHistory(filters = this.filters) {
+    fetchReportHistory() {
         this.isLoading = true;
         const user_session = localStorage.getItem('sb_token')
         const user_json = user_session ? JSON.parse(user_session) : null;
         this.user_session = user_json;
+        const filters = { ...this.filters };
 
 
         if (user_json?.role !== 'admin') {
@@ -230,6 +234,10 @@ export class AllLogbookComponent {
 
         if (this.selectedTime.length > 0) {
             filter_date.workday = this.selectedTime.join(',');;
+        }
+
+        if (this.selectedCategories.length > 0) {
+            filter_date.ids_categories = this.selectedCategories.join(',');;
         }
 
         this.filters = filter_date;

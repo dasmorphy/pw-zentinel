@@ -46,6 +46,7 @@ export class LogbookOutComponent {
 
     categories = computed(() => this.logbookService.categories());
     unitiesWeight = computed(() => this.logbookService.unitiesWeight());
+    authorized = computed(() => this.logbookService.authorized());
 
     logbookForm: FormGroup;
 
@@ -56,7 +57,6 @@ export class LogbookOutComponent {
     isLoading: boolean = false;
     showConfirmSave: boolean = false;
     messageEmpty: string = "No hay opciones disponibles";
-    optionWorkDay = ['Diurna', 'Nocturna']
     optionGroupBusiness= []
     user_json: any;
 
@@ -65,7 +65,6 @@ export class LogbookOutComponent {
     constructor(private fb: FormBuilder,) {
         this.logbookForm = this.fb.group({
             id_group_business: ['', Validators.required],
-            workday: ['', Validators.required],
             id_category: ['', Validators.required],
             id_unity: ['', Validators.required],
             shipping_guide: ['', Validators.required],
@@ -90,6 +89,7 @@ export class LogbookOutComponent {
 
         this.logbookService.getAllCategories();
         this.logbookService.getAllUnitiesWeight();
+        this.logbookService.getAllAuthorized();
         this.fetchGroupBusinessByBusiness();
     }
 
