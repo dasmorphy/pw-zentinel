@@ -70,6 +70,8 @@ export class SigninComponent implements OnInit {
       next: (data: any) => {
         this.isLoading = false;
         localStorage.setItem('sb_token', JSON.stringify(data?.data) )
+        const attributes = data?.data?.attributes
+        this.authService.setPermissionsUser(attributes.permissions);
         this.router.navigate(['/dashboard']);
       },
       error: (error: any) => {

@@ -42,27 +42,33 @@
                                             [options]="optionFilterCategory" optionLabel="label" optionValue="value" >
                                         </p-dropdown> -->
 
-                                        <p-multiSelect 
-                                            [style]="{ boxShadow: 'none' }"
-                                            styleClass="border-round w-full"
-                                            id="optionCategory"  
-                                            [options]="categories()"
-                                            [(ngModel)]="selectedCategories"
-                                            optionLabel="name_category"
-                                            optionValue="id_category"
-                                            placeholder="Seleccione categoría"
-                                        ></p-multiSelect>
+                                        @if (!user_permissions_signal().includes('DATA_BY_GROUP_BUSINESS')) {
+                                            <p-multiSelect 
+                                                [style]="{ boxShadow: 'none' }"
+                                                styleClass="border-round w-full"
+                                                id="optionCategory"  
+                                                [options]="categories()"
+                                                [(ngModel)]="selectedCategories"
+                                                optionLabel="name_category"
+                                                optionValue="id_category"
+                                                placeholder="Seleccione categoría"
+                                            ></p-multiSelect>
+    
+                                            <p-multiSelect 
+                                                [style]="{ boxShadow: 'none' }"
+                                                styleClass="border-round w-full"
+                                                id="optionSector"  
+                                                [options]="optionSector"
+                                                [(ngModel)]="selectedSector"
+                                                optionLabel="name"
+                                                optionValue="id_sector"
+                                                placeholder="Seleccione una opción"
+                                            ></p-multiSelect>
 
-                                        <p-multiSelect 
-                                            [style]="{ boxShadow: 'none' }"
-                                            styleClass="border-round w-full"
-                                            id="optionSector"  
-                                            [options]="optionSector"
-                                            [(ngModel)]="selectedSector"
-                                            optionLabel="name"
-                                            optionValue="id_sector"
-                                            placeholder="Seleccione una opción"
-                                        ></p-multiSelect>
+                                        }
+
+
+
 
                                         <p-multiSelect 
                                             [style]="{ boxShadow: 'none' }"

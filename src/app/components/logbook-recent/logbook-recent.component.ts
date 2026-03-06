@@ -13,6 +13,7 @@ import { LogbookService } from "src/app/services/logbook.service";
 import { UtilsService } from "src/app/services/utils.service";
 import { LogBookDetailsModalComponent } from "../modals/logbook-details-modal/logbook-details-modal.component";
 import { filter, Subscription } from "rxjs";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
     selector: 'app-logbook-recent',
@@ -38,8 +39,10 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
     private readonly logbookService = inject(LogbookService);
     private readonly eventSourceService = inject(EventSourceService);
     private readonly utilsService = inject(UtilsService);
+    private readonly authService = inject(AuthService);
 
     logbookSelected = computed(() => this.logbookService.showModalSummary());
+    user_permissions_signal = computed(() => this.authService.user_permissions_signal());
 
     private sseSub?: Subscription;
 
@@ -78,11 +81,16 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
         const user_session = localStorage.getItem('sb_token')
         const user_json = user_session ? JSON.parse(user_session) : null;
         this.user_session = user_json;
+        const attributes = user_json?.attributes
         let filters: any = {};
 
         if (user_json?.role !== 'admin') {
             headers['user'] = user_json?.user
             filters.user = user_json?.user
+        }
+
+        if (this.user_permissions_signal().includes('DATA_BY_GROUP_BUSINESS')) {
+            filters.groups_business_id = attributes?.group_business?.toString()
         }
 
         this.logbookService.getHistoryLogbook(filters).subscribe({

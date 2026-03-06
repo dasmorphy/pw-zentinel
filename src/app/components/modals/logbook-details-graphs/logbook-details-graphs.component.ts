@@ -21,6 +21,7 @@ import { UserService } from 'src/app/services/user.service';
 import { TieredMenuModule } from 'primeng/tieredmenu';
 import { LogbookService } from 'src/app/services/logbook.service';
 import { UtilsService } from 'src/app/services/utils.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
     selector: 'app-logbook-details-graphs',
@@ -55,7 +56,9 @@ export class LogbookDetailsGraphsComponent {
     public readonly userService = inject(UserService);
     public readonly logbookService = inject(LogbookService);
     public readonly utilsService = inject(UtilsService);
+    public readonly authService = inject(AuthService);
 
+    user_permissions_signal = computed(() => this.authService.user_permissions_signal());
     logbookSelected = computed(() => this.logbookService.showModalSummary());
 
     showModal: boolean = false;
@@ -109,6 +112,11 @@ export class LogbookDetailsGraphsComponent {
         const user_session = localStorage.getItem('sb_token')
         const user_json = user_session ? JSON.parse(user_session) : null;
         this.user_session = user_json;
+        const attributes = user_json?.attributes
+
+        if (this.user_permissions_signal().includes('DATA_BY_GROUP_BUSINESS')) {
+            this.filtersLogbook.groups_business_id = attributes?.group_business?.toString()
+        }
 
         this.logbookService.getHistoryLogbook(this.filtersLogbook).subscribe({
             next: (data: any) => {

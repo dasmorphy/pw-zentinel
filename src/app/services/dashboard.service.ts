@@ -40,13 +40,13 @@ export class DashboardService {
         );
     }
 
-    getSectorByBusiness(id_business: number) {
+    getSectorByBusiness(id_business: number = 0) {
         return this.http.get(
             `${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/sector-by-business/${id_business}`,
         );
     }
 
-    getGroupBusinessByBusiness(id_business: number) {
+    getGroupBusinessByBusiness(id_business: number = 0) {
         return this.http.get(
             `${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/group-business-by-id-business/${id_business}`,
         );

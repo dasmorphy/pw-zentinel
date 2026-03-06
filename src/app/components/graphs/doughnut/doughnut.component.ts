@@ -12,6 +12,7 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { PolarChartComponent } from '../polar-chart/polar-chart.component';
 import { LogbookDetailsGraphsComponent } from '../../modals/logbook-details-graphs/logbook-details-graphs.component';
 import { LogbookService } from 'src/app/services/logbook.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-doughnut',
@@ -35,9 +36,11 @@ export class DoughnutComponent {
   private readonly menuService = inject(MenuService);
   private readonly dashboardService = inject(DashboardService);
   private readonly logbookService = inject(LogbookService);
+  private readonly authService = inject(AuthService);
   
   toggle = computed(() => this.menuService.toggle());
   categories = computed(() => this.logbookService.categories());
+  user_permissions_signal = computed(() => this.authService.user_permissions_signal());
   
   dataCategoryQuantity: any = [];
   categoriesData: any[] = [];
@@ -95,7 +98,14 @@ export class DoughnutComponent {
   }
 
   fetchDataGraphs(filters?: any) {
-    this.dashboardService.getResumeChart(filters).subscribe({
+    const attributes = this.user_session?.attributes
+    const filterss = { ...(filters || {}) };
+
+    if (this.user_permissions_signal().includes('DATA_BY_GROUP_BUSINESS')) {
+      filterss.groups_business_id = attributes?.group_business?.toString()
+    }
+
+    this.dashboardService.getResumeChart(filterss).subscribe({
       next: (resp: any) => {
         this.createLogbookChart(
           resp?.data.total_entrada,

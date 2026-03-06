@@ -11,6 +11,7 @@ import { DropdownModule } from 'primeng/dropdown';
 import { LogbookService } from 'src/app/services/logbook.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-menu',
@@ -33,8 +34,12 @@ export class MenuComponent implements OnInit {
   private readonly menuService = inject(MenuService);
   private readonly logbookService = inject(LogbookService);
   private readonly utilsService = inject(UtilsService);
+  private readonly userService = inject(UserService);
 
   toggle = computed(() => this.menuService.toggle());
+  // user_storage = computed(() => this.userService.user_storage());
+  user_permissions_signal = computed(() => this.authService.user_permissions_signal());
+  
   user_permissions: string[] = [];
   user_session: any;
   showGenerateReport: boolean = false;
@@ -69,14 +74,14 @@ export class MenuComponent implements OnInit {
           {
             label: 'Nuevo registro de entrada',
             icon: 'pi pi-file-check',
-            // visible: this.user_permissions?.includes('VENTAS_VER_TODAS'),
+            visible: this.user_permissions_signal()?.includes('NUEVA_BITACORA_INGRESO'),
             routerLink: ['reporte-entrada'],
             command: () => { this.clickHiddenToggle() }
           },
           {
             label: 'Nuevo registro de salida',
             icon: 'pi pi-file-export',
-            // visible: this.user_permissions?.includes('VENTAS_VER_TODAS'),
+            visible: this.user_permissions_signal()?.includes('NUEVA_BITACORA_SALIDA'),
             routerLink: ['reporte-salida'],
             command: () => { this.clickHiddenToggle() }
           },
@@ -125,9 +130,12 @@ export class MenuComponent implements OnInit {
   })
 
   ngOnInit() {
-    const user: any = localStorage.getItem('user');
-    // this.user_session = JSON.parse(decrypt(user));
-    this.calculateUserPermissions();
+    const user: any = localStorage.getItem('sb_token');
+    this.user_session = JSON.parse(user);
+    const attributes = this.user_session?.attributes
+    this.authService.setPermissionsUser(attributes.permissions);
+    this.userService.setUserStorage(this.user_session)
+    // this.calculateUserPermissions();
   }
 
   clickHiddenToggle(flag?: boolean) {
@@ -144,8 +152,7 @@ export class MenuComponent implements OnInit {
 
   calculateUserPermissions() {
     // Lógica para calcular y retornar los permisos del usuario
-    if (this.user_session && this.user_session?.groups) {
-
+    if (this.user_session) {
       const rolePermissionsMap: { [key: string]: string } = {
         'VENTAS': 'VENTAS',
         'GESTION-USUARIO': 'GESTION-USUARIO',
@@ -179,7 +186,7 @@ export class MenuComponent implements OnInit {
         }
       }
 
-      // this.userService.user_permissions_signal.set(this.user_permissions)
+      this.authService.setPermissionsUser(this.user_permissions)
     }
 
   }

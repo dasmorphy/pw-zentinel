@@ -24,6 +24,7 @@ import { LogbookService } from 'src/app/services/logbook.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { LogBookDetailsModalComponent } from 'src/app/components/modals/logbook-details-modal/logbook-details-modal.component';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
     selector: 'app-logbooks-table',
@@ -59,9 +60,11 @@ export class AllLogbookComponent {
     public readonly userService = inject(UserService);
     public readonly logbookService = inject(LogbookService);
     public readonly utilsService = inject(UtilsService);
+    public readonly authService = inject(AuthService);
 
     logbookSelected = computed(() => this.logbookService.showModalSummary());
     categories = computed(() => this.logbookService.categories());
+    user_permissions_signal = computed(() => this.authService.user_permissions_signal());
 
 
     dataLogbooks: any = [];
@@ -144,10 +147,15 @@ export class AllLogbookComponent {
         const user_session = localStorage.getItem('sb_token')
         const user_json = user_session ? JSON.parse(user_session) : null;
         this.user_session = user_json;
+        const attributes = user_json?.attributes
         const filters = { ...this.filters };
 
         if (user_json?.role !== 'admin') {
             filters.user = user_json?.user
+        }
+
+        if (this.user_permissions_signal().includes('DATA_BY_GROUP_BUSINESS')) {
+            filters.groups_business_id = attributes?.group_business?.toString()
         }
 
         this.logbookService.getHistoryLogbook(filters).subscribe({
