@@ -12,6 +12,7 @@ export class LogbookService {
 
     categories: WritableSignal<any[]> = signal<any[]>([]);
     authorized: WritableSignal<any[]> = signal<any[]>([]);
+    destinyIntern: WritableSignal<any[]> = signal<any[]>([]);
     unitiesWeight: WritableSignal<any[]> = signal<any[]>([]);
     showModalSummary: WritableSignal<any> = signal<any>(null);
 
@@ -38,6 +39,16 @@ export class LogbookService {
             .subscribe({
                 next: (data: any) => {
                     this.authorized.set(data?.data || []);
+                },
+                error: ({ error }: any) => this.onError(error.message)
+            })
+    }
+
+    getAllDestinyIntern() {
+        this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/allDestinyIntern`)
+            .subscribe({
+                next: (data: any) => {
+                    this.destinyIntern.set(data?.data || []);
                 },
                 error: ({ error }: any) => this.onError(error.message)
             })

@@ -51,6 +51,7 @@ export class LogbookEntryComponent {
     categories = computed(() => this.logbookService.categories());
     unitiesWeight = computed(() => this.logbookService.unitiesWeight());
     authorized = computed(() => this.logbookService.authorized());
+    destinyIntern = computed(() => this.logbookService.destinyIntern());
 
     logbookForm: FormGroup;
 
@@ -72,7 +73,7 @@ export class LogbookEntryComponent {
             id_group_business: ['', Validators.required],
             id_category: ['', Validators.required],
             id_unity: ['', Validators.required],
-            shipping_guide: ['', Validators.required],
+            shipping_guide: [''],
             quantity: [0, Validators.required],
             description: ['', Validators.required],
             weight: [null],
@@ -94,6 +95,7 @@ export class LogbookEntryComponent {
         this.logbookService.getAllCategories();
         this.logbookService.getAllUnitiesWeight();
         this.logbookService.getAllAuthorized();
+        this.logbookService.getAllDestinyIntern();
         this.fetchGroupBusinessByBusiness();
     }
 
@@ -142,7 +144,16 @@ export class LogbookEntryComponent {
     }
 
     onSubmit() {
-        this.utilsService.validateControlsForms(this.logbookForm, ['weight', 'observations']);
+        const controls_ignore = ['weight', 'observations'];
+
+        if (this.hideGuide()) {
+            controls_ignore.push('shipping_guide');
+            this.logbookForm.patchValue({
+                shipping_guide: null
+            })
+        }
+
+        this.utilsService.validateControlsForms(this.logbookForm, controls_ignore);
         this.utilsService.showControlVoiled();
 
         if (this.images.length < 5) {
@@ -156,6 +167,13 @@ export class LogbookEntryComponent {
         }
     }
 
+    hideGuide() {
+        const categorys_hide = ['Ejecutivos de expalsa', 'Personal interno', 'Personal externo', 'Cuadrillas para pesca'];
+        const category_found = this.categories().find((cat: any) => cat.id_category === this.logbookForm.get('id_category')?.value);
+
+        return categorys_hide.includes(category_found?.name_category)
+    }
+
     saveLogbook() {
         this.isLoading = true;
         this.showConfirmSave = false;
@@ -164,7 +182,7 @@ export class LogbookEntryComponent {
             ...this.logbookForm.value,
             created_by: this.user_json?.user,
             name_user: this.user_json?.attributes?.fullname,
-            weight: this.logbookForm.get('weight')?.value ?? 0,
+            weight: this.logbookForm.get('weight')?.value,
             channel: 'ZENTINEL_WEB',
             external_transaction_id: uuidv4()
         };

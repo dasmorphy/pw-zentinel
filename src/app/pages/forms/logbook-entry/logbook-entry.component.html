@@ -69,16 +69,19 @@
                                 <span class="validate-data">El campo unidad es obligatorio</span>
                             </div>
                         </span>
+                        
+                        @if (!hideGuide()) {
+                            <span class="w-full">
+                                <label htmlFor="shipping_guide">OC / Guía de remisión <span style="color: red;">*</span></label>
+                                <input class="border-round w-full mt-2" pInputText
+                                    id="shipping_guide"
+                                    formControlName="shipping_guide" />
+                                <div *ngIf="logbookForm.get('shipping_guide')?.hasError('campoVacio')">
+                                    <span class="validate-data">Este campo es obligatorio</span>
+                                </div>
+                            </span>
+                        }
 
-                        <span class="w-full">
-                            <label htmlFor="shipping_guide">OC / Guía de remisión <span style="color: red;">*</span></label>
-                            <input class="border-round w-full mt-2" pInputText
-                                id="shipping_guide"
-                                formControlName="shipping_guide" />
-                            <div *ngIf="logbookForm.get('shipping_guide')?.hasError('campoVacio')">
-                                <span class="validate-data">Este campo es obligatorio</span>
-                            </div>
-                        </span>
                         <span class="w-full">
                             <label htmlFor="username">Descripción <span style="color: red;">*</span></label>
                             <input class="border-round w-full mt-2" pInputText
@@ -97,10 +100,13 @@
                                 <span class="validate-data">Este campo es obligatorio</span>
                             </div>
                         </span>
-                        <span class="w-full">
-                            <label htmlFor="weight">Peso</label>
-                            <p-inputNumber class="border-round w-full mt-2" formControlName="weight" [useGrouping]="false" styleClass="w-full"></p-inputNumber>
-                        </span>
+
+                        @if (!hideGuide()) {
+                            <span class="w-full">
+                                <label htmlFor="weight">Peso</label>
+                                <p-inputNumber class="border-round w-full mt-2" formControlName="weight" [useGrouping]="false" styleClass="w-full"></p-inputNumber>
+                            </span>
+                        }
 
                         <span class="w-full">
                             <label htmlFor="truck_license">Placa del camión <span style="color: red;">*</span></label>
@@ -130,9 +136,9 @@
                         </span>
                         <span class="w-full">
                             <label htmlFor="destiny_intern">Destino interno <span style="color: red;">*</span></label>
-                            <input class="border-round w-full mt-2" pInputText
-                                id="destiny_intern" maxlength="100"
-                                formControlName="destiny_intern" />
+                            <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" formControlName="destiny_intern"
+                                id="destiny_intern" [options]="destinyIntern()" optionLabel="name" optionValue="name"
+                                [emptyMessage]="messageEmpty"></p-dropdown>
                             <div *ngIf="logbookForm.get('destiny_intern')?.hasError('campoVacio')">
                                 <span class="validate-data">El campo destino interno es obligatorio</span>
                             </div>

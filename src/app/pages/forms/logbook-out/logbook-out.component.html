@@ -71,30 +71,47 @@
                             </div>
                         </span>
 
-                        <span class="w-full">
-                            <label htmlFor="shipping_guide">Guía / Documento <span style="color: red;">*</span></label>
-                            <input class="border-round w-full mt-2" pInputText id="shipping_guide"
-                                formControlName="shipping_guide" [maxlength]="50" 
-                            />
-                            <div *ngIf="logbookForm.get('shipping_guide')?.hasError('campoVacio')">
-                                <span class="validate-data">Este campo es obligatorio</span>
-                            </div>
-                        </span>
-                        <span class="w-full">
-                            <label htmlFor="quantity">Cantidad de bines <span style="color: red;">*</span></label>
-                            <p-inputNumber class="border-round w-full mt-2" formControlName="quantity" styleClass="w-full"></p-inputNumber>
-                            <div *ngIf="logbookForm.get('quantity')?.hasError('campoVacio')">
-                                <span class="validate-data">Este campo es obligatorio</span>
-                            </div>
-                        </span>
+                        @if (!hideGuide()) {
+                            <span class="w-full">
+                                <label htmlFor="shipping_guide">Guía / Documento <span style="color: red;">*</span></label>
+                                <input class="border-round w-full mt-2" pInputText id="shipping_guide"
+                                    formControlName="shipping_guide" [maxlength]="50" 
+                                />
+                                <div *ngIf="logbookForm.get('shipping_guide')?.hasError('campoVacio')">
+                                    <span class="validate-data">Este campo es obligatorio</span>
+                                </div>
+                            </span>
+                        }
 
-                        <span class="w-full">
-                            <label htmlFor="username">Peso (Libras)</label>
-                            <p-inputNumber class="border-round w-full mt-2" formControlName="weight" [useGrouping]="false" styleClass="w-full"></p-inputNumber>
-                            <div *ngIf="logbookForm.get('weight')?.hasError('campoVacio')">
-                                <span class="validate-data">Este campo es obligatorio</span>
-                            </div>
-                        </span>
+                        @if (hideQuantity()) {
+                            <span class="w-full">
+                                <label htmlFor="quantity">Cantidad de bines <span style="color: red;">*</span></label>
+                                <p-inputNumber class="border-round w-full mt-2" formControlName="quantity" styleClass="w-full"></p-inputNumber>
+                                <div *ngIf="logbookForm.get('quantity')?.hasError('campoVacio')">
+                                    <span class="validate-data">Este campo es obligatorio</span>
+                                </div>
+                            </span>
+    
+                            <span class="w-full ">
+                                <label htmlFor="person_withdraws">Custodia que retira el producto <span
+                                        style="color: red;">*</span></label>
+                                <input class="border-round w-full mt-2" pInputText id="person_withdraws" maxlength="100"
+                                    formControlName="person_withdraws" />
+                                <div *ngIf="logbookForm.get('person_withdraws')?.hasError('campoVacio')">
+                                    <span class="validate-data">Este campo es obligatorio</span>
+                                </div>
+                            </span>
+                        }
+
+                        @if (!hideGuide()) {
+                            <span class="w-full">
+                                <label htmlFor="username">Peso (Libras)</label>
+                                <p-inputNumber class="border-round w-full mt-2" formControlName="weight" [useGrouping]="false" styleClass="w-full"></p-inputNumber>
+                                <div *ngIf="logbookForm.get('weight')?.hasError('campoVacio')">
+                                    <span class="validate-data">Este campo es obligatorio</span>
+                                </div>
+                            </span>
+                        }
 
                         <span class="w-full">
                             <label htmlFor="truck_license">Placa del camión <span style="color: red;">*</span></label>
@@ -109,16 +126,6 @@
                             <input class="border-round w-full mt-2" pInputText id="name_driver" maxlength="100"
                                 formControlName="name_driver" />
                             <div *ngIf="logbookForm.get('name_driver')?.hasError('campoVacio')">
-                                <span class="validate-data">Este campo es obligatorio</span>
-                            </div>
-                        </span>
-
-                        <span class="w-full ">
-                            <label htmlFor="person_withdraws">Custodia que retira el producto <span
-                                    style="color: red;">*</span></label>
-                            <input class="border-round w-full mt-2" pInputText id="person_withdraws" maxlength="100"
-                                formControlName="person_withdraws" />
-                            <div *ngIf="logbookForm.get('person_withdraws')?.hasError('campoVacio')">
                                 <span class="validate-data">Este campo es obligatorio</span>
                             </div>
                         </span>
