@@ -100,15 +100,20 @@ export class AllLogbookComponent {
             icon: 'pi pi-eye',
             command: () => this.viewLogbookDetails(this.selectedLogbook)
         },
+        {
+            label: 'Continuar',
+            icon: 'pi pi-play-circle',
+            visible: () => this.selectedLogbook?.status === 'Pendiente Salida',
+            command: () => this.viewLogbookDetails(this.selectedLogbook)
+        },
     ];
 
 
     ngOnInit() {
         if (!this.dataModal) {
-            console.log('sin data de entrada')
+            
             this.fetchHistoryLogbook();
         }else {
-            console.log('data de entrada')
             this.dataLogbooks = this.dataModal
         }
 
@@ -272,4 +277,15 @@ export class AllLogbookComponent {
 
         this.logbookService.openSummary(log_found);
     }
+
+    getSeverity(status_logbook: string) {
+        switch (status_logbook) {
+        case "Finalizado":
+            return 'success';
+        case "Pendiente Salida":
+            return 'warning';
+        default:
+            return 'info';
+        }
+  }
 }
