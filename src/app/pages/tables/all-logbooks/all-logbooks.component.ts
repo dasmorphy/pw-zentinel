@@ -150,7 +150,7 @@ export class AllLogbookComponent {
             filters.user = user_json?.user
         }
 
-        this.logbookService.getHistoryLogbook(filters).subscribe({
+        this.logbookService.getAllLogbooks(filters).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
                 this.dataLogbooks = data?.data;
