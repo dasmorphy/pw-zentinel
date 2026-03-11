@@ -43,12 +43,12 @@
 
             <span class="w-full mt-1">
                 <label class="font-semibold" htmlFor="shipping_guide">Cantidad: </label>
-                <label htmlFor="shipping_guide">{{logbookSelected()?.quantity ?? 'N/C'}}</label>
+                <label htmlFor="shipping_guide">{{logbookSelected()?.quantity ?? 'N/A'}}</label>
             </span>
 
             <span class="w-full mt-1">
                 <label class="font-semibold" htmlFor="shipping_guide">Peso: </label>
-                <label htmlFor="shipping_guide">{{logbookSelected()?.weight ?? 'N/C'}}</label>
+                <label htmlFor="shipping_guide">{{logbookSelected()?.weight ?? 'N/A'}}</label>
             </span>
 
             @if (logbookSelected()?.id_logbook_entry) {
@@ -77,15 +77,16 @@
                 </span>
             }
 
+            <span class="w-full mt-1">
+                <label class="font-semibold" htmlFor="shipping_guide">Conductor: </label>
+                <label htmlFor="shipping_guide">{{ logbookSelected()?.name_driver }}</label>
+            </span>
+
             @if (logbookSelected()?.id_logbook_out) {
-                <span class="w-full mt-1">
-                    <label class="font-semibold" htmlFor="shipping_guide">Nombre Chófer: </label>
-                    <label htmlFor="shipping_guide">{{ logbookSelected()?.name_driver }}</label>
-                </span>
 
                 <span class="w-full mt-1">
                     <label class="font-semibold" htmlFor="shipping_guide">Persona Custodia: </label>
-                    <label htmlFor="shipping_guide">{{ logbookSelected()?.person_withdraws ?? 'N/C' }}</label>
+                    <label htmlFor="shipping_guide">{{ logbookSelected()?.person_withdraws ?? 'N/A' }}</label>
                 </span>
 
                 <span class="w-full mt-1">
@@ -102,7 +103,7 @@
 
                 <span class="w-full mt-1">
                     <label class="font-semibold" htmlFor="shipping_guide">Proveedor: </label>
-                    <label htmlFor="shipping_guide">{{logbookSelected()?.provider ?? 'N/C'}}</label>
+                    <label htmlFor="shipping_guide">{{logbookSelected()?.provider ?? 'N/A'}}</label>
                 </span>
 
             }
@@ -115,7 +116,7 @@
             <span class="w-full mt-1">
                 <label class="font-semibold" htmlFor="shipping_guide">Observaciones: </label>
                 <label htmlFor="shipping_guide">{{ !logbookSelected()?.observations || logbookSelected()?.observations
-                    === '' ? 'N/C' : logbookSelected()?.observations }}</label>
+                    === '' ? 'N/A' : logbookSelected()?.observations }}</label>
             </span>
 
         </div>
