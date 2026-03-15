@@ -106,7 +106,7 @@ export class LogbookDetailsGraphsComponent {
 
     fetchHistoryLogbook() {
         this.isLoading = true;
-        this.user_session = this.userService.getUserStorage();
+        this.user_session = this.userService.getDataSession();
 
         this.logbookService.getHistoryLogbook(this.filtersLogbook).subscribe({
             next: (data: any) => {

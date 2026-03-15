@@ -11,6 +11,8 @@ export class LogbookService {
     private readonly messageService = inject(MessageService);
 
     categories: WritableSignal<any[]> = signal<any[]>([]);
+    authorized: WritableSignal<any[]> = signal<any[]>([]);
+    destinyIntern: WritableSignal<any[]> = signal<any[]>([]);
     unitiesWeight: WritableSignal<any[]> = signal<any[]>([]);
     showModalSummary: WritableSignal<any> = signal<any>(null);
 
@@ -27,6 +29,26 @@ export class LogbookService {
             .subscribe({
                 next: (data: any) => {
                     this.categories.set(data?.data || []);
+                },
+                error: ({ error }: any) => this.onError(error.message)
+            })
+    }
+
+    getAllAuthorized() {
+        this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/allAuthorized`)
+            .subscribe({
+                next: (data: any) => {
+                    this.authorized.set(data?.data || []);
+                },
+                error: ({ error }: any) => this.onError(error.message)
+            })
+    }
+
+    getAllDestinyIntern() {
+        this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/allDestinyIntern`)
+            .subscribe({
+                next: (data: any) => {
+                    this.destinyIntern.set(data?.data || []);
                 },
                 error: ({ error }: any) => this.onError(error.message)
             })
@@ -83,6 +105,44 @@ export class LogbookService {
 
         return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/history-logbook`,
             { headers, params }
+        )
+    }
+
+    getReportHistory(filter?: any) {
+        let params = new HttpParams();
+        let headers = new HttpHeaders();
+
+        if (filter?.start_date) {
+            params = params.set('start_date', filter.start_date);
+        }
+
+        if (filter?.end_date) {
+            params = params.set('end_date', filter.end_date);
+        }
+
+        if (filter?.groups_business_id) {
+            headers = headers.set('groups-business-id', filter?.groups_business_id)
+        }
+
+        if (filter?.workday) {
+            headers = headers.set('workday', filter?.workday)
+        }
+
+        if (filter?.sectors) {
+            headers = headers.set('sectors', filter?.sectors)
+        }
+
+        if (filter?.ids_categories) {
+            headers = headers.set('ids-categories', filter?.ids_categories)
+        }
+
+
+        return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/generate_report_history`,
+            {
+                headers, params,
+                responseType: 'blob',
+                observe: 'response'
+            }
         )
     }
 

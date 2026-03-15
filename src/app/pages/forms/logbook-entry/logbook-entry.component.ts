@@ -45,12 +45,14 @@ export class LogbookEntryComponent {
     @ViewChild('fileUpload') fileUpload!: FileUpload;
 
     private logbookService = new LogbookService();
-    private userService = new UserService();
     private utilsService = new UtilsService();
     private dashboardService = new DashboardService();
+    private userService = new UserService();
 
     categories = computed(() => this.logbookService.categories());
     unitiesWeight = computed(() => this.logbookService.unitiesWeight());
+    authorized = computed(() => this.logbookService.authorized());
+    destinyIntern = computed(() => this.logbookService.destinyIntern());
 
     logbookForm: FormGroup;
 
@@ -60,7 +62,6 @@ export class LogbookEntryComponent {
     isLoading: boolean = false;
     showConfirmSave: boolean = false;
     messageEmpty: string = "No hay opciones disponibles";
-    optionWorkDay= [ 'Diurna', 'Nocturna']
     optionGroupBusiness= []
     user_json: any;
 
@@ -70,11 +71,10 @@ export class LogbookEntryComponent {
         this.logbookForm = this.fb.group({
             truck_license: ['', Validators.required],
             name_driver: ['', Validators.required],
-            workday: ['', Validators.required],
             id_group_business: ['', Validators.required],
             id_category: ['', Validators.required],
             id_unity: ['', Validators.required],
-            shipping_guide: ['', Validators.required],
+            shipping_guide: [''],
             quantity: [0, Validators.required],
             description: ['', Validators.required],
             weight: [null],
@@ -86,7 +86,7 @@ export class LogbookEntryComponent {
     }
 
     ngOnInit() {
-        this.user_json = this.userService.getUserStorage();
+        this.user_json = this.userService.getDataSession();
 
         if (this.user_json?.attributes['group_business']) {
             this.logbookForm.get('id_group_business')?.setValue(this.user_json?.attributes['group_business']);
@@ -94,6 +94,8 @@ export class LogbookEntryComponent {
 
         this.logbookService.getAllCategories();
         this.logbookService.getAllUnitiesWeight();
+        this.logbookService.getAllAuthorized();
+        this.logbookService.getAllDestinyIntern();
         this.fetchGroupBusinessByBusiness();
     }
 
@@ -142,7 +144,16 @@ export class LogbookEntryComponent {
     }
 
     onSubmit() {
-        this.utilsService.validateControlsForms(this.logbookForm, ['weight', 'observations']);
+        const controls_ignore = ['weight', 'observations'];
+
+        if (this.hideGuide()) {
+            controls_ignore.push('shipping_guide');
+            this.logbookForm.patchValue({
+                shipping_guide: null
+            })
+        }
+
+        this.utilsService.validateControlsForms(this.logbookForm, controls_ignore);
         this.utilsService.showControlVoiled();
 
         if (this.images.length < 5) {
@@ -156,6 +167,13 @@ export class LogbookEntryComponent {
         }
     }
 
+    hideGuide() {
+        const categorys_hide = ['Ejecutivos de expalsa', 'Personal interno', 'Personal externo', 'Cuadrillas para pesca'];
+        const category_found = this.categories().find((cat: any) => cat.id_category === this.logbookForm.get('id_category')?.value);
+
+        return categorys_hide.includes(category_found?.name_category)
+    }
+
     saveLogbook() {
         this.isLoading = true;
         this.showConfirmSave = false;
@@ -164,7 +182,7 @@ export class LogbookEntryComponent {
             ...this.logbookForm.value,
             created_by: this.user_json?.user,
             name_user: this.user_json?.attributes?.fullname,
-            weight: this.logbookForm.get('weight')?.value ?? 0,
+            weight: this.logbookForm.get('weight')?.value,
             channel: 'ZENTINEL_WEB',
             external_transaction_id: uuidv4()
         };

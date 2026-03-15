@@ -1,9 +1,6 @@
-import { HttpClient } from '@angular/common/http';
 import { Injectable, WritableSignal, effect, inject, signal } from '@angular/core';
-import { MessageService } from 'primeng/api';
-import { environment } from 'src/environments/environment.development';
 import { UtilsService } from './utils.service';
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from "jwt-decode";
 
 @Injectable({
     providedIn: 'root'
@@ -19,13 +16,11 @@ export class UserService {
         this.user_storage.set(json_user);
     }
 
-    getUserStorage() {
+    getDataSession() {
         const token = localStorage.getItem('sb_token');
-
         if (token) {
             return jwtDecode(token);
         }
-
-        return null;
+        return {};
     }
 }

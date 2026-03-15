@@ -50,7 +50,7 @@ export class DashboardComponent {
     isLoading: boolean = false;
 
     ngOnInit() {
-        this.user_session = this.userService.getUserStorage();
+        this.user_session = this.userService.getDataSession();
         this.logbookService.getAllCategories();
     }
 

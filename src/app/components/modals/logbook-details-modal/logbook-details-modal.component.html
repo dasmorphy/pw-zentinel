@@ -21,6 +21,11 @@
             </span>
 
             <span class="w-full mt-1">
+                <label class="font-semibold" htmlFor="shipping_guide">Tipo: </label>
+                <label htmlFor="shipping_guide">{{logbookSelected()?.id_logbook_entry ? 'Ingreso' : 'Salida'}}</label>
+            </span>
+
+            <span class="w-full mt-1">
                 <label class="font-semibold" htmlFor="shipping_guide">Creado por: </label>
                 <label htmlFor="shipping_guide">{{logbookSelected()?.created_by}}</label>
             </span>

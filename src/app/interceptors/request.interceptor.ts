@@ -22,27 +22,17 @@ export const httpInterceptorRequest: HttpInterceptorFn = (req: HttpRequest<unkno
     // token = user_session_json.access_token
     // idGroup = user_session_json?.groups[0]?.id
   }
-  const clone:any = req.clone();
 
-  if (req.method === 'GET') {
-    clone.headers = clone.headers
-      .set('Authorization', `Bearer ${token}`)
-      .set('channel', 'ZENTINEL_WEB')
-      .set('externalTransactionId', uuidv4());
-
-  }else {
-    req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-          Group: idGroup
-        },
-        body: {
-          ...req.body as object,
-          channel: "ZENTINEL_WEB",
-          externalTransactionId: uuidv4()
-        }
-      })
-  }
+  const clone = req.clone({
+    setHeaders: {
+      Authorization: `Bearer ${token}`,
+      channel: 'ZENTINEL_WEB',
+      externalTransactionId: uuidv4()
+    },
+    body: req.method !== 'GET'
+      ? { ...(req.body || {}), channel: "ZENTINEL_WEB", externalTransactionId: uuidv4() }
+      : req.body
+  });
 
   return next(clone)
 }

@@ -45,7 +45,18 @@
                                         <p-multiSelect 
                                             [style]="{ boxShadow: 'none' }"
                                             styleClass="border-round w-full"
-                                            id="optionGroupBusiness"  
+                                            id="optionCategory"  
+                                            [options]="categories()"
+                                            [(ngModel)]="selectedCategories"
+                                            optionLabel="name_category"
+                                            optionValue="id_category"
+                                            placeholder="Seleccione categoría"
+                                        ></p-multiSelect>
+
+                                        <p-multiSelect 
+                                            [style]="{ boxShadow: 'none' }"
+                                            styleClass="border-round w-full"
+                                            id="optionSector"  
                                             [options]="optionSector"
                                             [(ngModel)]="selectedSector"
                                             optionLabel="name"
@@ -94,18 +105,27 @@
                                 </ng-template>
                             </p-columnFilter>
                         </div>
-                        <p-button label="" icon="pi pi-sync" class="w-reload" (onClick)="reloadHistoryLogbook()"
-                            styleClass="w-full bg-white text-primary--custom b-reload border-round-1xl h-full">
-                        </p-button>
+
+                        <div class="flex gap-2">
+                            <p-button label="" icon="pi pi-file-excel" class="w-reload" (onClick)="generateReportHistory()"
+                                styleClass="w-full bg-white text-primary--custom b-reload border-round-1xl h-full">
+                            </p-button>
+                            <p-button label="" icon="pi pi-sync" class="w-reload" (onClick)="reloadHistoryLogbook()"
+                                styleClass="w-full bg-white text-primary--custom b-reload border-round-1xl h-full">
+                            </p-button>
+                        </div>
+
                     </div>
                 </ng-template>
                 <ng-template pTemplate="header">
                     <tr>
                         <th scope="col">Opciones</th>
                         <th scope="col">Fecha</th>
+                        <th scope="col">Tipo</th>
                         <th scope="col">Guia / documento</th>
                         <th scope="col">Categoría</th>
-                        <th scope="col">Nombre conductor</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Conductor</th>
                         <th scope="col">Placa</th>
                         <th scope="col">Jornada</th>
                     </tr>
@@ -120,11 +140,13 @@
                             </p-splitButton>
                         </td>
                         <td  data-titulo="Fecha:" [ngxTippy]="'Hora de registro: ' + (loogbook?.created_at | date:'HH:mm':'UTC')">{{ loogbook?.created_at | date:'dd/MM/yyyy':'UTC' }}</td>
-                        <td  data-titulo="Contrato:">{{ loogbook?.shipping_guide ?? 'N/C' }}</td>
-                        <td  data-titulo="Contrato:">{{ loogbook?.name_category ?? 'N/C' }}</td>
-                        <td  data-titulo="Cuenta:">{{ loogbook?.name_driver }}</td>
-                        <td  data-titulo="Identificación:">{{ loogbook?.truck_license }}</td>
-                        <td  data-titulo="Ciudad:">{{ loogbook?.workdday }}</td>
+                        <td  data-titulo="Tipo:">{{ loogbook?.id_logbook_entry ? 'Ingreso' : 'Salida'  }}</td>
+                        <td  data-titulo="Documento:">{{ loogbook?.shipping_guide ?? 'N/C' }}</td>
+                        <td  data-titulo="Categoría:">{{ loogbook?.name_category ?? 'N/C' }}</td>
+                        <td  data-titulo="Categoría:">{{ loogbook?.quantity }}</td>
+                        <td  data-titulo="Conductor:">{{ loogbook?.name_driver }}</td>
+                        <td  data-titulo="Licencia:">{{ loogbook?.truck_license }}</td>
+                        <td  data-titulo="Jornada:">{{ loogbook?.workdday }}</td>
                     </tr>
                 </ng-template>
                 <ng-template pTemplate="emptymessage">

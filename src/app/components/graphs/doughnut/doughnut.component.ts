@@ -66,7 +66,7 @@ export class DoughnutComponent {
   user_session: any;
 
   ngOnInit() {
-    this.user_session = this.userService.getUserStorage();
+    this.user_session = this.userService.getDataSession();
     this.fetchDataGraphs()
     this.fetchSectorByBusiness();
     this.fetchGroupBusinessByBusiness();

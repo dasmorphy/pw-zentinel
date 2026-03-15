@@ -53,6 +53,28 @@ export class UtilsService {
         this.firstControlForms = '';
     }
 
+    downloadFile(response: any, defaultName: string) {
+        const blob = response.body as Blob;
+
+        const contentDisposition = response.headers.get('content-disposition');
+        let fileName = defaultName;
+
+        if (contentDisposition) {
+        const match = contentDisposition.match(/filename="?(.+)"?/);
+        if (match?.[1]) {
+            fileName = match[1];
+        }
+        }
+
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+    }
+
     onSuccess(message: string, time: number = 5000) {
         this.messageService.add({
             life: time,
