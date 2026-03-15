@@ -1,20 +1,30 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/router';
-import { AuthService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthGuard {
 
-  constructor(private router: Router) {}
+  constructor(private router: Router) { }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    const user_stoage: any = localStorage.getItem('sb_token');
 
-    if (!user_stoage) {
+    const token = localStorage.getItem('sb_token');
+
+    if (!token) {
       this.router.navigate(['/login']);
       return false;
+    }
+
+    // validar que no sea JSON
+    try {
+      JSON.parse(token);
+      localStorage.removeItem('sb_token');
+      this.router.navigate(['/login']);
+      return false;
+    } catch {
+      // si falla, es string normal
     }
 
     return true;

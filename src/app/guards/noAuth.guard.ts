@@ -10,9 +10,9 @@ export class NoAuthGuard {
   constructor(private router: Router) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    const user_stoage: any = localStorage.getItem('sb_token');
+    const user_storage: any = localStorage.getItem('sb_token');
 
-    if (user_stoage) {
+    if (user_storage) {
       this.router.navigate(['/dashboard']);
       return false;
     }

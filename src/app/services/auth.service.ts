@@ -17,64 +17,6 @@ export class AuthService {
     private readonly http = inject(HttpClient);
     
     signIn(user: string, password: string) {
-        // if (user == 'admin' && pass == '123456') {
-        //     const dataUser = {
-        //         'email': user,
-        //         'name': 'Administrador',
-        //         'user': user,
-        //         'role': 'admin',
-        //         'business': 'Expalsa',
-        //         'id_business': 1,
-        //         'group_business': 1,
-        //         'name_group_business': 'Camanglar 1',
-        //     };
-        //     localStorage.setItem('sb_token', JSON.stringify(dataUser));
-        //     this.userService.setUserStorage(dataUser)
-        //     this.router.navigate(['/dashboard']);
-
-        // } else if (user == 'camanglar1@hotmail.com' && pass == '123456') {
-        //     const dataUser = {
-        //         'email': user,
-        //         'name': 'Daniel Males',
-        //         'user': user,
-        //         'group_business': 1,
-        //         'name_group_business': 'Camanglar 1',
-        //         'role': 'guardia',
-        //     };
-        //     localStorage.setItem('sb_token', JSON.stringify(dataUser));
-        //     this.userService.setUserStorage(dataUser)
-        //     this.router.navigate(['/dashboard']);
-
-        // } else if (user == 'camanglar2@hotmail.com' && pass == '123456') {
-        //     const dataUser = {
-        //         'email': user,
-        //         'user': user,
-        //         'name': 'David Cedeño',
-        //         'group_business': 2,
-        //         'name_group_business': 'Camanglar 2',
-        //         'role': 'guardia',
-        //     };
-        //     localStorage.setItem('sb_token', JSON.stringify(dataUser));
-        //     this.userService.setUserStorage(dataUser)
-        //     this.router.navigate(['/dashboard']);
-
-        // } else if (user == 'camanglar3@hotmail.com' && pass == '123456') {
-        //     const dataUser = {
-        //         'email': user,
-        //         'user': user,
-        //         'name': 'David Villamar',
-        //         'group_business': 3,
-        //         'name_group_business': 'Camanglar 3',
-        //         'role': 'guardia',
-        //     };
-
-        //     localStorage.setItem('sb_token', JSON.stringify(dataUser));
-        //     this.userService.setUserStorage(dataUser)
-        //     this.router.navigate(['/dashboard']);
-        // } else {
-        //     this.utilsService.onError('Usuario o contraseña incorrectos');
-        // }
-        
         return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/post/login`, {
             login: { password, user }
         });

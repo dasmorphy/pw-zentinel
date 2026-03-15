@@ -141,13 +141,11 @@ export class AllLogbookComponent {
 
     fetchHistoryLogbook() {
         this.isLoading = true;
-        const user_session = localStorage.getItem('sb_token')
-        const user_json = user_session ? JSON.parse(user_session) : null;
-        this.user_session = user_json;
+        this.user_session = this.userService.getDataSession();
         const filters = { ...this.filters };
 
-        if (user_json?.role !== 'admin') {
-            filters.user = user_json?.user
+        if (this.user_session?.role !== 'admin') {
+            filters.user = this.user_session?.user
         }
 
         this.logbookService.getHistoryLogbook(filters).subscribe({
@@ -164,14 +162,12 @@ export class AllLogbookComponent {
 
     fetchReportHistory() {
         this.isLoading = true;
-        const user_session = localStorage.getItem('sb_token')
-        const user_json = user_session ? JSON.parse(user_session) : null;
-        this.user_session = user_json;
+        this.user_session = this.userService.getDataSession();
         const filters = { ...this.filters };
 
 
-        if (user_json?.role !== 'admin') {
-            filters.user = user_json?.user
+        if (this.user_session?.role !== 'admin') {
+            filters.user = this.user_session?.user
         }
 
         this.logbookService.getReportHistory(filters).subscribe({
