@@ -1,13 +1,12 @@
 import { Injectable, WritableSignal, effect, inject, signal } from '@angular/core';
-import { UtilsService } from './utils.service';
 import { jwtDecode } from "jwt-decode";
+import { Router } from '@angular/router';
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
-
-    private utilsService = inject(UtilsService);
+    private router = inject(Router);
 
     user_storage: WritableSignal<any> = signal({})
 
@@ -19,7 +18,12 @@ export class UserService {
     getDataSession() {
         const token = localStorage.getItem('sb_token');
         if (token) {
-            return jwtDecode(token);
+            try {
+                return jwtDecode(token);
+            } catch (error) {
+                localStorage.removeItem('sb_token');
+                this.router.navigate(['/login']);
+            }
         }
         return {};
     }
