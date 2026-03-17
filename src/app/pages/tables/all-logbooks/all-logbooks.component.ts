@@ -164,7 +164,7 @@ export class AllLogbookComponent {
             filters.groups_business_id = attributes?.group_business?.toString()
         }
 
-        this.logbookService.getHistoryLogbook(filters).subscribe({
+        this.logbookService.getAllLogbooks(filters).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
                 this.dataLogbooks = data?.data;

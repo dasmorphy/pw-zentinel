@@ -52,13 +52,17 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
     // showDetail: boolean = false;
     isLoading: boolean = false;
     log_selected: any;
+    audio = new Audio('./assets/sound-notification.mp3');
 
     ngOnInit() {
         this.fetchHistoryLogbook();
 
         this.sseSub = this.eventSourceService.connect(0).subscribe({
             next: (data: any) => {
-            this.utilsService.onSuccess(`Se ha recibido una nueva bitácora de la finca ${data?.group_name ?? 'N/A'}`)
+                this.audio.play().catch(err => {
+                    console.warn('No se pudo reproducir el sonido:', err);
+                });
+                this.utilsService.onSuccess(`Se ha recibido una nueva bitácora de la finca ${data?.logbook?.group_name ?? 'N/A'}`)
                 this.dataComplete.unshift(data?.logbook);
                 this.dataHistory = this.mapHistory(this.dataComplete).slice(0, 5);
 

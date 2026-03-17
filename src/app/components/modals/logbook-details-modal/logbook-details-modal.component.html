@@ -31,6 +31,11 @@
             </span>
 
             <span class="w-full mt-1">
+                <label class="font-semibold" htmlFor="shipping_guide">Usuario: </label>
+                <label htmlFor="shipping_guide">{{logbookSelected()?.name_user}}</label>
+            </span>
+
+            <span class="w-full mt-1">
                 <label class="font-semibold" htmlFor="shipping_guide">Destino: </label>
                 <label htmlFor="shipping_guide">{{logbookSelected()?.destiny_intern ??
                     logbookSelected()?.destiny}}</label>
@@ -61,7 +66,7 @@
 
             @if (logbookSelected()?.out) {
                 <span class="w-full mt-1">
-                    <label class="font-semibold" htmlFor="shipping_guide">Nombre Chófer: </label>
+                    <label class="font-semibold" htmlFor="shipping_guide">Conductor: </label>
                     <label htmlFor="shipping_guide">{{ logbookSelected()?.out?.name_driver }}</label>
                 </span>
 
