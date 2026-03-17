@@ -59,6 +59,7 @@ export class AllLogbookComponent {
     public readonly userService = inject(UserService);
     public readonly logbookService = inject(LogbookService);
     public readonly utilsService = inject(UtilsService);
+    public readonly router = inject(Router);
 
     logbookSelected = computed(() => this.logbookService.showModalSummary());
     categories = computed(() => this.logbookService.categories());
@@ -104,7 +105,7 @@ export class AllLogbookComponent {
             label: 'Continuar',
             icon: 'pi pi-play-circle',
             visible: () => this.selectedLogbook?.status === 'Pendiente Salida',
-            command: () => this.viewLogbookDetails(this.selectedLogbook)
+            command: () => this.routeOut()
         },
     ];
 
@@ -260,6 +261,14 @@ export class AllLogbookComponent {
 
     optionsLogbook(loogbook: any) {
         this.selectedLogbook = loogbook
+    }
+
+    routeOut() {
+        this.router.navigate(['/reporte-salida'], {
+            state: {
+                data: this.selectedLogbook
+            }
+        });
     }
 
     viewLogbookDetails(log: any) {

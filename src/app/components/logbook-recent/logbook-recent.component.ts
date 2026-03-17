@@ -55,8 +55,7 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
 
         this.sseSub = this.eventSourceService.connect(0).subscribe({
             next: (data: any) => {
-                this.utilsService.onSuccess('Se ha recibido una nueva bitácora')
-                console.log('Nuevo mensaje:', data);
+            this.utilsService.onSuccess(`Se ha recibido una nueva bitácora de la finca ${data?.group_name ?? 'N/A'}`)
                 this.dataComplete.unshift(data?.logbook);
                 this.dataHistory = this.mapHistory(this.dataComplete).slice(0, 5);
 

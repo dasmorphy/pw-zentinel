@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, ViewChild } from '@angular/core';
+import { Component, computed, inject, ViewChild } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -15,6 +15,7 @@ import { DialogModule } from 'primeng/dialog';
 import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { v4 as uuidv4} from 'uuid';
 import { DashboardService } from 'src/app/services/dashboard.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-logbook-out',
@@ -42,6 +43,7 @@ export class LogbookOutComponent {
     private logbookService = new LogbookService();
     private utilsService = new UtilsService();
     private dashboardService = new DashboardService();
+    public readonly router = inject(Router);
     
 
     categories = computed(() => this.logbookService.categories());
@@ -76,6 +78,7 @@ export class LogbookOutComponent {
             person_withdraws: [''],
             authorized_by: ['', Validators.required],
             observations: [''],
+            id_logbook_entry: [null],
         });
     }
 
@@ -87,10 +90,16 @@ export class LogbookOutComponent {
             this.logbookForm.get('id_group_business')?.setValue(this.user_json?.attributes['group_business']);
         }
 
+        const data = history.state.data;
+
         this.logbookService.getAllCategories();
         this.logbookService.getAllUnitiesWeight();
         this.logbookService.getAllAuthorized();
         this.fetchGroupBusinessByBusiness();
+
+        if (data) {
+            this.autocompleted(data);
+        }
     }
 
     fetchGroupBusinessByBusiness() {
@@ -104,7 +113,7 @@ export class LogbookOutComponent {
     }
 
     onSubmit() {
-        const controls_ignore = ['weight', 'observations'];
+        const controls_ignore = ['weight', 'observations', 'id_logbook_entry'];
 
         if (this.hideGuide()) {
             controls_ignore.push('shipping_guide');
@@ -208,7 +217,7 @@ export class LogbookOutComponent {
         this.images.forEach((file: File) => {
             formData.append('images', file);
         });
-
+        
         this.logbookService.saveLogbookOut(formData).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
@@ -230,6 +239,18 @@ export class LogbookOutComponent {
 
 
 
+    }
+
+    autocompleted(data: any) {
+        this.logbookForm.patchValue({
+            id_category: data?.category_id,
+            id_unity: data?.unity_id,
+            shipping_guide: data?.shipping_guide,
+            truck_license: data?.truck_license,
+            name_driver: data?.name_driver,
+            authorized_by: data?.authorized_by,
+            id_logbook_entry: data?.id_logbook_entry
+        });
     }
 
 }
