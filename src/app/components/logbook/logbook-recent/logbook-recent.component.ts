@@ -11,7 +11,7 @@ import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { EventSourceService } from "src/app/services/event-source.service";
 import { LogbookService } from "src/app/services/logbook.service";
 import { UtilsService } from "src/app/services/utils.service";
-import { LogBookDetailsModalComponent } from "../modals/logbook-details-modal/logbook-details-modal.component";
+import { LogBookDetailsModalComponent } from "../../modals/logbook-details-modal/logbook-details-modal.component";
 import { filter, Subscription } from "rxjs";
 import { AuthService } from "src/app/services/auth.service";
 

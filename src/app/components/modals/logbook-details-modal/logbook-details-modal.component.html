@@ -9,167 +9,29 @@
     </ng-template>
 
     <ng-template pTemplate="content">
-        <div class="div-responsive mt-4 gap-2">
-            <span class="w-full mt-1">
-                <label class="font-semibold" htmlFor="shipping_guide">Localidad: </label>
-                <label htmlFor="shipping_guide">{{logbookSelected()?.group_name}}</label>
-            </span>
 
-            <span class="w-full mt-1">
-                <label class="font-semibold" htmlFor="shipping_guide">Coordenadas: </label>
-                <label htmlFor="shipping_guide">{{logbookSelected()?.lat}},{{logbookSelected()?.long}} </label>
-            </span>
-
-            <!-- <span class="w-full mt-1">
-                <label class="font-semibold" htmlFor="shipping_guide">Tipo: </label>
-                <label htmlFor="shipping_guide">{{logbookSelected()?.id_logbook_entry ? 'Ingreso' : 'Salida'}}</label>
-            </span> -->
-
-            <span class="w-full mt-1">
-                <label class="font-semibold" htmlFor="shipping_guide">Creado por: </label>
-                <label htmlFor="shipping_guide">{{logbookSelected()?.created_by}}</label>
-            </span>
-
-            <span class="w-full mt-1">
-                <label class="font-semibold" htmlFor="shipping_guide">Usuario: </label>
-                <label htmlFor="shipping_guide">{{logbookSelected()?.name_user}}</label>
-            </span>
-
-            <span class="w-full mt-1">
-                <label class="font-semibold" htmlFor="shipping_guide">Destino: </label>
-                <label htmlFor="shipping_guide">{{logbookSelected()?.destiny_intern ??
-                    logbookSelected()?.destiny}}</label>
-            </span>
-
-            <span class="w-full mt-1">
-                <label class="font-semibold" htmlFor="shipping_guide">Categoria: </label>
-                <label htmlFor="shipping_guide">{{logbookSelected()?.name_category}}</label>
-            </span>
-
-            <span class="w-full mt-1">
-                <label class="font-semibold" htmlFor="shipping_guide">Cantidad: </label>
-                <label htmlFor="shipping_guide">{{logbookSelected()?.quantity ?? 'N/A'}}</label>
-            </span>
-
-            <span class="w-full mt-1">
-                <label class="font-semibold" htmlFor="shipping_guide">Peso: </label>
-                <label htmlFor="shipping_guide">{{logbookSelected()?.weight ?? 'N/A'}}</label>
-            </span>
-
+        @if (logbookSelected()?.out) {
+            <p-tabView>
+                <p-tabPanel header="Ingreso">
+                    <app-logbook-detail-entry [logbookData]="logbookSelected()"></app-logbook-detail-entry>
+                </p-tabPanel>
+    
+                <p-tabPanel header="Salida">
+                    <app-logbook-detail-out [logbookData]="logbookSelected()?.out"></app-logbook-detail-out>
+                </p-tabPanel>
+            </p-tabView>
+        }
+        @else {
             @if (logbookSelected()?.id_logbook_entry) {
-                <span class="w-full mt-1">
-                    <label class="font-semibold" htmlFor="shipping_guide">Fecha Ingreso: </label>
-                    <label htmlFor="shipping_guide">{{ logbookSelected()?.created_at | date:'dd/MM/yyyy HH:mm':'UTC'
-                        }}</label>
-                </span>
+                <app-logbook-detail-entry [logbookData]="logbookSelected()"></app-logbook-detail-entry>
             }
-
-            @if (logbookSelected()?.out) {
-                <span class="w-full mt-1">
-                    <label class="font-semibold" htmlFor="shipping_guide">Conductor: </label>
-                    <label htmlFor="shipping_guide">{{ logbookSelected()?.out?.name_driver }}</label>
-                </span>
-
-                <span class="w-full mt-1">
-                    <label class="font-semibold" htmlFor="shipping_guide">Persona Custodia: </label>
-                    <label htmlFor="shipping_guide">{{ logbookSelected()?.out?.person_withdraws }}</label>
-                </span>
-
-                <span class="w-full mt-1">
-                    <label class="font-semibold" htmlFor="shipping_guide">Fecha Salida: </label>
-                    <label htmlFor="shipping_guide">{{ logbookSelected()?.out?.created_at | date:'dd/MM/yyyy HH:mm':'UTC'
-                        }}</label>
-                </span>
-            }
-
-            <span class="w-full mt-1">
-                <label class="font-semibold" htmlFor="shipping_guide">Conductor: </label>
-                <label htmlFor="shipping_guide">{{ logbookSelected()?.name_driver }}</label>
-            </span>
-
+    
+            
             @if (logbookSelected()?.id_logbook_out) {
-
-                <span class="w-full mt-1">
-                    <label class="font-semibold" htmlFor="shipping_guide">Persona Custodia: </label>
-                    <label htmlFor="shipping_guide">{{ logbookSelected()?.person_withdraws ?? 'N/A' }}</label>
-                </span>
-
-                <span class="w-full mt-1">
-                    <label class="font-semibold" htmlFor="shipping_guide">Fecha Salida: </label>
-                    <label htmlFor="shipping_guide">{{ logbookSelected()?.created_at | date:'dd/MM/yyyy HH:mm':'UTC'
-                        }}</label>
-                </span>
+                <app-logbook-detail-out [logbookData]="logbookSelected()"></app-logbook-detail-out>
             }
-            @else {
-                <span class="w-full mt-1">
-                    <label class="font-semibold" htmlFor="shipping_guide">Decripción: </label>
-                    <label htmlFor="shipping_guide">{{logbookSelected()?.description}}</label>
-                </span>
-
-                <span class="w-full mt-1">
-                    <label class="font-semibold" htmlFor="shipping_guide">Proveedor: </label>
-                    <label htmlFor="shipping_guide">{{logbookSelected()?.provider ?? 'N/A'}}</label>
-                </span>
-
-            }
-
-            <span class="w-full mt-1">
-                <label class="font-semibold" htmlFor="shipping_guide">Placa: </label>
-                <label htmlFor="shipping_guide">{{ logbookSelected()?.truck_license }}</label>
-            </span>
-
-            <span class="w-full mt-1">
-                <label class="font-semibold" htmlFor="shipping_guide">Observaciones: </label>
-                <label htmlFor="shipping_guide">{{ !logbookSelected()?.observations || logbookSelected()?.observations
-                    === '' ? 'N/A' : logbookSelected()?.observations }}</label>
-            </span>
-
-        </div>
-
-        @if (logbookSelected()?.images_entry?.length > 0) {
-            <div class="flex flex-column mt-2">
-                <label class="font-semibold" htmlFor="shipping_guide">Imágenes Ingreso: </label>
-
-                <div class="div-responsive mt-3">
-                    <div class="flex justify-content-center" *ngFor="let image of logbookSelected()?.images_entry">
-                        <img style="object-fit: contain;" [src]="'http://st.telearseg.net' + image" alt="imagenes ingreso"
-                            loading="lazy" height="190" width="180">
-                    </div>
-                </div>
-
-
-            </div>
         }
 
-        @if (logbookSelected()?.out?.images_out?.length > 0) {
-            <div class="flex flex-column mt-2">
-                <label class="font-semibold" htmlFor="shipping_guide">Imágenes Salida: </label>
-
-                <div class="div-responsive mt-3">
-                    <div class="flex justify-content-center" *ngFor="let image of logbookSelected()?.out?.images_out">
-                        <img style="object-fit: contain;" [src]="'http://st.telearseg.net' + image" alt="imagenes salida"
-                            loading="lazy" height="190" width="180">
-                    </div>
-                </div>
-
-
-            </div>
-        }
-
-        @if (logbookSelected()?.images_out?.length > 0) {
-            <div class="flex flex-column mt-2">
-                <label class="font-semibold" htmlFor="shipping_guide">Imágenes Salida: </label>
-
-                <div class="div-responsive mt-3">
-                    <div class="flex justify-content-center" *ngFor="let image of logbookSelected()?.images_out">
-                        <img style="object-fit: contain;" [src]="'http://st.telearseg.net' + image" alt="imagenes salida"
-                            loading="lazy" height="190" width="180">
-                    </div>
-                </div>
-
-
-            </div>
-        }
 
     </ng-template>
 

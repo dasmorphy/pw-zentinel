@@ -22,6 +22,9 @@ import { validate } from 'uuid';
 import { TieredMenuModule } from 'primeng/tieredmenu';
 import { LogbookService } from 'src/app/services/logbook.service';
 import { UtilsService } from 'src/app/services/utils.service';
+import { TabViewModule } from 'primeng/tabview';
+import { LogbookDetailOutComponent } from '../../logbook/logbook-detail-out/logbook-detail-out.component';
+import { LogbookDetailEntryComponent } from '../../logbook/logbook-detail-entry/logbook-detail-entry.component';
 
 @Component({
     selector: 'app-logbook-details-modal',
@@ -44,6 +47,9 @@ import { UtilsService } from 'src/app/services/utils.service';
         SplitButtonModule,
         NgxTippyModule,
         TieredMenuModule,
+        TabViewModule,
+        LogbookDetailOutComponent,
+        LogbookDetailEntryComponent
     ],
     templateUrl: './logbook-details-modal.component.html',
     styleUrls: ['./logbook-details-modal.component.sass']

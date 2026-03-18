@@ -17,7 +17,7 @@ import { DoughnutComponent } from 'src/app/components/graphs/doughnut/doughnut.c
 import { LogbookService } from 'src/app/services/logbook.service';
 import { UserService } from 'src/app/services/user.service';
 import { DialogModule } from 'primeng/dialog';
-import { LogbookRecentComponent } from 'src/app/components/logbook-recent/logbook-recent.component';
+import { LogbookRecentComponent } from 'src/app/components/logbook/logbook-recent/logbook-recent.component';
 
 @Component({
     selector: 'app-dashboard',
