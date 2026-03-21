@@ -71,6 +71,7 @@ export class AllLogbookComponent {
     dataLogbooks: any = [];
     selectedLogbook: any = null;
     isLoading: boolean = true;
+    showConfirmDelete: boolean = false;
 
     optionSector: any = [];
     optionGroupBusiness: any = [];
@@ -109,6 +110,11 @@ export class AllLogbookComponent {
             icon: 'pi pi-play-circle',
             visible: () => this.selectedLogbook?.status === 'Pendiente Salida',
             command: () => this.routeOut()
+        },
+        {
+            label: 'Eliminar',
+            icon: 'pi pi-trash',
+            command: () => this.showConfirmDelete = true
         },
     ];
 
@@ -304,5 +310,25 @@ export class AllLogbookComponent {
         default:
             return 'info';
         }
-  }
+    }
+
+    deleteLogbook() {
+        this.isLoading = true;
+        this.showConfirmDelete = false;
+        const id_logbook = this.selectedLogbook?.id_logbook_entry ?? this.selectedLogbook?.id_logbook_out;
+        const type_logbook = this.selectedLogbook?.id_logbook_entry ? 'entrada' : 'salida';
+
+        this.logbookService.deleteLogbook(id_logbook, type_logbook).subscribe({
+            next: (data: any) => {
+                this.isLoading = false;
+                this.utilsService.onSuccess(data?.data?.message ?? 'Bitácora eliminada correctamente');
+                this.fetchHistoryLogbook();
+            },
+            error: (error: any) => {
+                this.isLoading = false;
+                console.log(error)
+                this.utilsService.onError(error?.error?.message ?? 'No se pudo eliminar la bitácora');
+            }
+        })
+    }
 }

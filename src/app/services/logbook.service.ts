@@ -197,6 +197,22 @@ export class LogbookService {
         );
     }
 
+    deleteLogbook(id_logbook: number, type_logbook: string) {
+        let params = new HttpParams();
+
+        if (id_logbook) {
+            params = params.set('id-logbook', id_logbook);
+        }
+
+        if (type_logbook) {
+            params = params.set('type-logbook', type_logbook);
+        }
+
+        return this.http.delete(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/delete/logbook`,
+            { params }
+        )
+    }
+
     onError(message: string) {
         this.messageService.add({
             life: 5000,

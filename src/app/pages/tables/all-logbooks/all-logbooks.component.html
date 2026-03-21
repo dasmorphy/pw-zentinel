@@ -4,6 +4,29 @@
     <app-logbook-details-modal [showModal]="logbookSelected() ?? false"></app-logbook-details-modal>
 }
 
+<p-dialog header="Header" id="delete-logbook" [closable]="false" [(visible)]="showConfirmDelete" [draggable]="false" [modal]="true"
+    [style]="{ 'width': '23vw', 'border-radius': '32px'}">
+    <ng-template pTemplate="header">
+        <div style="display: grid; place-items: center;">
+            <i class="pi pi-exclamation-circle mt-4" style="color: #EB6506; font-size: 40px;"></i>
+            <h1 style="margin: 0; font-size: 22px;" class="text-center mt-3">
+                ¿Está seguro de continuar?
+            </h1>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-center gap-3 mt-3" style="font-size: 15px;">
+            <p-button label="Guardar" (onClick)="deleteLogbook()"
+                styleClass="bg-btn-primary w-full">
+            </p-button>
+            <p-button label="Cancelar" (onClick)="showConfirmDelete = false"
+                styleClass="bg-btn-cancel w-full">
+            </p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
 <div
     class="bg-bluegray-50 mt-header border-round-2xl flex flex-column flex-no-wrap justify-content-center align-items-end">
     
