@@ -114,6 +114,7 @@ export class AllLogbookComponent {
         {
             label: 'Eliminar',
             icon: 'pi pi-trash',
+            visible: () => this.user_session?.user === 'dmales' || this.user_session?.user === 'cod_monitoreo' || this.user_permissions_signal().includes('DELETE_LOGBOOK'),
             command: () => this.showConfirmDelete = true
         },
     ];
