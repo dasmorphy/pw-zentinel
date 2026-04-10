@@ -1,0 +1,149 @@
+<p-toast></p-toast>
+
+
+<div class="bg-bluegray-50 border-round-2xl flex justify-content-center mt-header">
+    <div class="bg-white w-12 flex flex-column border-round-md flex-wrap">
+        <div class="flex justify-content-start w-full">
+            <div class="flex flex-column card-form w-full">
+
+                <h2>Nuevo Despacho</h2>
+
+
+                <form [formGroup]="dispatchForm">
+                    <div class="flex gap-3">
+
+                        <div formArrayName="sku" class="mt-3" style="width: 50%;">
+                            <span class="flex justify-content-between align-items-center">
+                                <h3>Gestión Skus</h3>
+            
+                                <button icon="pi pi-plus" pButton type="button" label="Agregar Sku" class="p-button-primary align-self-center btn-add" (click)="addSku()"></button>
+                            </span>
+    
+                            <div class="card-container px-5 mb-3" *ngFor="let skuItem of sku.controls; let i = index" [formGroupName]="i">
+                                <div class="flex justify-content-between align-items-center">
+                                    <h4>SKU {{i + 1}} </h4>
+    
+                                    <div class="flex gap-3">
+                                        <span class="sku-tag">
+                                            {{ skuItem.get('type_sku')?.value }}
+                                        </span>
+        
+                                        <button pButton style="height: 35px; width: 35px;" type="button" icon="pi pi-trash" class="p-button-danger" (click)="removeSku(i)"></button>
+                                    </div>
+    
+                                </div>
+                                
+    
+                                <div formArrayName="products">
+    
+                                    <div class="card-product flex gap-3 align-items-center mb-3" *ngFor="let product of products(i).controls; let j = index" [formGroupName]="j">
+    
+                                        <span class="w-full">
+                                            <label htmlFor="username">Producto <span style="color: red;">*</span></label>
+                                            <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" formControlName="id_product"
+                                                id="cuentaCliente" [options]="productsSku()" optionLabel="name" optionValue="id_product"
+                                                [emptyMessage]="messageEmpty">
+                                            </p-dropdown>
+                                            <div *ngIf="dispatchForm.get('id_product')?.hasError('campoVacio')">
+                                                <span class="validate-data">El campo categoria es obligatorio</span>
+                                            </div>
+                                        </span>
+                                        
+                                        <span class="w-full">
+                                            <label htmlFor="username">Cantidad <span style="color: red;">*</span></label>
+                                            <input class="border-round w-full mt-2" pInputText
+                                                id="shipping_guide"
+                                                formControlName="quantity" />
+                                            <div *ngIf="dispatchForm.get('id_category')?.hasError('campoVacio')">
+                                                <span class="validate-data">El campo categoria es obligatorio</span>
+                                            </div>
+                                        </span>
+    
+                                        <button pButton type="button" icon="pi pi-trash" class="p-button-danger size-btn-remove mt-3" (click)="removeProduct(i, j)"></button>
+    
+                                    </div>
+                                    
+                                </div>
+                                
+                                <button icon="pi pi-plus" pButton type="button" label="Agregar Producto" class="p-button-primary mt-3 align-self-center btn-add" (click)="addProduct(i)"></button>
+                                
+                            </div>
+    
+                            
+                            
+                        </div>
+    
+                        <div class="flex flex-column m-3" style="width: 50%;">
+                            <span class="flex align-items-center">
+                                <h3>Logística</h3>
+
+                                <div>
+                                    
+                                </div>
+                            </span>
+
+                            <span class="w-full mt-3">
+                                <label htmlFor="email">N. orden <span style="color: red;">*</span></label>
+                                <input class="border-round w-full mt-2" pInputText type="text" id="order_number" name="order_number"
+                                    formControlName="order_number" />
+                                <div *ngIf="dispatchForm.get('order_number')?.hasError('campoVacio')">
+                                    <span class="validate-data">Este campo es obligatorio</span>
+                                </div>
+                            </span>
+
+                            <span class="w-full mt-3">
+                                <label htmlFor="email">Conductor <span style="color: red;">*</span></label>
+                                <input class="border-round w-full mt-2" pInputText type="text" id="driver" name="driver"
+                                    formControlName="driver" />
+                                <div *ngIf="dispatchForm.get('driver')?.hasError('campoVacio')">
+                                    <span class="validate-data">Este campo es obligatorio</span>
+                                </div>
+                            </span>
+
+                            <span class="w-full mt-3">
+                                <label htmlFor="email">Placa <span style="color: red;">*</span></label>
+                                <input class="border-round w-full mt-2" pInputText type="text" id="truck_license" name="truck_license"
+                                    formControlName="truck_license" />
+                                <div *ngIf="dispatchForm.get('truck_license')?.hasError('campoVacio')">
+                                    <span class="validate-data">Este campo es obligatorio</span>
+                                </div>
+                            </span>
+
+
+                            <span class="w-full mt-3">
+                                <label htmlFor="destiny">Destino <span style="color: red;">*</span></label>
+                                <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" formControlName="destiny"
+                                    id="destiny_intern" [options]="destinyIntern()" optionLabel="name" optionValue="id_destiny"
+                                    [emptyMessage]="messageEmpty">
+                                </p-dropdown>
+                                <div *ngIf="dispatchForm.get('destiny')?.hasError('campoVacio')">
+                                    <span class="validate-data">Este campo es obligatorio</span>
+                                </div>
+                            </span>
+
+                            <span class="w-full mt-3">
+                                <label htmlFor="destiny">Tipo transporte <span style="color: red;">*</span></label>
+                                <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" formControlName="vehicle_type"
+                                    id="destiny_intern" [options]="vehiclesTypes()" optionLabel="name" optionValue="id_vehicle_type"
+                                    [emptyMessage]="messageEmpty">
+                                </p-dropdown>
+                                <div *ngIf="dispatchForm.get('vehicle_type')?.hasError('campoVacio')">
+                                    <span class="validate-data">Este campo es obligatorio</span>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                    
+                </form>
+
+
+                <div class="flex justify-content-end">
+                  <p-button label="Guardar" class="mt-5" (onClick)="onSubmit()"
+                    styleClass="bg-btn-primary px-6 w-full" >
+                  </p-button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

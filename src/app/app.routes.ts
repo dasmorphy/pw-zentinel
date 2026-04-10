@@ -7,6 +7,8 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { NoAuthGuard } from './guards/noAuth.guard';
 import { AuthGuard } from './guards/auth.guard';
 import { AllLogbookComponent } from './pages/tables/all-logbooks/all-logbooks.component';
+import { NewDispatchForm } from './pages/forms/biomar/new-dispatch-form/new-dispatch-form.component';
+import { AllDispatchsComponent } from './pages/tables/all-dispatchs/all-dispatchs.component';
 
 export const routes: Routes = [
 
@@ -43,7 +45,20 @@ export const routes: Routes = [
                 path: "reporte-salida",
                 loadComponent: () => LogbookOutComponent,
                 canActivate: [AuthGuard]
-            }
+            },
+            {
+                path: "crear-despacho",
+                loadComponent: () => NewDispatchForm,
+                canActivate: [AuthGuard]
+            },
+
+            {
+                path: "tablero-despacho",
+                loadComponent: () => AllDispatchsComponent,
+                canActivate: [AuthGuard]
+            },
+
+            
         ],
         canActivate: [AuthGuard]
     },
