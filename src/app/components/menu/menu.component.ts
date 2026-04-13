@@ -118,7 +118,7 @@ export class MenuComponent implements OnInit {
             label: 'Nuevo registro de entrada',
             icon: 'pi pi-pen-to-square',
             visible: this.user_permissions_signal()?.includes('NUEVO_INGRESO_BIOMAR'),
-            routerLink: ['reporte-salida'],
+            routerLink: ['nuevo-ingreso'],
             command: () => { this.clickHiddenToggle() }
           },
         ]

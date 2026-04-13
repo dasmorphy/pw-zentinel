@@ -1,0 +1,175 @@
+<p-toast></p-toast>
+
+<p-dialog header="Header" [closable]="false" [(visible)]="showConfirmSave" [draggable]="false" [modal]="true"
+    [style]="{ 'width': '23vw', 'border-radius': '32px'}">
+    <ng-template pTemplate="header">
+        <div style="display: grid; place-items: center;">
+            <i class="pi pi-exclamation-circle mt-4" style="color: #EB6506; font-size: 40px;"></i>
+            <h1 style="margin: 0; font-size: 22px;" class="text-center mt-3">
+                ¿Está seguro de continuar?
+            </h1>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-center gap-3 mt-3" style="font-size: 15px;">
+            <p-button label="Guardar" (onClick)="saveEntry()" styleClass="bg-btn-primary w-full">
+            </p-button>
+            <p-button label="Cancelar" (onClick)="showConfirmSave = false" styleClass="bg-btn-cancel w-full">
+            </p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
+<div class="bg-bluegray-50 border-round-2xl flex justify-content-center mt-header">
+    <div class="bg-white w-12 flex flex-column border-round-md flex-wrap">
+        <div class="flex justify-content-start w-full">
+            <div class="flex flex-column card-form w-full">
+
+                <h2>Formulario de Entrada</h2>
+
+                <form [formGroup]="entryForm">
+                    <div class="div-responsive mt-3">
+
+                        <span class="w-full">
+                            <label htmlFor="dni">Identificación <span style="color: red;">*</span></label>
+                            <input class="border-round w-full mt-2" pInputText id="dni" maxlength="10"
+                                formControlName="dni" />
+                            <div *ngIf="entryForm.get('dni')?.hasError('campoVacio')">
+                                <span class="validate-data">Este campo es obligatorio</span>
+                            </div>
+                        </span>
+
+
+                        <span class="w-full">
+                            <label htmlFor="username">Visitante <span style="color: red;">*</span></label>
+                            <input class="border-round w-full mt-2" pInputText formControlName="names_visit"
+                                id="descripcion" />
+                            <div *ngIf="entryForm.get('names_visit')?.hasError('campoVacio')">
+                                <span class="validate-data">Este campo es obligatorio</span>
+                            </div>
+                        </span>
+
+                        <span class="w-full">
+                            <label htmlFor="username">Áreas <span style="color: red;">*</span></label>
+                            <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2"
+                                formControlName="area_visit" id="cuentaCliente" [options]="areasVisit()"
+                                optionLabel="name" optionValue="id_area" [emptyMessage]="messageEmpty"></p-dropdown>
+                            <div *ngIf="entryForm.get('area_visit')?.hasError('campoVacio')">
+                                <span class="validate-data">El campo categoria es obligatorio</span>
+                            </div>
+                        </span>
+
+
+
+                        <span class="w-full">
+                            <label htmlFor="person_charge">Personal a cargo <span style="color: red;">*</span></label>
+                            <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2"
+                                formControlName="person_charge" id="person_charge" [options]="staffCharge()"
+                                optionLabel="name" optionValue="id_staff" [emptyMessage]="messageEmpty"></p-dropdown>
+                            <div *ngIf="entryForm.get('person_charge')?.hasError('campoVacio')">
+                                <span class="validate-data">Este campo es obligatorio</span>
+                            </div>
+                        </span>
+
+                        <span class="w-full">
+                            <label htmlFor="username">Razón de visita <span style="color: red;">*</span></label>
+                            <input class="border-round w-full mt-2" pInputText formControlName="reason_visit"
+                                id="descripcion" />
+                            <div *ngIf="entryForm.get('reason_visit')?.hasError('campoVacio')">
+                                <span class="validate-data">Este campo es obligatorio</span>
+                            </div>
+                        </span>
+
+                        <span class="w-full">
+                            <label htmlFor="username">Observaciones</label>
+                            <input formControlName="observations" class="w-full mt-2" pInputText id="observations" />
+                        </span>
+
+                        @if (materials() && materials().length > 0) {
+                            <div formArrayName="material_entry">
+                                <div *ngFor="let material of materialsEntry.controls; let i = index" [formGroupName]="i">
+
+                                    <div class="card-product flex gap-3 align-items-center mb-3">
+                                        <span class="w-full">
+                                            <label>Material {{i+1}} <span style="color: red;">*</span></label>
+                                            <p-dropdown class="w-full mt-2" formControlName="id_material" styleClass="w-full mt-2"
+                                                [options]="materials()" optionLabel="name" optionValue="id_material"
+                                                [emptyMessage]="messageEmpty">
+                                            </p-dropdown>
+                                            <div *ngIf="material.get('id_material')?.invalid">
+                                                <span class="validate-data">El material es obligatorio</span>
+                                            </div>
+                                        </span>
+
+                                        <!-- Cantidad -->
+                                        <span class="w-full">
+                                            <label>Cantidad <span style="color: red;">*</span></label>
+
+                                            <input class="border-round w-full mt-2" pInputText formControlName="quantity" />
+                                           <div *ngIf="material.get('quantity')?.invalid">
+                                                <span class="validate-data">La cantidad es obligatoria</span>
+                                            </div>
+                                        </span>
+
+                                        <!-- Eliminar -->
+                                        <button pButton type="button" icon="pi pi-trash" style="width: 4rem; height: 2.5rem;"
+                                            class="p-button-danger size-btn-remove mt-3" (click)="removeMaterial(i)">
+                                        </button>
+
+                                    </div>
+
+                                </div>
+
+                                <button icon="pi pi-plus" pButton type="button" label="Agregar Producto"
+                                    class="p-button-primary mt-3 align-self-center btn-add" (click)="addMaterial()">
+                                </button>
+        
+                                
+
+
+
+                            </div>
+
+                            
+                        }
+
+
+                        <span class="w-full">
+                            <label>Imágenes <span style="color: red;">*</span></label>
+
+                            <p-fileUpload #fileUpload name="images" mode="advanced" accept="image/*" [multiple]="true"
+                                [maxFileSize]="5000000" [showUploadButton]="false" [showCancelButton]="false"
+                                [auto]="true" (onSelect)="onSelectImages($event)" (onRemove)="onRemoveImages($event)"
+                                styleClass="w-full mt-2" chooseLabel="Subir imágenes">
+                            </p-fileUpload>
+
+                            <small class="text-gray-500">
+                                Mínimo 5 imágenes / Máximo 10 imágenes
+                            </small>
+
+                            <div *ngIf="imagesError" class="validate-data">
+                                {{ imagesError }}
+                            </div>
+                        </span>
+                    </div>
+                </form>
+
+                <div class="flex justify-content-end">
+                    <p-button label="Guardar" class="mt-5" (onClick)="onSubmit()"
+                        styleClass="bg-btn-primary px-6 w-full">
+                    </p-button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+<div class="overlay" *ngIf="isLoading">
+    <p-progressSpinner class="center-spinner" [style]="{ width: '50px', height: '50px' }" strokeWidth="8" fill="#007bff"
+        animationDuration="2s"></p-progressSpinner>
+</div>

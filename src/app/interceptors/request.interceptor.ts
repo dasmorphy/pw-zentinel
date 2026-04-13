@@ -7,6 +7,7 @@ export const httpInterceptorRequest: HttpInterceptorFn = (req: HttpRequest<unkno
   if (req.url.includes('/rest/token-api/v1.0/generate')) return next(req)
   if (req.url.includes('/rest/zent-logbook-api/v1.0/post/logbook-out')) return next(req)
   if (req.url.includes('/rest/zent-logbook-api/v1.0/post/logbook-entry')) return next(req)
+  if (req.url.includes('/rest/zent-dispatch-api/v1.0/entry-access') && req.method == 'POST') return next(req)
     
   let token = "";
   let idGroup = ""

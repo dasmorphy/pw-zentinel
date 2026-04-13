@@ -28,6 +28,9 @@ import { AuthService } from 'src/app/services/auth.service';
 import { DispatchService } from 'src/app/services/dispatch.service';
 import { DispatchDetailsModalComponent } from 'src/app/components/modals/dispatch-details-modal/dispatch-details-modal.component';
 import { Dispatch } from 'src/app/models/dispatch';
+import { EntryAccess } from 'src/app/models/entry-access';
+import { EntryDetailsModalComponent } from 'src/app/components/modals/entry-details-modal/entry-details-modal.component';
+import { FileUploadModule } from 'primeng/fileupload';
 
 @Component({
     selector: 'app-entry-access-table',
@@ -51,7 +54,8 @@ import { Dispatch } from 'src/app/models/dispatch';
         NgxTippyModule,
         TieredMenuModule,
         OverlayPanelModule,
-        DispatchDetailsModalComponent
+        FileUploadModule,
+        EntryDetailsModalComponent
     ],
     templateUrl: './all-entry-access.component.html',
     styleUrls: ['./all-entry-access.component.sass']
@@ -61,37 +65,42 @@ export class AllEntryAccessComponent {
 
     public readonly dispatchService = inject(DispatchService);
 
-    dispatchSelected = computed(() => this.dispatchService.showModalSummary());
+    entrySelected = computed(() => this.dispatchService.showModalSummaryEntry());
 
-    dataDispatchs: Dispatch[] = [];
+    dataEntries: EntryAccess[] = [];
     isLoading: boolean = false;
+    showUpdate: boolean = false;
+    observationOut: string = '';
+    selectedEntry: any = null;
 
-    selectedDispatch: any = null;
+    images: File[] = [];
+    imagesError: string | null = null;
 
     items: any = [
         {
             label: 'Ver detalles',
             icon: 'pi pi-eye',
-            command: () => this.viewDispatchDetails(this.selectedDispatch)
+            command: () => this.viewDispatchDetails(this.selectedEntry)
         },
         {
             label: 'Continuar',
             icon: 'pi pi-play-circle',
-            // visible: () => this.selectedDispatch?.status === 'Pendiente Salida',
-            // command: () => this.routeOut()
+            visible: () => this.selectedEntry?.status === 'Pendiente Salida',
+            command: () => this.showUpdate = true
         },
     ];
 
     ngOnInit() {
-        this.fetchAllDispatchs();
+        this.fetchAllEntries();
+        
     }
 
-    fetchAllDispatchs() {
+    fetchAllEntries() {
         this.isLoading = true;
-        this.dispatchService.getAllDispatchs().subscribe({
+        this.dispatchService.getAllEntryAccess().subscribe({
             next: (data: any) => {
                 this.isLoading = false;
-                this.dataDispatchs = data?.data;
+                this.dataEntries = data?.data;
             },
             error: (error: any) => {
                 this.isLoading = false;
@@ -101,33 +110,80 @@ export class AllEntryAccessComponent {
     }
     
     reloadDataDispatch() {
-        this.fetchAllDispatchs();
+        this.fetchAllEntries();
     }
 
     optionsDispatch(loogbook: any) {
-        this.selectedDispatch = loogbook
+        this.selectedEntry = loogbook
     }
 
     getSeverity(status: string) {
         switch (status) {
-        case "Ingresado en bodega":
+        case "Finalizado":
             return 'success';
-        case "En tránsito":
+        case "Pendiente Salida":
             return 'warning';
-        case "Listo para despacho":
-            return 'info';
         default:
             return 'info';
         }
     }
 
-    viewDispatchDetails(dispatch: Dispatch) {
-        const dispatch_found = this.dataDispatchs.find(
-            item => item.id_dispatch === dispatch.id_dispatch
+    viewDispatchDetails(entry: EntryAccess) {
+        const entry_found = this.dataEntries.find(
+            item => item.id_access_control === entry.id_access_control
         );
         
-        if (dispatch_found) {
-            this.dispatchService.openSummary(dispatch_found);
+        if (entry_found) {
+            this.dispatchService.openSummaryEntry(entry_found);
         } 
+    }
+
+    closeModal() {
+        this.showUpdate = false;
+        this.observationOut = '';
+        this.images = [];
+    }
+
+    onSelectImages(event: any) {
+        const selectedFiles: File[] = event.files;
+
+        // 🔄 acumular imágenes
+        this.images = [...this.images, ...selectedFiles];
+
+        if (this.images.length < 5) {
+            this.imagesError = 'Debe subir al menos 5 imágenes';
+            return;
+        }
+
+        if (this.images.length > 10) {
+            this.imagesError = 'No puede subir más de 10 imágenes';
+            this.images = this.images.slice(0, 10); // 👈 recorta exceso
+            return;
+        }
+
+        this.imagesError = null;
+    }
+
+    onRemoveImages(event: any) {
+        const removedFile = event.file;
+
+        const index = this.images.findIndex(
+            file => file.name === removedFile.name &&
+            file.size === removedFile.size &&
+            file.lastModified === removedFile.lastModified
+        );
+
+        if (index !== -1) {
+            this.images.splice(index, 1);
+        }
+    }
+
+    onSaveOut() {
+        const data = {
+            "observations": this.observationOut,
+            "images": this.images
+        }
+
+        console.log(data)
     }
 }

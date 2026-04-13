@@ -10,6 +10,7 @@ import { AllLogbookComponent } from './pages/tables/all-logbooks/all-logbooks.co
 import { NewDispatchForm } from './pages/forms/biomar/new-dispatch-form/new-dispatch-form.component';
 import { AllDispatchsComponent } from './pages/tables/all-dispatchs/all-dispatchs.component';
 import { AllEntryAccessComponent } from './pages/tables/all-entry-access/all-entry-access.component';
+import { NewEntryFormComponent } from './pages/forms/biomar/new-entry-form/new-entry-form.component';
 
 export const routes: Routes = [
 
@@ -60,6 +61,11 @@ export const routes: Routes = [
             {
                 path: "tablero-ingresos",
                 loadComponent: () => AllEntryAccessComponent,
+                canActivate: [AuthGuard]
+            },
+            {
+                path: "nuevo-ingreso",
+                loadComponent: () => NewEntryFormComponent,
                 canActivate: [AuthGuard]
             }
 
