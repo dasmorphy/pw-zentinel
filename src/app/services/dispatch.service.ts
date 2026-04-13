@@ -3,6 +3,7 @@ import { Injectable, WritableSignal, computed, effect, inject, signal } from '@a
 import { MessageService } from 'primeng/api';
 import { environment } from 'src/environments/environment.development';
 import { UtilsService } from './utils.service';
+import { Dispatch } from '../models/dispatch';
 
 @Injectable({
     providedIn: 'root'
@@ -15,10 +16,10 @@ export class DispatchService {
     vehiclesTypes: WritableSignal<any[]> = signal<any[]>([]);
     destinyIntern: WritableSignal<any[]> = signal<any[]>([]);
     unitiesWeight: WritableSignal<any[]> = signal<any[]>([]);
-    showModalSummary: WritableSignal<any> = signal<any>(null);
+    showModalSummary: WritableSignal<Dispatch | null> = signal<any>(null);
 
-    openSummary(datLogbook: any) {
-        this.showModalSummary.set(datLogbook);
+    openSummary(dispatch: Dispatch) {
+        this.showModalSummary.set(dispatch);
     }
 
     closeSummary() {
@@ -48,6 +49,10 @@ export class DispatchService {
 
     getAllDispatchs() {
         return this.http.get(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/dispatch`)
+    }
+
+    getAllEntryAccess() {
+        return this.http.get(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/entry-access`)
     }
 
 }

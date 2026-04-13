@@ -104,7 +104,7 @@ export class MenuComponent implements OnInit {
             label: 'Ver registros de entrada',
             icon: 'pi pi-list-check',
             visible: this.user_permissions_signal()?.includes('VER_INGRESOS_BIOMAR'),
-            routerLink: ['tablero-bitacoras'],
+            routerLink: ['tablero-ingresos'],
             command: () => { this.clickHiddenToggle() }
           },
           {

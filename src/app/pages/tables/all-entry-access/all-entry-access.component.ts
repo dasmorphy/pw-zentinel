@@ -30,7 +30,7 @@ import { DispatchDetailsModalComponent } from 'src/app/components/modals/dispatc
 import { Dispatch } from 'src/app/models/dispatch';
 
 @Component({
-    selector: 'app-logbooks-table',
+    selector: 'app-entry-access-table',
     standalone: true,
     imports: [
         CommonModule,
@@ -53,10 +53,10 @@ import { Dispatch } from 'src/app/models/dispatch';
         OverlayPanelModule,
         DispatchDetailsModalComponent
     ],
-    templateUrl: './all-dispatchs.component.html',
-    styleUrls: ['./all-dispatchs.component.sass']
+    templateUrl: './all-entry-access.component.html',
+    styleUrls: ['./all-entry-access.component.sass']
 })
-export class AllDispatchsComponent {
+export class AllEntryAccessComponent {
 
 
     public readonly dispatchService = inject(DispatchService);
