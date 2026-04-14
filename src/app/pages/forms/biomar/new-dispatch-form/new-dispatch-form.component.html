@@ -1,5 +1,28 @@
 <p-toast></p-toast>
 
+<p-dialog header="Header" [closable]="false" [(visible)]="showConfirmSave" [draggable]="false" [modal]="true"
+    [style]="{ 'width': '23vw', 'border-radius': '32px'}">
+    <ng-template pTemplate="header">
+        <div style="display: grid; place-items: center;">
+            <i class="pi pi-exclamation-circle mt-4" style="color: #EB6506; font-size: 40px;"></i>
+            <h1 style="margin: 0; font-size: 22px;" class="text-center mt-3">
+                ¿Está seguro de continuar?
+            </h1>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-center gap-3 mt-3" style="font-size: 15px;">
+            <p-button label="Guardar" (onClick)="saveDispatch()"
+                styleClass="bg-btn-primary w-full">
+            </p-button>
+            <p-button label="Cancelar" (onClick)="showConfirmSave = false"
+                styleClass="bg-btn-cancel w-full">
+            </p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
 
 <div class="bg-bluegray-50 border-round-2xl flex justify-content-center mt-header">
     <div class="bg-white w-12 flex flex-column border-round-md flex-wrap">
@@ -10,9 +33,9 @@
 
 
                 <form [formGroup]="dispatchForm">
-                    <div class="flex gap-3">
+                    <div class="flex gap-4 column-responsive">
 
-                        <div formArrayName="sku" class="mt-3" style="width: 50%;">
+                        <div formArrayName="sku" class="mt-3 w-responsive" style="max-height: 32rem; overflow: scroll;">
                             <span class="flex justify-content-between align-items-center">
                                 <h3>Gestión Skus</h3>
             
@@ -44,18 +67,20 @@
                                                 id="cuentaCliente" [options]="productsSku()" optionLabel="name" optionValue="id_product"
                                                 [emptyMessage]="messageEmpty">
                                             </p-dropdown>
-                                            <div *ngIf="dispatchForm.get('id_product')?.hasError('campoVacio')">
-                                                <span class="validate-data">El campo categoria es obligatorio</span>
+                                            <div *ngIf="product.get('id_product')?.invalid">
+                                                <span class="validate-data">Este campo es obligatorio</span>
                                             </div>
                                         </span>
                                         
                                         <span class="w-full">
                                             <label htmlFor="username">Cantidad <span style="color: red;">*</span></label>
-                                            <input class="border-round w-full mt-2" pInputText
+                                            <!-- <input class="border-round w-full mt-2" pInputText
                                                 id="shipping_guide"
-                                                formControlName="quantity" />
-                                            <div *ngIf="dispatchForm.get('id_category')?.hasError('campoVacio')">
-                                                <span class="validate-data">El campo categoria es obligatorio</span>
+                                                formControlName="quantity" /> -->
+                                            <p-inputNumber min="1" class="border-round w-full mt-2" formControlName="quantity" [useGrouping]="false" styleClass="w-full">
+                                            </p-inputNumber>
+                                            <div *ngIf="product.get('quantity')?.invalid">
+                                                <span class="validate-data">Este campo es obligatorio</span>
                                             </div>
                                         </span>
     
@@ -73,7 +98,7 @@
                             
                         </div>
     
-                        <div class="flex flex-column m-3" style="width: 50%;">
+                        <div class="flex flex-column mt-3 w-responsive">
                             <span class="flex align-items-center">
                                 <h3>Logística</h3>
 
@@ -131,8 +156,43 @@
                                     <span class="validate-data">Este campo es obligatorio</span>
                                 </div>
                             </span>
+
+                            <span class="w-full mt-3">
+                                <label htmlFor="username">Observaciones</label>
+                                <input formControlName="observations" class="w-full mt-2" pInputText id="observations" />
+                            </span>
                         </div>
+
+
                     </div>
+                    <span class="w-responsive">
+                        <label>Imágenes <span style="color: red;">*</span></label>
+
+                        <p-fileUpload
+                            #fileUpload
+                            name="images"
+                            mode="advanced"
+                            accept="image/*"
+                            [multiple]="true"
+                            [maxFileSize]="5000000"
+                            [showUploadButton]="false"
+                            [showCancelButton]="false"
+                            [auto]="true"
+                            (onSelect)="onSelectImages($event)"
+                            (onRemove)="onRemoveImages($event)"
+                            styleClass="w-responsive mt-2"
+                            chooseLabel="Subir imágenes"
+                        >
+                        </p-fileUpload>
+
+                        <small class="text-gray-500">
+                            Mínimo 5 imágenes / Máximo 10 imágenes
+                        </small>
+
+                        <div *ngIf="imagesError" class="validate-data">
+                            {{ imagesError }}
+                        </div>
+                    </span>
                     
                 </form>
 

@@ -44,13 +44,22 @@ export class LogbookService {
             })
     }
 
-    getAllDestinyIntern() {
-        this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/allDestinyIntern`)
+    getAllDestinyIntern(filter?: any) {
+        let headers = new HttpHeaders();
+
+        if (filter?.business) {
+            headers = headers.set('business', filter?.business)
+        }
+
+        this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/allDestinyIntern`, {headers})
             .subscribe({
                 next: (data: any) => {
                     this.destinyIntern.set(data?.data || []);
                 },
-                error: ({ error }: any) => this.onError(error.message)
+                error: (error: any) => {
+                    console.log(error)
+                    this.onError(error?.message ?? 'Error al obtener los destinos')
+                }
             })
     }
 

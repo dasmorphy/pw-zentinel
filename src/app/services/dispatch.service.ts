@@ -20,6 +20,7 @@ export class DispatchService {
     unitiesWeight: WritableSignal<any[]> = signal<any[]>([]);
     staffCharge: WritableSignal<any[]> = signal<any[]>([]);
     materials: WritableSignal<any[]> = signal<any[]>([]);
+    statusDispatch: WritableSignal<any[]> = signal<any[]>([]);
     
     showModalSummary: WritableSignal<Dispatch | null> = signal<any>(null);
     showModalSummaryEntry: WritableSignal<EntryAccess | null> = signal<any>(null);
@@ -99,12 +100,34 @@ export class DispatchService {
             })
     }
 
+    getStatusDispatch() {
+        this.http.get(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/status-dispatch`)
+        .subscribe({
+                next: (data: any) => {
+                    this.statusDispatch.set(data?.data || []);
+                },
+                error: ({ error }: any) => this.utilsService.onError(error.message)
+            })
+    }
+
     saveEntryAccess(formData: FormData) {
         return this.http.post(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/entry-access`, formData)
     }
 
     saveDispatch(formData: FormData) {
         return this.http.post(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/dispatch`, formData)
+    }
+
+    patchDispatch(formData: FormData, id_dispatch: number) {
+        return this.http.patch(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/dispatch/${id_dispatch}`, formData)
+    }
+
+    patchEntryAccess(formData: FormData, id_entry: number) {
+        return this.http.patch(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/entry-access/${id_entry}`, formData)
+    }
+
+    saveReception(formData: FormData) {
+        return this.http.post(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/reception`, formData)
     }
 
 }

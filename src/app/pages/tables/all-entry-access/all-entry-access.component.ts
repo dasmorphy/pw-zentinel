@@ -1,5 +1,5 @@
 import { Component, computed, effect, ElementRef, inject, Input, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule, FormArray } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MenuItem, SelectItem } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -31,6 +31,7 @@ import { Dispatch } from 'src/app/models/dispatch';
 import { EntryAccess } from 'src/app/models/entry-access';
 import { EntryDetailsModalComponent } from 'src/app/components/modals/entry-details-modal/entry-details-modal.component';
 import { FileUploadModule } from 'primeng/fileupload';
+import { v4 as uuidv4} from 'uuid';
 
 @Component({
     selector: 'app-entry-access-table',
@@ -64,6 +65,7 @@ export class AllEntryAccessComponent {
 
 
     public readonly dispatchService = inject(DispatchService);
+    public readonly utilsService = inject(UtilsService);
 
     entrySelected = computed(() => this.dispatchService.showModalSummaryEntry());
 
@@ -71,19 +73,20 @@ export class AllEntryAccessComponent {
     isLoading: boolean = false;
     showUpdate: boolean = false;
     observationOut: string = '';
-    selectedEntry: any = null;
+    selectedEntry: EntryAccess | null = null;
 
     images: File[] = [];
     imagesError: string | null = null;
+    user_json: any;
 
     items: any = [
         {
             label: 'Ver detalles',
             icon: 'pi pi-eye',
-            command: () => this.viewDispatchDetails(this.selectedEntry)
+            command: () => this.viewDispatchDetails(this.selectedEntry!)
         },
         {
-            label: 'Continuar',
+            label: 'Crear salida',
             icon: 'pi pi-play-circle',
             visible: () => this.selectedEntry?.status === 'Pendiente Salida',
             command: () => this.showUpdate = true
@@ -91,8 +94,9 @@ export class AllEntryAccessComponent {
     ];
 
     ngOnInit() {
+        const user_session = localStorage.getItem('sb_token')
+        this.user_json = user_session ? JSON.parse(user_session) : null;
         this.fetchAllEntries();
-        
     }
 
     fetchAllEntries() {
@@ -108,13 +112,13 @@ export class AllEntryAccessComponent {
             }
         })
     }
-    
+
     reloadDataDispatch() {
         this.fetchAllEntries();
     }
 
-    optionsDispatch(loogbook: any) {
-        this.selectedEntry = loogbook
+    optionsDispatch(entry: any) {
+        this.selectedEntry = entry
     }
 
     getSeverity(status: string) {
@@ -179,11 +183,51 @@ export class AllEntryAccessComponent {
     }
 
     onSaveOut() {
-        const data = {
-            "observations": this.observationOut,
-            "images": this.images
+        this.isLoading = true;
+        if (this.images.length < 5) {
+            this.imagesError = 'Debes subir mínimo 5 imágenes';
+            this.isLoading = false;
+            return;
         }
 
-        console.log(data)
+        const data_save = {
+            observations: this.observationOut,
+            user: this.user_json?.user,
+            channel: 'ZENTINEL_WEB',
+            external_transaction_id: uuidv4()
+        };
+
+        const formData = new FormData();
+
+        formData.append(
+            'entry_data',
+            new Blob([JSON.stringify(data_save)], { type: 'application/json' })
+        );
+
+        this.images.forEach((file: File) => {
+            formData.append('images', file);
+        });
+
+        this.showUpdate = false;
+        this.dispatchService.patchEntryAccess(
+            formData,
+            this.selectedEntry!.id_access_control
+        ).subscribe({
+            next: (data: any) => {
+                this.isLoading = false;
+                const message = data?.message ?? 'Salida creada correctamente'
+                this.utilsService.onSuccess(message)
+                this.observationOut = '';
+                this.images = [];
+                this.imagesError = '';
+                this.fetchAllEntries();
+            },
+            error: (error: any) => {
+                console.log(error);
+                this.isLoading = false;
+                const error_message = error?.error?.message ?? 'Error al crear la salida, por favor intente nuevamente'
+                this.utilsService.onError(error_message)
+            }
+        })
     }
 }

@@ -116,6 +116,8 @@ export class NewEntryFormComponent {
     removeMaterial(index: number) {
         if (this.materialsEntry.length > 1) {
             this.materialsEntry.removeAt(index);
+        }else{
+            this.utilsService.onWarn('Es obligatorio tener al menos 1 material')
         }
     }
 
@@ -157,6 +159,7 @@ export class NewEntryFormComponent {
         const controls_ignore = ['observations'];
 
         this.utilsService.validateControlsForms(this.entryForm, controls_ignore);
+        this.utilsService.validateControlsForms(this.createMaterial(), []);
         this.utilsService.showControlVoiled();
 
         if (this.images.length < 5) {
@@ -198,6 +201,7 @@ export class NewEntryFormComponent {
                 const message = data?.message ?? 'Ingreso guardado'
                 this.utilsService.onSuccess(message)
                 this.entryForm.reset();
+                this.createMaterial().reset();
                 this.fileUpload.clear();
                 this.images = [];
                 this.imagesError = '';
