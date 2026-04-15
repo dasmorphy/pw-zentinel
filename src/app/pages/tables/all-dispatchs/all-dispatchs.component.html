@@ -91,8 +91,9 @@
                                 <!-- Cantidad -->
                                 <span class="w-full mt-4">
                                     <label>Cantidad Recibida<span style="color: red;">*</span></label>
-        
-                                    <input class="border-round w-full mt-2" pInputText formControlName="received_quantity" />
+                                    <p-inputNumber class="border-round w-full mt-2" formControlName="received_quantity" [useGrouping]="false" styleClass="w-full">
+                                    </p-inputNumber>
+                                    <!-- <input class="border-round w-full mt-2" pInputText formControlName="received_quantity" /> -->
                                     <div *ngIf="material.get('received_quantity')?.invalid">
                                         <span class="validate-data">Este campo es obligatorio</span>
                                     </div>

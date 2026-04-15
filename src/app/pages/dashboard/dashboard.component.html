@@ -6,7 +6,11 @@
     <h2>¡Hola {{user_session?.attributes?.fullname ?? 'Desconocido'}}!</h2>
   </div>
 
-  <div class="flex w-full justify-content-center column-responsive">
+  @if (!user_permissions_signal().includes('DATA_BY_GROUP_BUSINESS')) {
+    <app-biomar-dashboard></app-biomar-dashboard>
+  }
+
+  <!-- <div class="flex w-full justify-content-center column-responsive">
     <div class="flex flex-column align-items-center p-3-responsive xl:w-7 w-full h-funnel">
 
       <app-doughnut class="w-full bg-funnel shadow-1 border-round-2xl"></app-doughnut>
@@ -20,7 +24,7 @@
       </div>
     </div>
 
-  </div>
+  </div> -->
 </div>
 
 <div class="overlay" *ngIf="isLoading">

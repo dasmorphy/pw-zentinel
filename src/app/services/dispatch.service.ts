@@ -21,6 +21,7 @@ export class DispatchService {
     staffCharge: WritableSignal<any[]> = signal<any[]>([]);
     materials: WritableSignal<any[]> = signal<any[]>([]);
     statusDispatch: WritableSignal<any[]> = signal<any[]>([]);
+    graphsDispatch: WritableSignal<any[]> = signal<any[]>([]);
     
     showModalSummary: WritableSignal<Dispatch | null> = signal<any>(null);
     showModalSummaryEntry: WritableSignal<EntryAccess | null> = signal<any>(null);
@@ -128,6 +129,16 @@ export class DispatchService {
 
     saveReception(formData: FormData) {
         return this.http.post(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/reception`, formData)
+    }
+
+    getGraphs() {
+        this.http.get(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/get/resume_graphs`)
+        .subscribe({
+                next: (data: any) => {
+                    this.graphsDispatch.set(data?.data || []);
+                },
+                error: ({ error }: any) => this.utilsService.onError(error.message)
+            })
     }
 
 }

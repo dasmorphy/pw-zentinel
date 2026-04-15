@@ -31,6 +31,7 @@ import { Dispatch } from 'src/app/models/dispatch';
 import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { v4 as uuidv4} from 'uuid';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @Component({
     selector: 'app-logbooks-table',
@@ -56,7 +57,8 @@ import { InputSwitchModule } from 'primeng/inputswitch';
         OverlayPanelModule,
         DispatchDetailsModalComponent,
         FileUploadModule,
-        InputSwitchModule
+        InputSwitchModule,
+        InputNumberModule
     ],
     templateUrl: './all-dispatchs.component.html',
     styleUrls: ['./all-dispatchs.component.sass']
@@ -107,16 +109,10 @@ export class AllDispatchsComponent {
 
     constructor(private fb: FormBuilder,) {
         this.receptionForm = this.fb.group({
-            area_visit: ['', Validators.required],
-            names_visit: ['', Validators.required],
-            dni: ['', Validators.required],
-            person_charge: ['', Validators.required],
-            reason_visit: ['', Validators.required],
             observations: [''],
             reception_details: this.fb.array([
                 this.createProduct()
             ]),
-
         });
     }
 
@@ -128,14 +124,23 @@ export class AllDispatchsComponent {
     }
 
     createProduct(product?: any): FormGroup {
-        console.log(product)
         return this.fb.group({
             has_discrepancy: [true],
             expected_quantity: [product?.quantity, Validators.required],
-            received_quantity: ['', Validators.required],
+            received_quantity: [null, Validators.required],
             observations: [''],
             product_id: [product?.id_product, Validators.required],
+            product_sku_id: [product?.id_product_sku, Validators.required],
             product_name: [product?.name]
+        });
+    }
+
+    createProductDiscrepancy(product: any): FormGroup {
+        return this.fb.group({
+            expected_quantity: [product?.expected_quantity, Validators.required],
+            received_quantity: [product?.received_quantity, Validators.required],
+            observations: [product?.observations],
+            product_id: [product?.product_sku_id, Validators.required],
         });
     }
 
@@ -293,29 +298,98 @@ export class AllDispatchsComponent {
     }
 
     onSaveReception() {
-        this.isLoading = true;
-        this.showReception = false;
-        const allProducts = this.selectedDispatch!.skus.flatMap(sku => sku.products);
+        if (this.images.length < 5) {
+            this.utilsService.onError('Debe subir mínimo 5 imágenes')
+            this.imagesError = 'Debe subir mínimo 5 imágenes';
+            this.isLoading = false;
+            return;
+        }
 
-        const has_discrepancy = allProducts.some((p: any) => p.has_discrepancy === false);
-        const receptionDetails = this.receptionForm.get('reception_details')?.value;
-
-        const reception_details = receptionDetails.map((p: any) => ({
+        const has_discrepancy: any[] = this.productsReception?.value.filter((p: any) => p.has_discrepancy === false);
+        const reception_details = has_discrepancy.length > 0 ? has_discrepancy.map((p: any) => ({
             expected_quantity: p.expected_quantity,
-            observations: p.observations || 'N/A',
-            product_id: p.product_id,
-            received_quantity: p.received_quantity,
-            reception_id: p.reception_id || 1 // o lo que corresponda
-        }));
+            observations: p.observations,
+            product_sku_id: p.product_sku_id,
+            received_quantity: p.received_quantity != null
+            ? parseInt(p.received_quantity, 10)
+            : null
+        })) 
+        : null;
+
+        const controls_ignore = ['observations', 'has_discrepancy'];
+
+        this.utilsService.validateControlsForms(this.receptionForm, controls_ignore);
+        this.utilsService.showControlVoiled();
 
         const data = {
             dispatch_id: this.selectedDispatch?.id_dispatch,
             images: this.images,
-            is_correct: !has_discrepancy,
+            is_correct: has_discrepancy.length > 0 ? false : true,
             observations: this.receptionForm.get('observations')?.value,
             reception_details: reception_details 
         }
 
-        console.log(data)
+        if (has_discrepancy.length === 0) {
+            this.fetchSaveReception(data);
+        }else {
+            for (const product of has_discrepancy) {
+                const formProductDiscrepancy = this.createProductDiscrepancy(product);
+
+                this.utilsService.validateControlsForms(formProductDiscrepancy, controls_ignore);
+                this.utilsService.showControlVoiled();
+
+                if (!formProductDiscrepancy.valid) {
+                    return;
+                }
+
+            }
+
+            this.fetchSaveReception(data);
+        }
+
+    }
+
+    fetchSaveReception(dataReception: any) {
+        this.isLoading = true;
+        this.showReception = false;
+ 
+        const data_save = {
+            ...dataReception,
+            user: this.user_json?.user,
+            channel: 'ZENTINEL_WEB',
+            external_transaction_id: uuidv4()
+        };
+
+        const formData = new FormData();
+
+        formData.append(
+            'reception_data',
+            new Blob([JSON.stringify(data_save)], { type: 'application/json' })
+        );
+
+        this.images.forEach((file: File) => {
+            formData.append('images', file);
+        });
+
+        this.dispatchService.saveReception(formData).subscribe({
+            next: (data: any) => {
+                this.isLoading = false;
+                const message = data?.message ?? 'Recepción guardada correctamente'
+                this.utilsService.onSuccess(message)
+                this.receptionForm.reset();
+                this.createProductDiscrepancy(null).reset();
+                this.createProduct().reset();
+                // this.fileUpload.clear();
+                this.images = [];
+                this.imagesError = '';
+                this.fetchAllDispatchs();
+            },
+            error: (error: any) => {
+                console.log(error);
+                this.isLoading = false;
+                const error_message = error?.error?.message ?? 'Error al guardar recepción, por favor intente nuevamente'
+                this.utilsService.onError(error_message)
+            }
+        })
     }
 }

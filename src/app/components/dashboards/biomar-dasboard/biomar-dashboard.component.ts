@@ -19,11 +19,9 @@ import { UserService } from 'src/app/services/user.service';
 import { DialogModule } from 'primeng/dialog';
 import { LogbookRecentComponent } from 'src/app/components/logbook/logbook-recent/logbook-recent.component';
 import { DispatchService } from 'src/app/services/dispatch.service';
-import { BiomarDashboardComponent } from 'src/app/components/dashboards/biomar-dasboard/biomar-dashboard.component';
-import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
-    selector: 'app-dashboard',
+    selector: 'app-biomar-dashboard',
     standalone: true,
     imports: [
         CommonModule,
@@ -38,22 +36,18 @@ import { AuthService } from 'src/app/services/auth.service';
         ProgressSpinnerModule,
         DoughnutComponent,
         DialogModule,
-        LogbookRecentComponent,
-        BiomarDashboardComponent
+        LogbookRecentComponent
     ],
-    templateUrl: './dashboard.component.html',
-    styleUrls: ['./dashboard.component.sass'],
+    templateUrl: './biomar-dashboard.component.html',
+    styleUrls: ['./biomar-dashboard.component.sass'],
 })
-export class DashboardComponent {
+export class BiomarDashboardComponent {
     private readonly menuService = inject(MenuService);
     private readonly logbookService = inject(LogbookService);
     private readonly dispatchService = inject(DispatchService);
-    private readonly authService = inject(AuthService);
 
     toggle = computed(() => this.menuService.toggle());
-
-    user_permissions_signal = computed(() => this.authService.user_permissions_signal());
-
+    graphs = computed(() => this.dispatchService.graphsDispatch());
     user_session: any;
     isLoading: boolean = false;
 

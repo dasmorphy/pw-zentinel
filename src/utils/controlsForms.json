@@ -21,5 +21,6 @@
     "dni": "identificación",
     "person_charge": "personal a cargo",
     "reason_visit": "razón de visita",
-    "material_entry": "materiales"
+    "material_entry": "materiales",
+    "received_quantity": "cantidad recibida"
 }
