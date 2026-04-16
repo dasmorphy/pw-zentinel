@@ -6,25 +6,27 @@
     <h2>¡Hola {{user_session?.attributes?.fullname ?? 'Desconocido'}}!</h2>
   </div>
 
-  @if (!user_permissions_signal().includes('DATA_BY_GROUP_BUSINESS')) {
-    <app-biomar-dashboard></app-biomar-dashboard>
+  @if (user_permissions_signal().includes('VER_DASHBOARD_BIOMAR')) {
+    <app-biomar-dashboard class="w-full"></app-biomar-dashboard>
   }
 
-  <!-- <div class="flex w-full justify-content-center column-responsive">
-    <div class="flex flex-column align-items-center p-3-responsive xl:w-7 w-full h-funnel">
-
-      <app-doughnut class="w-full bg-funnel shadow-1 border-round-2xl"></app-doughnut>
-    </div>
-
-    <div class="flex flex-column align-items-center p-3-responsive h-funnel">
-      <div class="bg-funnel shadow-1 border-round-2xl w-history">
-        <div class="p-5 flex flex-column">
-          <app-logbook-recent></app-logbook-recent>
+  @if (user_permissions_signal().includes('VER_DASHBOARD_EXPALSA')) {
+    <div class="flex w-full justify-content-center column-responsive">
+      <div class="flex flex-column align-items-center p-3-responsive xl:w-7 w-full h-funnel">
+  
+        <app-doughnut class="w-full bg-funnel shadow-1 border-round-2xl"></app-doughnut>
+      </div>
+  
+      <div class="flex flex-column align-items-center p-3-responsive h-funnel">
+        <div class="bg-funnel shadow-1 border-round-2xl w-history">
+          <div class="p-5 flex flex-column">
+            <app-logbook-recent></app-logbook-recent>
+          </div>
         </div>
       </div>
+  
     </div>
-
-  </div> -->
+  }
 </div>
 
 <div class="overlay" *ngIf="isLoading">

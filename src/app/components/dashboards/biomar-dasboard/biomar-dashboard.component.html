@@ -1,27 +1,31 @@
 <div class="flex column-responsive w-full">
-    <div class="flex card-info w-full justify-content-center gap-3">
-        <div class="flex card-info" style="width: 9rem; height: 7rem;">
-            <span>10</span>
+    <div class="flex w-full justify-content-center gap-3" >
+        <div class="flex card-info justify-content-between align-items-center" *ngFor="let status of graphs()?.dispatch_by_status" style="width: 15rem; height: 8rem;"
+            [ngStyle]="{
+                'background-color': getStatusStyles(status.status_name).background,
+                'color': getStatusStyles(status.status_name).color
+            }"
+        >
+            @if (status.status_name === 'En tránsito') {
+                <i class="pi pi-truck" style="font-size: 45px; color: black;"></i>
+            }
+            @if (status.status_name === 'Ingresado en bodega') {
+                <i class="pi pi-shop" style="font-size: 45px; color: black;"></i>
+            }
+            @if (status.status_name === 'Listo para despacho') {
+                <i class="pi pi-megaphone" style="font-size: 45px; color: black;"></i>
+            }
+            <div class="flex flex-column" style="max-width: 90px;">
+                <span style="font-weight: 600;">{{status.status_name}}</span>
+                <span style="color: black; font-weight: 600;">{{status.count}}</span>
+            </div>
         </div>
-
-        <div class="flex card-info" style="width: 9rem; height: 7rem;">
-            <span>10</span>
-
-        </div>
-
-        <div class="flex card-info" style="width: 9rem; height: 7rem;">
-            <span>10</span>
-
-        </div>
-
-        <div class="flex card-info" style="width: 9rem; height: 7rem;">
-            <span>10</span>
-
-        </div>
-
-        <div class="flex card-info" style="width: 9rem; height: 7rem;">
-            <span>10</span>
-
+        <div class="flex card-info justify-content-between align-items-center" style="width: 15rem; height: 8rem;">
+            <i class="pi pi-exclamation-triangle" style="font-size: 45px;"></i>
+            <div class="flex flex-column">
+                <span>Discrepancias</span>
+                <span>{{graphs()?.discrepancy}}</span>
+            </div>
         </div>
     </div>
 

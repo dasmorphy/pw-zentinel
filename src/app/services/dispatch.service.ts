@@ -21,7 +21,7 @@ export class DispatchService {
     staffCharge: WritableSignal<any[]> = signal<any[]>([]);
     materials: WritableSignal<any[]> = signal<any[]>([]);
     statusDispatch: WritableSignal<any[]> = signal<any[]>([]);
-    graphsDispatch: WritableSignal<any[]> = signal<any[]>([]);
+    graphsDispatch: WritableSignal<any> = signal<any>(null);
     
     showModalSummary: WritableSignal<Dispatch | null> = signal<any>(null);
     showModalSummaryEntry: WritableSignal<EntryAccess | null> = signal<any>(null);

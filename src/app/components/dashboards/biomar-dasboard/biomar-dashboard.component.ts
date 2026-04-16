@@ -60,4 +60,30 @@ export class BiomarDashboardComponent {
     }
 
 
+    getStatusStyles(statusName: string) {
+        switch (statusName) {
+            case 'En tránsito':
+                return {
+                    background: '#f3e178',
+                    color: '#8a9019'
+                };
+            case 'Ingresado en bodega':
+                return {
+                    background: '#9df18a',
+                    color: '#158308'
+                };
+            case 'Listo para despacho':
+                return {
+                    background: '#bfdaec',
+                    color: '#3b6d89'
+                };
+            default:
+                return {
+                    background: '#F3F4F6',
+                    color: '#374151'
+                };
+        }
+    }
+
+
 }
