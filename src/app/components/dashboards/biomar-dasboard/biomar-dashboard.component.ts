@@ -19,6 +19,13 @@ import { UserService } from 'src/app/services/user.service';
 import { DialogModule } from 'primeng/dialog';
 import { LogbookRecentComponent } from 'src/app/components/logbook/logbook-recent/logbook-recent.component';
 import { DispatchService } from 'src/app/services/dispatch.service';
+import { TableModule } from 'primeng/table';
+import { NgxTippyModule } from 'ngx-tippy-wrapper';
+import { TagModule } from 'primeng/tag';
+import { SplitButtonModule } from 'primeng/splitbutton';
+import { forkJoin, catchError, of } from 'rxjs';
+import { EntryDetailsModalComponent } from '../../modals/entry-details-modal/entry-details-modal.component';
+import { DispatchDetailsModalComponent } from '../../modals/dispatch-details-modal/dispatch-details-modal.component';
 
 @Component({
     selector: 'app-biomar-dashboard',
@@ -34,9 +41,13 @@ import { DispatchService } from 'src/app/services/dispatch.service';
         ReactiveFormsModule,
         ToastModule,
         ProgressSpinnerModule,
-        DoughnutComponent,
         DialogModule,
-        LogbookRecentComponent
+        NgxTippyModule,
+        TableModule,
+        TagModule,
+        SplitButtonModule,
+        EntryDetailsModalComponent,
+        DispatchDetailsModalComponent
     ],
     templateUrl: './biomar-dashboard.component.html',
     styleUrls: ['./biomar-dashboard.component.sass'],
@@ -48,8 +59,22 @@ export class BiomarDashboardComponent {
 
     toggle = computed(() => this.menuService.toggle());
     graphs = computed(() => this.dispatchService.graphsDispatch());
+    entrySelected = computed(() => this.dispatchService.showModalSummaryEntry());
+    dispatchSelected = computed(() => this.dispatchService.showModalSummary());
+
     user_session: any;
     isLoading: boolean = false;
+    selectedDispatch: any = null;
+
+    dataBiomar: any [] = [];
+
+    items: any = [
+        {
+            label: 'Ver detalles',
+            icon: 'pi pi-eye',
+            command: () => this.viewDispatchDetails(this.selectedDispatch!)
+        },
+    ];
 
     ngOnInit() {
         const user_session = localStorage.getItem('sb_token')
@@ -57,6 +82,7 @@ export class BiomarDashboardComponent {
         this.user_session = user_json;
         this.logbookService.getAllCategories();
         this.dispatchService.getGraphs()
+        this.fetchAllData();
     }
 
 
@@ -82,6 +108,58 @@ export class BiomarDashboardComponent {
                     background: '#F3F4F6',
                     color: '#374151'
                 };
+        }
+    }
+
+    fetchAllData() {
+        forkJoin({
+            entryAccess: this.dispatchService.getAllEntryAccess().pipe(catchError(() => of([]))),
+            dispatchs: this.dispatchService.getAllDispatchs().pipe(catchError(() => of([])))
+        }).subscribe({
+            next: ({ entryAccess, dispatchs }: any) => {
+                this.dataBiomar = [
+                    ...(entryAccess?.data || []),
+                    ...(dispatchs?.data || [])
+                ].sort((a: any, b: any) => 
+                    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+                );
+                console.log(this.dataBiomar);
+            },
+            error: (error: any) => {
+                console.log(error);
+            }
+        });
+    }
+
+
+    getSeverity(status: string) {
+        switch (status) {
+        case "Ingresado en bodega":
+            return 'success';
+        case "En tránsito":
+            return 'warning';
+        case "Listo para despacho":
+            return 'info';
+        case "Finalizado":
+            return 'success';
+        case "Pendiente Salida":
+            return 'warning';
+        default:
+            return 'info';
+        }
+    }
+
+
+    optionsDispatch(loogbook: any) {
+        this.selectedDispatch = loogbook
+    }
+
+
+    viewDispatchDetails(data: any) {
+        if (data?.id_access_control) {
+            this.dispatchService.openSummaryEntry(data);
+        }else{
+            this.dispatchService.openSummary(data);
         }
     }
 
