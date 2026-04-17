@@ -85,7 +85,24 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
         const user_json = user_session ? JSON.parse(user_session) : null;
         this.user_session = user_json;
         const attributes = user_json?.attributes
-        let filters: any = {};
+        const today = new Date();
+
+        // Función para formatear
+        const formatDate = (date: any) => {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+
+            return `${year}-${month}-${day}T00:00:00`;
+        };
+
+        const tomorrow = new Date();
+        tomorrow.setDate(today.getDate() + 1);
+
+        const filters: any = {
+            start_date: formatDate(today),
+            end_date: formatDate(tomorrow),
+        };
 
         if (user_json?.role !== 'admin') {
             headers['user'] = user_json?.user

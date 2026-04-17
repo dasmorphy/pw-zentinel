@@ -101,6 +101,23 @@ export class DoughnutComponent {
     const attributes = this.user_session?.attributes
     const filterss = { ...(filters || {}) };
 
+    if (!filters?.start_date && !filters?.end_date) {
+      const today = new Date();
+      const tomorrow = new Date();
+      tomorrow.setDate(today.getDate() + 1);
+
+      const formatDate = (date: any) => {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+
+        return `${year}-${month}-${day}T00:00:00`;
+      };
+
+      filterss.start_date = formatDate(today);
+      filterss.end_date = formatDate(tomorrow);
+    }
+
     if (this.user_permissions_signal().includes('DATA_BY_GROUP_BUSINESS')) {
       filterss.groups_business_id = attributes?.group_business?.toString()
     }
