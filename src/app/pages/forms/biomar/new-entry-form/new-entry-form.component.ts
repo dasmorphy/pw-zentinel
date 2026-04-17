@@ -3,11 +3,7 @@ import { Component, computed, inject, ViewChild } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { RouterOutlet } from "@angular/router";
-import { HeaderComponent } from "src/app/components/header/header.component";
-import { MenuService } from 'src/app/services/menu.service';
-import { MenuComponent } from "src/app/components/menu/menu.component";
-import { FormArray, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { ToastModule } from 'primeng/toast';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -16,10 +12,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { LogbookService } from 'src/app/services/logbook.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { DialogModule } from 'primeng/dialog';
-import { UserService } from 'src/app/services/user.service';
 import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { v4 as uuidv4} from 'uuid';
-import { DashboardService } from 'src/app/services/dashboard.service';
 import { DispatchService } from 'src/app/services/dispatch.service';
 
 @Component({
@@ -98,7 +92,7 @@ export class NewEntryFormComponent {
     createMaterial(): FormGroup {
         return this.fb.group({
             id_material: ['', Validators.required],
-            quantity: ['', Validators.required]
+            quantity: [1, Validators.required]
         });
     }
 

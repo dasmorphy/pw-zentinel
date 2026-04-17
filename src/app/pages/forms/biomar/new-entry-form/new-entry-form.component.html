@@ -33,7 +33,7 @@
 
                         <span class="w-full">
                             <label htmlFor="dni">Identificación <span style="color: red;">*</span></label>
-                            <input class="border-round w-full mt-2" pInputText id="dni" maxlength="10"
+                            <input class="border-round w-full mt-2" pInputText id="dni" maxlength="10" oninput="this.value = this.value.replace(/\D/g, '');"
                                 formControlName="dni" />
                             <div *ngIf="entryForm.get('dni')?.hasError('campoVacio')">
                                 <span class="validate-data">Este campo es obligatorio</span>
@@ -105,8 +105,8 @@
                                         <!-- Cantidad -->
                                         <span class="w-full">
                                             <label>Cantidad <span style="color: red;">*</span></label>
-
-                                            <input class="border-round w-full mt-2" pInputText formControlName="quantity" />
+                                            <p-inputNumber min="1" class="border-round w-full mt-2" formControlName="quantity" [useGrouping]="false" styleClass="w-full">
+                                            </p-inputNumber>
                                            <div *ngIf="material.get('quantity')?.invalid">
                                                 <span class="validate-data">La cantidad es obligatoria</span>
                                             </div>

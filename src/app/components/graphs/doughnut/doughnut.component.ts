@@ -13,6 +13,7 @@ import { PolarChartComponent } from '../polar-chart/polar-chart.component';
 import { LogbookDetailsGraphsComponent } from '../../modals/logbook-details-graphs/logbook-details-graphs.component';
 import { LogbookService } from 'src/app/services/logbook.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { UtilsService } from 'src/app/services/utils.service';
 
 @Component({
   selector: 'app-doughnut',
@@ -37,6 +38,7 @@ export class DoughnutComponent {
   private readonly dashboardService = inject(DashboardService);
   private readonly logbookService = inject(LogbookService);
   private readonly authService = inject(AuthService);
+  private readonly utilsService = inject(UtilsService);
   
   toggle = computed(() => this.menuService.toggle());
   categories = computed(() => this.logbookService.categories());
@@ -265,6 +267,7 @@ export class DoughnutComponent {
 
 
   createLogbookChart(entrada: number, salida: number) {
+    const total = entrada + salida;
     const centerTextPlugin = {
       id: 'centerText',
       beforeDraw(chart: any) {
@@ -300,11 +303,11 @@ export class DoughnutComponent {
         plugins: {
           legend: { position: 'bottom' },
           centerText: {
-            text: `${entrada + salida} total` // 👈 el texto que quieras mostrar
+            text: `${this.utilsService.formatNumber(total)}` // 👈 el texto que quieras mostrar
         }
         }
       } as any,
-      plugins: [centerTextPlugin]
+      // plugins: [centerTextPlugin]
     };
 
     const canvas = document.getElementById('myDoughnutChart') as HTMLCanvasElement;
