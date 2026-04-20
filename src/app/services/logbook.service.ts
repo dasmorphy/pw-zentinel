@@ -112,6 +112,10 @@ export class LogbookService {
         let params = new HttpParams();
         let headers = new HttpHeaders();
 
+        if (filter?.user) {
+            params = params.set('user', filter.user);
+        }
+
         if (filter?.start_date) {
             params = params.set('start_date', filter.start_date);
         }

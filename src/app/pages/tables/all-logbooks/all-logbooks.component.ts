@@ -163,7 +163,7 @@ export class AllLogbookComponent {
         const attributes = user_json?.attributes
         const filters = { ...this.filters };
 
-        if (user_json?.role !== 'admin') {
+        if (user_json?.role == 'guardia') {
             filters.user = user_json?.user
         }
 
