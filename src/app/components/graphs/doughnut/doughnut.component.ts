@@ -54,7 +54,7 @@ export class DoughnutComponent {
   selectedGroupBusiness: number[] = [];
   selectedSector: number[] = [];
   selectedTime: string[] = ['Diurna', 'Nocturna'];
-  filters: any;
+  filters: any = {};
   modalDetailsGraphs: boolean = false;
 
   optionFilterCategory = [
@@ -116,6 +116,9 @@ export class DoughnutComponent {
 
       filterss.start_date = formatDate(today);
       filterss.end_date = formatDate(tomorrow);
+      
+      this.filters.start_date = formatDate(today);
+      this.filters.end_date = formatDate(tomorrow);
     }
 
     if (this.user_permissions_signal().includes('DATA_BY_GROUP_BUSINESS')) {
