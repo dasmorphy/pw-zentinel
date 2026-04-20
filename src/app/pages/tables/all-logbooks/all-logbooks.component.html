@@ -36,11 +36,14 @@
             <p-table  #dt_logbooks
                 [value]="dataLogbooks"
                 [paginator]="true"
+                [totalRecords]="totalRecords"
                 [rows]="5"
                 [globalFilterFields]="['workday','truck_license','name_driver', 'shipping_guide', 'observations']"
                 [rowsPerPageOptions]="[5, 10, 25, 50]"
                 [showCurrentPageReport]="false"
                 [tableStyle]="{ 'max-width': '100%' }"
+                [lazy]="true"
+                (onLazyLoad)="pageChange($event)"
                 rowStyleClass="custom-row-height"
                 dataKey="id"
             >

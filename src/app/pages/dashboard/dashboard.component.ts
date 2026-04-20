@@ -46,8 +46,6 @@ import { AuthService } from 'src/app/services/auth.service';
 })
 export class DashboardComponent {
     private readonly menuService = inject(MenuService);
-    private readonly logbookService = inject(LogbookService);
-    private readonly dispatchService = inject(DispatchService);
     private readonly authService = inject(AuthService);
 
     toggle = computed(() => this.menuService.toggle());
@@ -61,8 +59,6 @@ export class DashboardComponent {
         const user_session = localStorage.getItem('sb_token')
         const user_json = user_session ? JSON.parse(user_session) : null;
         this.user_session = user_json;
-        this.logbookService.getAllCategories();
-        this.dispatchService.getGraphs()
     }
 
 

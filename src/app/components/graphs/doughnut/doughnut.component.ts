@@ -75,6 +75,7 @@ export class DoughnutComponent {
     this.fetchDataGraphs()
     this.fetchSectorByBusiness();
     this.fetchGroupBusinessByBusiness();
+    this.logbookService.getAllCategories();
   }
 
   fetchSectorByBusiness() {

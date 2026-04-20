@@ -79,9 +79,12 @@ export class AllLogbookComponent {
     selectedSector: number[] = [];
     selectedCategories: number[] = [];
     selectedTime: string[] = ['Diurna', 'Nocturna'];
-    filters: any = {};
+    filters: any = {
+        first: 1,
+        rows: 5
+    };
     dateRange: Date[] | null = null;
-
+    totalRecords: number = 0;
 
     optionFilterCategory = [
         { value: 'all', label: 'Todos' },
@@ -171,10 +174,12 @@ export class AllLogbookComponent {
             filters.groups_business_id = attributes?.group_business?.toString()
         }
 
-        this.logbookService.getAllLogbooks(filters).subscribe({
+        this.logbookService.getAllLogbooksPaginated(filters).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
-                this.dataLogbooks = data?.data;
+                const dataHistory = data?.data;
+                this.dataLogbooks = dataHistory?.data;
+                this.totalRecords = dataHistory?.pagination?.total_pages;
             },
             error: (error: any) => {
                 this.isLoading = false;
@@ -331,5 +336,32 @@ export class AllLogbookComponent {
                 this.utilsService.onError(error?.error?.message ?? 'No se pudo eliminar la bitácora');
             }
         })
+    }
+
+    pageChange(event: any) {
+        const paginator = {
+            first: event.first,
+            rows: event.rows
+        }
+        
+
+        console.log(paginator)
+        this.filters.first = event.first + 1;
+        this.filters.rows = event.rows;
+
+        this.fetchHistoryLogbook();
+        // if (this.lastSearchInputValue === '') {
+        // this.cachedContracts = [];
+        // }
+
+
+        // if (this.cachedContracts.length > 0) {
+        // // Usa datos en memoria de contratos
+        // const start = event.first;
+        // const end = start + event.rows;
+        // this.contracts = this.cachedContracts.slice(start, end);
+        // }else {
+        // this.reloadContracts(paginator)
+        // }
     }
 }

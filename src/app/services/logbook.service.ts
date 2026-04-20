@@ -150,6 +150,47 @@ export class LogbookService {
         )
     }
 
+    getAllLogbooksPaginated(filter?: any) {
+        let params = new HttpParams();
+        let headers = new HttpHeaders();
+
+        if (filter?.start_date) {
+            params = params.set('start_date', filter.start_date);
+        }
+
+        if (filter?.end_date) {
+            params = params.set('end_date', filter.end_date);
+        }
+
+        if (filter?.first) {
+            params = params.set('first', filter.first);
+        }
+
+        if (filter?.rows) {
+            params = params.set('rows', filter.rows);
+        }
+
+        if (filter?.groups_business_id) {
+            headers = headers.set('groups-business-id', filter?.groups_business_id)
+        }
+
+        if (filter?.workday) {
+            headers = headers.set('workday', filter?.workday)
+        }
+
+        if (filter?.sectors) {
+            headers = headers.set('sectors', filter?.sectors)
+        }
+
+        if (filter?.ids_categories) {
+            headers = headers.set('ids-categories', filter?.ids_categories)
+        }
+
+        return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/all-logbooks-paginated`,
+            { headers, params }
+        )
+    }
+
     getReportHistory(filter?: any) {
         let params = new HttpParams();
         let headers = new HttpHeaders();
