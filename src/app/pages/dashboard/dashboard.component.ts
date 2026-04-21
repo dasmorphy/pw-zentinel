@@ -54,12 +54,18 @@ export class DashboardComponent {
 
     user_session: any;
     isLoading: boolean = false;
+    optionsDashboard = ["Expalsa", "Biomar"];
+    optionDashboardSelected = "Expalsa";
+
 
     ngOnInit() {
         const user_session = localStorage.getItem('sb_token')
         const user_json = user_session ? JSON.parse(user_session) : null;
         this.user_session = user_json;
     }
-
+    
+    onChangeDahboard(option: string) {
+        this.optionDashboardSelected = option
+    }
 
 }

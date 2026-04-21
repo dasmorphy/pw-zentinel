@@ -38,7 +38,6 @@
                 [paginator]="true"
                 [totalRecords]="totalRecords"
                 [rows]="5"
-                [globalFilterFields]="['workday','truck_license','name_driver', 'shipping_guide', 'observations']"
                 [rowsPerPageOptions]="[5, 10, 25, 50]"
                 [showCurrentPageReport]="false"
                 [tableStyle]="{ 'max-width': '100%' }"
@@ -58,7 +57,7 @@
                                 class="border-none shadow-none--custom border-round-left-2xl border-round-right-2xl" 
                                 type="text"
                                 pInputText 
-                                (input)="dt_logbooks.filterGlobal($any($event.target).value, 'contains')" 
+                                (input)="searchLogbook($event)"
                             />         
                             <p-columnFilter #imagePanel id="dateFilter" style="position: relative; z-index: 3; right: 3rem; margin-top: 7px;" type="date" field="date" display="menu">
                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
@@ -174,7 +173,7 @@
                             </p-splitButton>
                         </td>
                         <td  data-titulo="Fecha:" [ngxTippy]="'Hora de registro: ' + (loogbook?.created_at | date:'HH:mm':'UTC')">{{ loogbook?.created_at | date:'dd/MM/yyyy':'UTC' }}</td>
-                        <td  data-titulo="Tipo:">{{ loogbook?.id_logbook_entry ? 'Ingreso' : 'Salida'  }}</td>
+                        <td  data-titulo="Tipo:">{{ loogbook?.record_type == 'entry' ? 'Ingreso' : 'Salida'  }}</td>
                         <td  data-titulo="Documento:" style="max-width: 20px;">{{ loogbook?.shipping_guide == '' || null ? 'N/A' : loogbook?.shipping_guide }}</td>
                         <td  data-titulo="Categoría:">{{ loogbook?.name_category ?? 'N/A' }}</td>
                         <td  data-titulo="Cantidad:">{{ loogbook?.quantity ?? 'N/A' }}</td>

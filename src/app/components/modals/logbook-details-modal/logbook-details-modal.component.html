@@ -22,12 +22,12 @@
             </p-tabView>
         }
         @else {
-            @if (logbookSelected()?.id_logbook_entry) {
+            @if (logbookSelected()?.record_type == 'entry') {
                 <app-logbook-detail-entry [logbookData]="logbookSelected()"></app-logbook-detail-entry>
             }
     
             
-            @if (logbookSelected()?.id_logbook_out) {
+            @if (logbookSelected()?.record_type == 'out') {
                 <app-logbook-detail-out [logbookData]="logbookSelected()"></app-logbook-detail-out>
             }
         }

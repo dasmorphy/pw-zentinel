@@ -112,7 +112,7 @@ export class LogbookService {
             headers = headers.set('ids-categories', filter?.ids_categories)
         }
 
-        return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/history-logbook`,
+        return this.http.get(`http://localhost:2120/rest/zent-logbook-api/v1.0/get/history-logbook`,
             { headers, params }
         )
     }
@@ -168,6 +168,10 @@ export class LogbookService {
 
         if (filter?.rows) {
             params = params.set('rows', filter.rows);
+        }
+
+        if (filter?.search) {
+            params = params.set('search', filter.search);
         }
 
         if (filter?.groups_business_id) {
