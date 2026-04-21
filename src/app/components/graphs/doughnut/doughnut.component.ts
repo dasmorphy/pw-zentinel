@@ -13,6 +13,7 @@ import { PolarChartComponent } from '../polar-chart/polar-chart.component';
 import { LogbookDetailsGraphsComponent } from '../../modals/logbook-details-graphs/logbook-details-graphs.component';
 import { LogbookService } from 'src/app/services/logbook.service';
 import { AuthService } from 'src/app/services/auth.service';
+import { UtilsService } from 'src/app/services/utils.service';
 
 @Component({
   selector: 'app-doughnut',
@@ -37,6 +38,7 @@ export class DoughnutComponent {
   private readonly dashboardService = inject(DashboardService);
   private readonly logbookService = inject(LogbookService);
   private readonly authService = inject(AuthService);
+  private readonly utilsService = inject(UtilsService);
   
   toggle = computed(() => this.menuService.toggle());
   categories = computed(() => this.logbookService.categories());
@@ -73,6 +75,7 @@ export class DoughnutComponent {
     this.fetchDataGraphs()
     this.fetchSectorByBusiness();
     this.fetchGroupBusinessByBusiness();
+    this.logbookService.getAllCategories();
   }
 
   fetchSectorByBusiness() {
@@ -285,6 +288,27 @@ export class DoughnutComponent {
 
 
   createLogbookChart(entrada: number, salida: number) {
+    const total = entrada + salida;
+    const centerTextPlugin = {
+      id: 'centerText',
+      beforeDraw(chart: any) {
+        const { ctx, width, height } = chart;
+
+        ctx.save();
+
+        const text = chart.config.options.plugins.centerText.text;
+
+        ctx.font = 'bold 24px Arial';
+        ctx.fillStyle = '#333';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        ctx.fillText(text, width / 2, height / 2);
+
+        ctx.restore();
+      }
+    };
+
     const config: ChartConfiguration<'doughnut'> = {
       type: 'doughnut',
       data: {
@@ -298,9 +322,13 @@ export class DoughnutComponent {
       options: {
         responsive: true,
         plugins: {
-          legend: { position: 'bottom' }
+          legend: { position: 'bottom' },
+          centerText: {
+            text: `${this.utilsService.formatNumber(total)}` // 👈 el texto que quieras mostrar
         }
-      }
+        }
+      } as any,
+      // plugins: [centerTextPlugin]
     };
 
     const canvas = document.getElementById('myDoughnutChart') as HTMLCanvasElement;

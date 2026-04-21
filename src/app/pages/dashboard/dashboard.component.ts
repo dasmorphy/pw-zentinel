@@ -18,6 +18,9 @@ import { LogbookService } from 'src/app/services/logbook.service';
 import { UserService } from 'src/app/services/user.service';
 import { DialogModule } from 'primeng/dialog';
 import { LogbookRecentComponent } from 'src/app/components/logbook/logbook-recent/logbook-recent.component';
+import { DispatchService } from 'src/app/services/dispatch.service';
+import { BiomarDashboardComponent } from 'src/app/components/dashboards/biomar-dasboard/biomar-dashboard.component';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
     selector: 'app-dashboard',
@@ -35,25 +38,34 @@ import { LogbookRecentComponent } from 'src/app/components/logbook/logbook-recen
         ProgressSpinnerModule,
         DoughnutComponent,
         DialogModule,
-        LogbookRecentComponent
+        LogbookRecentComponent,
+        BiomarDashboardComponent
     ],
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.sass'],
 })
 export class DashboardComponent {
     private readonly menuService = inject(MenuService);
-    private readonly logbookService = inject(LogbookService);
+    private readonly authService = inject(AuthService);
 
     toggle = computed(() => this.menuService.toggle());
+
+    user_permissions_signal = computed(() => this.authService.user_permissions_signal());
+
     user_session: any;
     isLoading: boolean = false;
+    optionsDashboard = ["Expalsa", "Biomar"];
+    optionDashboardSelected = "Expalsa";
+
 
     ngOnInit() {
         const user_session = localStorage.getItem('sb_token')
         const user_json = user_session ? JSON.parse(user_session) : null;
         this.user_session = user_json;
-        this.logbookService.getAllCategories();
     }
-
+    
+    onChangeDahboard(option: string) {
+        this.optionDashboardSelected = option
+    }
 
 }

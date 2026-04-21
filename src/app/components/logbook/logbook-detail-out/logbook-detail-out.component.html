@@ -125,10 +125,10 @@
 </div>
 
 
-@if (logbookData?.images_out?.length > 0) {
+@if (logbookData?.images?.length > 0) {
     <h4 class="mt-4">IMÁGENES</h4>
     <div class="div-responsive mt-3">
-        <div class="flex justify-content-center" *ngFor="let image of logbookData?.images_out">
+        <div class="flex justify-content-center" *ngFor="let image of logbookData?.images">
             <img style="object-fit: contain;" [src]="'http://st.telearseg.net' + image" alt="imagenes salida"
                 loading="lazy" height="190" width="180">
         </div>

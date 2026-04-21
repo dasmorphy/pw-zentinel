@@ -25,6 +25,8 @@ import { UtilsService } from 'src/app/services/utils.service';
 import { LogBookDetailsModalComponent } from 'src/app/components/modals/logbook-details-modal/logbook-details-modal.component';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { AuthService } from 'src/app/services/auth.service';
+import { debounceTime, distinctUntilChanged, filter, tap } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
     selector: 'app-logbooks-table',
@@ -54,6 +56,8 @@ import { AuthService } from 'src/app/services/auth.service';
     styleUrls: ['./all-logbooks.component.sass']
 })
 export class AllLogbookComponent {
+    @ViewChild('dt_logbooks') dtLogbooks: any;
+
     @Input() dataModal: any = null;
     
     public readonly dashboardService = inject(DashboardService);
@@ -72,6 +76,7 @@ export class AllLogbookComponent {
     selectedLogbook: any = null;
     isLoading: boolean = true;
     showConfirmDelete: boolean = false;
+    searchInput$ = new Subject<string>();
 
     optionSector: any = [];
     optionGroupBusiness: any = [];
@@ -79,9 +84,12 @@ export class AllLogbookComponent {
     selectedSector: number[] = [];
     selectedCategories: number[] = [];
     selectedTime: string[] = ['Diurna', 'Nocturna'];
-    filters: any = {};
+    filters: any = {
+        first: 1,
+        rows: 5
+    };
     dateRange: Date[] | null = null;
-
+    totalRecords: number = 0;
 
     optionFilterCategory = [
         { value: 'all', label: 'Todos' },
@@ -121,16 +129,18 @@ export class AllLogbookComponent {
 
 
     ngOnInit() {
-        if (!this.dataModal) {
-            
-            this.fetchHistoryLogbook();
-        }else {
+        const user_session = localStorage.getItem('sb_token')
+        const user_json = user_session ? JSON.parse(user_session) : null;
+        this.user_session = user_json;
+
+        if (this.dataModal) {
             this.dataLogbooks = this.dataModal
         }
 
         this.fetchGroupBusinessByBusiness();
         this.fetchSectorByBusiness();
         this.logbookService.getAllCategories();
+        this.debounceSearch();
     }
 
     fetchSectorByBusiness() {
@@ -157,24 +167,23 @@ export class AllLogbookComponent {
 
     fetchHistoryLogbook() {
         this.isLoading = true;
-        const user_session = localStorage.getItem('sb_token')
-        const user_json = user_session ? JSON.parse(user_session) : null;
-        this.user_session = user_json;
-        const attributes = user_json?.attributes
+        const attributes = this.user_session?.attributes
         const filters = { ...this.filters };
 
-        if (user_json?.role == 'guardia') {
-            filters.user = user_json?.user
+        if (this.user_session?.role == 'guardia') {
+            filters.user = this.user_session?.user
         }
 
         if (this.user_permissions_signal().includes('DATA_BY_GROUP_BUSINESS')) {
             filters.groups_business_id = attributes?.group_business?.toString()
         }
 
-        this.logbookService.getAllLogbooks(filters).subscribe({
+        this.logbookService.getAllLogbooksPaginated(filters).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
-                this.dataLogbooks = data?.data;
+                const dataHistory = data?.data;
+                this.dataLogbooks = dataHistory?.data;
+                this.totalRecords = dataHistory?.pagination?.total;
             },
             error: (error: any) => {
                 this.isLoading = false;
@@ -287,19 +296,7 @@ export class AllLogbookComponent {
     }
 
     viewLogbookDetails(log: any) {
-        let log_found;
-
-        if (log?.id_logbook_entry) {
-            log_found = this.dataLogbooks.find(
-                (item: any) => item.id_logbook_entry === log.id_logbook_entry
-            );
-        } else {
-            log_found = this.dataLogbooks.find(
-                (item: any) => item.id_logbook_out === log.id_logbook_out
-            );
-        }
-
-        this.logbookService.openSummary(log_found);
+        this.logbookService.openSummary(log);
     }
 
     getSeverity(status_logbook: string) {
@@ -331,5 +328,34 @@ export class AllLogbookComponent {
                 this.utilsService.onError(error?.error?.message ?? 'No se pudo eliminar la bitácora');
             }
         })
+    }
+
+    pageChange(event: any) {
+        const page = (event.first / event.rows) + 1;
+        this.filters.first = page;
+        this.filters.rows = event.rows;
+        this.fetchHistoryLogbook();
+    }
+
+    searchLogbook(valueSearch: any) {
+        const value = valueSearch?.target?.value || '';
+        this.filters.search = value
+        this.searchInput$.next(value);
+    }
+
+    debounceSearch() {
+        this.searchInput$.pipe(
+            debounceTime(750),
+            distinctUntilChanged(),
+            filter(value => value.length >= 2 || value.length === 0),
+            tap((valueSearch) => {
+                this.dtLogbooks.first = 0;
+                this.dtLogbooks.rows = 5;
+                delete this.filters.first;
+                delete this.filters.rows;
+                this.filters.search = valueSearch || '';
+                this.fetchHistoryLogbook();
+            })
+        ).subscribe();
     }
 }

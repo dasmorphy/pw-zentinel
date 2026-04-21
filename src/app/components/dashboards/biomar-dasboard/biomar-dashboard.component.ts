@@ -1,0 +1,166 @@
+import { CommonModule } from '@angular/common';
+import { Component, computed, inject } from '@angular/core';
+import { AvatarModule } from 'primeng/avatar';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { RouterOutlet } from "@angular/router";
+import { HeaderComponent } from "src/app/components/header/header.component";
+import { MenuService } from 'src/app/services/menu.service';
+import { MenuComponent } from "src/app/components/menu/menu.component";
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DropdownModule } from 'primeng/dropdown';
+import { ToastModule } from 'primeng/toast';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { DoughnutComponent } from 'src/app/components/graphs/doughnut/doughnut.component';
+import { LogbookService } from 'src/app/services/logbook.service';
+import { UserService } from 'src/app/services/user.service';
+import { DialogModule } from 'primeng/dialog';
+import { LogbookRecentComponent } from 'src/app/components/logbook/logbook-recent/logbook-recent.component';
+import { DispatchService } from 'src/app/services/dispatch.service';
+import { TableModule } from 'primeng/table';
+import { NgxTippyModule } from 'ngx-tippy-wrapper';
+import { TagModule } from 'primeng/tag';
+import { SplitButtonModule } from 'primeng/splitbutton';
+import { forkJoin, catchError, of } from 'rxjs';
+import { EntryDetailsModalComponent } from '../../modals/entry-details-modal/entry-details-modal.component';
+import { DispatchDetailsModalComponent } from '../../modals/dispatch-details-modal/dispatch-details-modal.component';
+
+@Component({
+    selector: 'app-biomar-dashboard',
+    standalone: true,
+    imports: [
+        CommonModule,
+        ButtonModule,
+        AvatarModule,
+        InputTextModule,
+        DropdownModule,
+        InputNumberModule,
+        FormsModule,
+        ReactiveFormsModule,
+        ToastModule,
+        ProgressSpinnerModule,
+        DialogModule,
+        NgxTippyModule,
+        TableModule,
+        TagModule,
+        SplitButtonModule,
+        EntryDetailsModalComponent,
+        DispatchDetailsModalComponent
+    ],
+    templateUrl: './biomar-dashboard.component.html',
+    styleUrls: ['./biomar-dashboard.component.sass'],
+})
+export class BiomarDashboardComponent {
+    private readonly menuService = inject(MenuService);
+    private readonly logbookService = inject(LogbookService);
+    private readonly dispatchService = inject(DispatchService);
+
+    toggle = computed(() => this.menuService.toggle());
+    graphs = computed(() => this.dispatchService.graphsDispatch());
+    entrySelected = computed(() => this.dispatchService.showModalSummaryEntry());
+    dispatchSelected = computed(() => this.dispatchService.showModalSummary());
+
+    user_session: any;
+    isLoading: boolean = false;
+    selectedDispatch: any = null;
+
+    dataBiomar: any [] = [];
+
+    items: any = [
+        {
+            label: 'Ver detalles',
+            icon: 'pi pi-eye',
+            command: () => this.viewDispatchDetails(this.selectedDispatch!)
+        },
+    ];
+
+    ngOnInit() {
+        const user_session = localStorage.getItem('sb_token')
+        const user_json = user_session ? JSON.parse(user_session) : null;
+        this.user_session = user_json;
+        this.dispatchService.getGraphs()
+        this.fetchAllData();
+    }
+
+
+    getStatusStyles(statusName: string) {
+        switch (statusName) {
+            case 'En tránsito':
+                return {
+                    background: '#f3e178',
+                    color: '#8a9019'
+                };
+            case 'Ingresado en bodega':
+                return {
+                    background: '#9df18a',
+                    color: '#158308'
+                };
+            case 'Listo para despacho':
+                return {
+                    background: '#bfdaec',
+                    color: '#3b6d89'
+                };
+            default:
+                return {
+                    background: '#F3F4F6',
+                    color: '#374151'
+                };
+        }
+    }
+
+    fetchAllData() {
+        forkJoin({
+            entryAccess: this.dispatchService.getAllEntryAccess().pipe(catchError(() => of([]))),
+            dispatchs: this.dispatchService.getAllDispatchs().pipe(catchError(() => of([])))
+        }).subscribe({
+            next: ({ entryAccess, dispatchs }: any) => {
+                this.dataBiomar = [
+                    ...(entryAccess?.data || []),
+                    ...(dispatchs?.data || [])
+                ].sort((a: any, b: any) => 
+                    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+                );
+                console.log(this.dataBiomar);
+            },
+            error: (error: any) => {
+                console.log(error);
+            }
+        });
+    }
+
+
+    getSeverity(status: string) {
+        switch (status) {
+        case "Ingresado en bodega":
+            return 'success';
+        case "En tránsito":
+            return 'warning';
+        case "Listo para despacho":
+            return 'info';
+        case "Finalizado":
+            return 'success';
+        case "Pendiente Salida":
+            return 'warning';
+        default:
+            return 'info';
+        }
+    }
+
+
+    optionsDispatch(loogbook: any) {
+        this.selectedDispatch = loogbook
+    }
+
+
+    viewDispatchDetails(data: any) {
+        if (data?.id_access_control) {
+            this.dispatchService.openSummaryEntry(data);
+        }else{
+            this.dispatchService.openSummary(data);
+        }
+    }
+
+
+}

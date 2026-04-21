@@ -61,13 +61,13 @@ export class MenuComponent implements OnInit {
       {
         label: 'Bitácoras',
         icon: 'pi pi-list-check',
-        // visible: this.user_permissions?.includes('VENTAS'),
+        visible: this.user_permissions_signal()?.includes('VER_BITACORAS'),
         command: () => { this.clickHiddenToggle(true) },
         items: [
           {
             label: 'Todas las bitácoras',
             icon: 'pi pi-list-check',
-            // visible: this.user_permissions?.includes('VENTAS_VER_TODAS'),
+            visible: this.user_permissions_signal()?.includes('VER_BITACORAS'),
             routerLink: ['tablero-bitacoras'],
             command: () => { this.clickHiddenToggle() }
           },
@@ -83,6 +83,42 @@ export class MenuComponent implements OnInit {
             icon: 'pi pi-file-export',
             visible: this.user_permissions_signal()?.includes('NUEVA_BITACORA_SALIDA'),
             routerLink: ['reporte-salida'],
+            command: () => { this.clickHiddenToggle() }
+          },
+        ]
+      },
+      {
+        label: 'Despachos',
+        icon: 'pi pi-truck',
+        visible: this.user_permissions_signal()?.includes('VER_DESPACHOS'),
+        command: () => { this.clickHiddenToggle(true) },
+        items: [
+          {
+            label: 'Ver despachos',
+            icon: 'pi pi-list-check',
+            visible: this.user_permissions_signal()?.includes('VER_DESPACHOS'),
+            routerLink: ['tablero-despacho'],
+            command: () => { this.clickHiddenToggle() }
+          },
+          {
+            label: 'Ver registros de entrada',
+            icon: 'pi pi-list-check',
+            visible: this.user_permissions_signal()?.includes('VER_INGRESOS_BIOMAR'),
+            routerLink: ['tablero-ingresos'],
+            command: () => { this.clickHiddenToggle() }
+          },
+          {
+            label: 'Crear despacho',
+            icon: 'pi pi-file-check',
+            visible: this.user_permissions_signal()?.includes('NUEVO_DESPACHO'),
+            routerLink: ['crear-despacho'],
+            command: () => { this.clickHiddenToggle() }
+          },
+          {
+            label: 'Nuevo registro de entrada',
+            icon: 'pi pi-pen-to-square',
+            visible: this.user_permissions_signal()?.includes('NUEVO_INGRESO_BIOMAR'),
+            routerLink: ['nuevo-ingreso'],
             command: () => { this.clickHiddenToggle() }
           },
         ]

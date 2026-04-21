@@ -44,13 +44,22 @@ export class LogbookService {
             })
     }
 
-    getAllDestinyIntern() {
-        this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/allDestinyIntern`)
+    getAllDestinyIntern(filter?: any) {
+        let headers = new HttpHeaders();
+
+        if (filter?.business) {
+            headers = headers.set('business', filter?.business)
+        }
+
+        this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/allDestinyIntern`, {headers})
             .subscribe({
                 next: (data: any) => {
                     this.destinyIntern.set(data?.data || []);
                 },
-                error: ({ error }: any) => this.onError(error.message)
+                error: (error: any) => {
+                    console.log(error)
+                    this.onError(error?.message ?? 'Error al obtener los destinos')
+                }
             })
     }
 
@@ -103,7 +112,7 @@ export class LogbookService {
             headers = headers.set('ids-categories', filter?.ids_categories)
         }
 
-        return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/history-logbook`,
+        return this.http.get(`http://localhost:2120/rest/zent-logbook-api/v1.0/get/history-logbook`,
             { headers, params }
         )
     }
@@ -141,6 +150,51 @@ export class LogbookService {
         }
 
         return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/all-logbooks`,
+            { headers, params }
+        )
+    }
+
+    getAllLogbooksPaginated(filter?: any) {
+        let params = new HttpParams();
+        let headers = new HttpHeaders();
+
+        if (filter?.start_date) {
+            params = params.set('start_date', filter.start_date);
+        }
+
+        if (filter?.end_date) {
+            params = params.set('end_date', filter.end_date);
+        }
+
+        if (filter?.first) {
+            params = params.set('first', filter.first);
+        }
+
+        if (filter?.rows) {
+            params = params.set('rows', filter.rows);
+        }
+
+        if (filter?.search) {
+            params = params.set('search', filter.search);
+        }
+
+        if (filter?.groups_business_id) {
+            headers = headers.set('groups-business-id', filter?.groups_business_id)
+        }
+
+        if (filter?.workday) {
+            headers = headers.set('workday', filter?.workday)
+        }
+
+        if (filter?.sectors) {
+            headers = headers.set('sectors', filter?.sectors)
+        }
+
+        if (filter?.ids_categories) {
+            headers = headers.set('ids-categories', filter?.ids_categories)
+        }
+
+        return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/all-logbooks-paginated`,
             { headers, params }
         )
     }
