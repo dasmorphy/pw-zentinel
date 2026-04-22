@@ -313,8 +313,8 @@ export class AllLogbookComponent {
     deleteLogbook() {
         this.isLoading = true;
         this.showConfirmDelete = false;
-        const id_logbook = this.selectedLogbook?.id_logbook_entry ?? this.selectedLogbook?.id_logbook_out;
-        const type_logbook = this.selectedLogbook?.id_logbook_entry ? 'entrada' : 'salida';
+        const id_logbook = this.selectedLogbook?.record_id;
+        const type_logbook = this.selectedLogbook?.record_type == 'entry' ? 'entrada' : 'salida';
 
         this.logbookService.deleteLogbook(id_logbook, type_logbook).subscribe({
             next: (data: any) => {
