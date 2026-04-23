@@ -159,18 +159,12 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
 
     mapHistory(data: any[]) {
         return data.map((item: any) => {
-            const isEntry = !!item.id_logbook_entry;
-
-            if (!item?.name_category) {
-                console.log('id sin nombre', item.category_id)
-            }
-
             return {
                 user: item.created_by,
-                id: isEntry ? item.id_logbook_entry : item.id_logbook_out,
+                id: item.record_id,
                 guide: item.shipping_guide,
                 name_category: item.name_category,
-                type: isEntry ? 'entrada' : 'salida',
+                type: item.record_type === 'entry' ? 'entrada' : 'salida',
                 group: item.group_name,
                 truck_license: item.truck_license,
                 date: item.created_at
@@ -181,31 +175,11 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
 
 
     viewLogbookDetails(log: any) {
-        let log_found;
-
-        if (log.type === 'entrada') {
-            log_found = this.dataComplete.find(
-                (item: any) => item.id_logbook_entry === log.id
-            );
-        } else {
-            log_found = this.dataComplete.find(
-                (item: any) => item.id_logbook_out === log.id
-            );
-        }
-
+        const log_found = this.dataComplete.find(
+            (item: any) => item.record_id === log.id
+        );
+        
         this.log_selected = log_found;
         this.logbookService.openSummary(log_found);
-        // this.showDetail = true;
-    }
-
-    // viewContractDetails(logbook: any) {
-    //     if (!this.selectedLogbook) {
-    //         this.utilsService.onWarn('Registro no seleccionado');
-    //         return;
-    //     }
-    //     this.logbookService.openSummary(logbook);
-    // }
-
-    
-    
+    }    
 }

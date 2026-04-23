@@ -92,19 +92,7 @@ export class LogbookDetailsGraphsComponent {
     }
 
     viewLogbookDetails(log: any) {
-        let log_found;
-
-        if (log?.id_logbook_entry) {
-            log_found = this.dataLogbooks.find(
-                (item: any) => item.id_logbook_entry === log.id_logbook_entry
-            );
-        } else {
-            log_found = this.dataLogbooks.find(
-                (item: any) => item.id_logbook_out === log.id_logbook_out
-            );
-        }
-
-        this.logbookService.openSummary(log_found);
+        this.logbookService.openSummary(log);
     }
 
     fetchHistoryLogbook() {
