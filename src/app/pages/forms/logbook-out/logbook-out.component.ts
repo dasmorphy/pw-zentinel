@@ -248,7 +248,7 @@ export class LogbookOutComponent {
             truck_license: data?.truck_license,
             name_driver: data?.name_driver,
             authorized_by: data?.authorized_by,
-            id_logbook_entry: data?.id_logbook_entry
+            id_logbook_entry: data?.record_id
         });
     }
 
