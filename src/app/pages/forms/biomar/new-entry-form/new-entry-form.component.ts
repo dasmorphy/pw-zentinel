@@ -15,6 +15,7 @@ import { DialogModule } from 'primeng/dialog';
 import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { v4 as uuidv4} from 'uuid';
 import { DispatchService } from 'src/app/services/dispatch.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
     selector: 'app-new-entry',
@@ -42,6 +43,7 @@ export class NewEntryFormComponent {
     private logbookService = new LogbookService();
     private utilsService = new UtilsService();
     private readonly dispatchService = inject(DispatchService);
+    public readonly userService = inject(UserService);
 
     categories = computed(() => this.logbookService.categories());
     unitiesWeight = computed(() => this.logbookService.unitiesWeight());
@@ -82,8 +84,7 @@ export class NewEntryFormComponent {
     }
 
     ngOnInit() {
-        const user_session = localStorage.getItem('sb_token')
-        this.user_json = user_session ? JSON.parse(user_session) : null;
+        this.user_json = this.userService.getDataSession();
         this.dispatchService.getAllAreas();
         this.dispatchService.getStaffCharge();
         this.dispatchService.getMaterials();

@@ -166,8 +166,7 @@ export class MenuComponent implements OnInit {
   })
 
   ngOnInit() {
-    const user: any = localStorage.getItem('sb_token');
-    this.user_session = JSON.parse(user);
+    this.user_session = this.userService.getDataSession();
     const attributes = this.user_session?.attributes
     this.authService.setPermissionsUser(attributes.permissions);
     this.userService.setUserStorage(this.user_session)

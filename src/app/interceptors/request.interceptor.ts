@@ -13,7 +13,7 @@ export const httpInterceptorRequest: HttpInterceptorFn = (req: HttpRequest<unkno
     
   let token = "";
   let idGroup = ""
-  const user_session = localStorage.getItem('user');
+  const user_session = localStorage.getItem('sb_token');
   let  urlPath: any;
 
   if (req.url != '/assets/encryption_key/public_key_prod.pem') {
@@ -22,13 +22,13 @@ export const httpInterceptorRequest: HttpInterceptorFn = (req: HttpRequest<unkno
 
   if (user_session){
     // const user_session_json: any = JSON.parse(decrypt(user_session));
-    // token = user_session_json.access_token
+    token = user_session
     // idGroup = user_session_json?.groups[0]?.id
   }
 
   const clone = req.clone({
     setHeaders: {
-      Authorization: `Bearer ${token}`,
+      Token: token,
       channel: 'ZENTINEL_WEB',
       externalTransactionId: uuidv4()
     },

@@ -69,6 +69,7 @@ export class AllDispatchsComponent {
 
     public readonly dispatchService = inject(DispatchService);
     public readonly utilsService = inject(UtilsService);
+    public readonly userService = inject(UserService);
 
     dispatchSelected = computed(() => this.dispatchService.showModalSummary());
     statusDispatch = computed(() => this.dispatchService.statusDispatch());
@@ -117,8 +118,7 @@ export class AllDispatchsComponent {
     }
 
     ngOnInit() {
-        const user_session = localStorage.getItem('sb_token')
-        this.user_json = user_session ? JSON.parse(user_session) : null;
+        this.user_json = this.userService.getDataSession();
         this.fetchAllDispatchs();
         this.dispatchService.getStatusDispatch();
     }

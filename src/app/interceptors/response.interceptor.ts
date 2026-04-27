@@ -12,12 +12,9 @@ export const httpInterceptorResponse: HttpInterceptorFn = (req: HttpRequest<unkn
   return next(req).pipe(
     catchError((error: any) => {
       if (error instanceof HttpErrorResponse && error.status === 401) {
-        localStorage.removeItem('user');
-        localStorage.removeItem('time_expiration');
-        localStorage.removeItem('time_session');
+        localStorage.removeItem('sb_token')
 
         if (!req.url.includes('/rest/zent-logbook-api/v1.0/post/login')) {
-          // messageService.clear();
           messageService.add({
             severity: 'warn',
             summary: 'Aviso',

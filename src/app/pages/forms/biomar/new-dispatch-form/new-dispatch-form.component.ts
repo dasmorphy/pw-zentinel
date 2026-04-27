@@ -17,6 +17,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { Router } from '@angular/router';
 import { DispatchService } from 'src/app/services/dispatch.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
     selector: 'app-logbook-out',
@@ -44,6 +45,7 @@ export class NewDispatchForm {
     private readonly dispatchService = inject(DispatchService);
     private readonly logbookService = inject(LogbookService);
     private readonly utilsService = inject(UtilsService);
+    public readonly userService = inject(UserService);
 
 
     productsSku = computed(() => this.dispatchService.productsSku());
@@ -75,8 +77,7 @@ export class NewDispatchForm {
     }
 
     ngOnInit() {
-        const user_session = localStorage.getItem('sb_token')
-        this.user_json = user_session ? JSON.parse(user_session) : null;
+        this.user_json = this.userService.getDataSession();
 
         let filters: any = {"business": this.user_json?.attributes?.id_business.toString()};
 

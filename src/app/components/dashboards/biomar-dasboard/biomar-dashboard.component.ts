@@ -56,6 +56,7 @@ export class BiomarDashboardComponent {
     private readonly menuService = inject(MenuService);
     private readonly logbookService = inject(LogbookService);
     private readonly dispatchService = inject(DispatchService);
+    private readonly userService = inject(UserService);
 
     toggle = computed(() => this.menuService.toggle());
     graphs = computed(() => this.dispatchService.graphsDispatch());
@@ -77,9 +78,7 @@ export class BiomarDashboardComponent {
     ];
 
     ngOnInit() {
-        const user_session = localStorage.getItem('sb_token')
-        const user_json = user_session ? JSON.parse(user_session) : null;
-        this.user_session = user_json;
+        this.user_session = this.userService.getDataSession();
         this.dispatchService.getGraphs()
         this.fetchAllData();
     }

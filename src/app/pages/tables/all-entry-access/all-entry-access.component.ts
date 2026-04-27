@@ -66,6 +66,7 @@ export class AllEntryAccessComponent {
 
     public readonly dispatchService = inject(DispatchService);
     public readonly utilsService = inject(UtilsService);
+    public readonly userService = inject(UserService);
 
     entrySelected = computed(() => this.dispatchService.showModalSummaryEntry());
 
@@ -94,8 +95,7 @@ export class AllEntryAccessComponent {
     ];
 
     ngOnInit() {
-        const user_session = localStorage.getItem('sb_token')
-        this.user_json = user_session ? JSON.parse(user_session) : null;
+        this.user_json = this.userService.getDataSession();
         this.fetchAllEntries();
     }
 

@@ -14,6 +14,7 @@ import { LogbookDetailsGraphsComponent } from '../../modals/logbook-details-grap
 import { LogbookService } from 'src/app/services/logbook.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { UtilsService } from 'src/app/services/utils.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-doughnut',
@@ -39,6 +40,7 @@ export class DoughnutComponent {
   private readonly logbookService = inject(LogbookService);
   private readonly authService = inject(AuthService);
   private readonly utilsService = inject(UtilsService);
+  private readonly userService = inject(UserService);
   
   toggle = computed(() => this.menuService.toggle());
   categories = computed(() => this.logbookService.categories());
@@ -69,9 +71,7 @@ export class DoughnutComponent {
   user_session: any;
 
   ngOnInit() {
-    const user_session = localStorage.getItem('sb_token')
-    const user_json = user_session ? JSON.parse(user_session) : null;
-    this.user_session = user_json;
+    this.user_session = this.userService.getDataSession();
     this.fetchDataGraphs()
     this.fetchSectorByBusiness();
     this.fetchGroupBusinessByBusiness();

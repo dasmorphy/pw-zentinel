@@ -25,6 +25,13 @@ export class AuthService {
     }
 
     logout() {
+        const token = localStorage.getItem('sb_token');
+        this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/post/logout`, {
+            logout: { token }
+        }).subscribe({
+            next: (data: any) => console.log(data),
+            error: (error: any) => console.log(error)
+        });
         localStorage.removeItem('sb_token');
         this.router.navigate(['/login']);
     }

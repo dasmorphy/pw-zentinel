@@ -97,10 +97,8 @@ export class LogbookDetailsGraphsComponent {
 
     fetchHistoryLogbook() {
         this.isLoading = true;
-        const user_session = localStorage.getItem('sb_token')
-        const user_json = user_session ? JSON.parse(user_session) : null;
-        this.user_session = user_json;
-        const attributes = user_json?.attributes
+        this.user_session = this.userService.getDataSession();
+        const attributes = this.user_session?.attributes
 
         if (this.user_permissions_signal().includes('DATA_BY_GROUP_BUSINESS')) {
             this.filtersLogbook.groups_business_id = attributes?.group_business?.toString()

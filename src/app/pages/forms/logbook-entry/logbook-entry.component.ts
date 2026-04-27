@@ -47,6 +47,7 @@ export class LogbookEntryComponent {
     private logbookService = new LogbookService();
     private utilsService = new UtilsService();
     private dashboardService = new DashboardService();
+    private userService = new UserService();
 
     categories = computed(() => this.logbookService.categories());
     unitiesWeight = computed(() => this.logbookService.unitiesWeight());
@@ -85,8 +86,7 @@ export class LogbookEntryComponent {
     }
 
     ngOnInit() {
-        const user_session = localStorage.getItem('sb_token')
-        this.user_json = user_session ? JSON.parse(user_session) : null;
+        this.user_json = this.userService.getDataSession();
 
         if (this.user_json?.attributes['group_business']) {
             this.logbookForm.get('id_group_business')?.setValue(this.user_json?.attributes['group_business']);
