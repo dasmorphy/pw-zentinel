@@ -1,0 +1,134 @@
+<p-toast></p-toast>
+
+
+<div class="congress-page">
+
+    <!-- Background overlay -->
+    <div class="bg-overlay"></div>
+
+    <div class="content-wrapper">
+
+        <!-- Header Section -->
+        <div class="header-section">
+            <img src="./assets/logo_evento.svg" alt="logo-evento">
+
+            <!-- Date Badge -->
+            <div class="date-badge">
+                <span>27 DE MAYO DEL 2026 | HILTON COLÓN</span>
+            </div>
+
+            <!-- Location -->
+            <div class="location-link mt-3">
+                <i style="color: #57b1f5;" class="pi pi-map-marker"></i>
+                <span>
+                    <a href="https://maps.app.goo.gl/TQxqheLoRArz8VCN9" target="_blank">Ver ubicación</a>
+                </span>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="form-card">
+            <h2 class="form-title">INSCRIPCIÓN</h2>
+            <p class="form-subtitle">Confirma tu asistencia.</p>
+            <p class="form-subtitle">Evento <span class="highlight-yellow">Presencial</span>.</p>
+
+            <form [formGroup]="registrationForm" (ngSubmit)="onSubmit()" class="registration-form">
+
+                <!-- Row 1: Nombre / Apellidos -->
+                <div class="p-fluid p-formgrid">
+                    <div class="form-row">
+                        <div class="form-col">
+                            <label class="field-label">Nombre Completos<span class="required">*</span></label>
+                            <input pInputText formControlName="names" placeholder="Nombres completos"
+                                class="p-inputtext-sm custom-input" />
+                        </div>
+                    </div>
+
+                    <!-- Row 2: E-mail / Teléfono -->
+                    <div class="form-row">
+                        <div class="form-col">
+                            <label class="field-label">E-mail <span class="required">*</span></label>
+                            <input pInputText formControlName="email" placeholder="E-mail" type="email"
+                                class="p-inputtext-sm custom-input" />
+                            <div *ngIf="registrationForm.get('email')?.hasError('pattern')">
+                                <span class="validate-data font-bold">El formato de correo electrónico es inválido</span>
+                            </div>
+                        </div>
+                        <div class="form-col">
+                            <label class="field-label">Empresa <span class="required">*</span></label>
+                            <input pInputText formControlName="business" placeholder="Nombre de la empresa"
+                                class="p-inputtext-sm custom-input" />
+                        </div>
+                    </div>
+
+                    <!-- Row 3: País / Nacionalidad -->
+                    <div class="form-row">
+                        <div class="form-col">
+                            <label class="field-label">Cargo <span class="required">*</span></label>
+                            <input pInputText formControlName="position" placeholder="Cargo"
+                                class="p-inputtext-sm custom-input" />
+                        </div>
+
+                        <div class="form-col">
+                            <label class="field-label">Tipo industria <span class="required">*</span></label>
+                            <p-dropdown [style]="{ boxShadow: 'none', maxWidth: '100%' }"
+                                styleClass="border-round mt-2 w-full" id="typeIndustry"
+                                formControlName="type_industry" [options]="typeIndustry"
+                                [autoDisplayFirst]="false">
+                            </p-dropdown>
+
+                            @if (registrationForm.get('type_industry')?.value === 'Otro') {
+                                <input pInputText ng placeholder="Nombre de la empresa" [ngModelOptions]="{standalone: true}"
+                                class="p-inputtext-sm custom-input mt-2" [(ngModel)]="otherIndustry" />
+                            }
+                        </div>
+
+                        <div class="form-col">
+                            <label class="field-label">¿Asistirás al evento en la fecha indicada? <span class="required">*</span></label>
+                            <div class="flex mt-2">
+                                <p-radioButton 
+                                    name="is_assist"
+                                    class="parlante-check mr-2"
+                                    [value]="true"
+                                    formControlName="is_assist">
+                                </p-radioButton>
+                                <label style="color: white; font-size: 14px;" for="is_assist-true">Sí</label>
+                            </div>
+                            
+                            <div class="flex mt-2">
+                                <p-radioButton 
+                                    name="is_assist"
+                                    class="parlante-check mr-2"
+                                    [value]="false"
+                                    formControlName="is_assist">
+                                </p-radioButton>
+                                <label style="color: white; font-size: 14px;" for="is_assist-false">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- Privacy Notice -->
+                <div class="privacy-box">
+                    <p class="privacy-text">
+                        El congreso tratará sus datos personales para dar respuesta a las solicitudes planteadas. Puede
+                        ejercer los derechos de acceso,
+                        rectificación, supresión y portabilidad de sus datos, de limitación y oposición a su
+                        tratamiento, así como a no ser objeto de
+                        decisiones basadas únicamente en el tratamiento automatizado de sus datos, cuando proceda, en la
+                        dirección de correo electrónico
+                        facilitada.
+                    </p>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="submit-section">
+                    <button pButton type="submit" label="Enviar" class="submit-btn"></button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+</div>

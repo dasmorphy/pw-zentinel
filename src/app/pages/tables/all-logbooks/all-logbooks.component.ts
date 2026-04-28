@@ -116,7 +116,7 @@ export class AllLogbookComponent {
         {
             label: 'Continuar',
             icon: 'pi pi-play-circle',
-            visible: () => this.selectedLogbook?.status === 'Pendiente Salida',
+            visible: () => this.user_permissions_signal().includes('CONTINUAR_BITACORA') && this.selectedLogbook?.status === 'Pendiente Salida',
             command: () => this.routeOut()
         },
         {

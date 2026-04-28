@@ -126,7 +126,7 @@ export class MenuComponent implements OnInit {
       {
         label: 'Reportes',
         icon: 'pi pi-file',
-        // visible: this.user_permissions?.includes('VENTAS'),
+        visible: this.user_permissions_signal()?.includes('GENERAR_REPORTES'),
         command: () => { this.clickHiddenToggle(true) },
         items: [
           // {
@@ -141,7 +141,7 @@ export class MenuComponent implements OnInit {
           {
             label: 'Generar reportes',
             icon: 'pi pi-fw pi-table',
-            // visible: this.user_permissions?.includes('VENTAS_VER_TODAS'),
+            visible: this.user_permissions_signal()?.includes('GENERAR_REPORTES'),
             // routerLink: ['ventas'],
             command: () => {
               this.clickHiddenToggle()

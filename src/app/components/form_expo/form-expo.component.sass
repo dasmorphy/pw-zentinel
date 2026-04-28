@@ -1,0 +1,289 @@
+/* app.component.scss */
+
+// === Variables ===
+$dark-bg: #0a1628
+$dark-mid: #0d1e35
+$dark-card: #0f2240
+$yellow: #f5c518
+$yellow-light: #ffd700
+$white: #ffffff
+$light-gray: #c8d0e0
+$input-bg: #ffffff
+$input-border: #dde3ed
+$required-red: #e74c3c
+$privacy-bg: rgba(255, 255, 255, 0.06)
+
+a
+    color: $white
+    text-decoration: none
+
+input
+    font-family: 'Montserrat', sans-serif!important
+
+.congress-page
+    min-height: 100vh
+    position: relative
+    // font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif
+
+.bg-overlay
+    position: fixed
+    inset: 0
+    background-image: url('../../../assets/back_form.png')
+    background-size: cover
+    background-position: center
+    background-repeat: no-repeat
+    pointer-events: none
+    z-index: 0
+
+.content-wrapper
+    position: relative
+    z-index: 1
+    max-width: 680px
+    margin: 0 auto
+    padding: 40px 20px 60px
+
+// === Header ===
+.header-section
+    text-align: center
+    margin-bottom: 36px
+
+.title-main
+    font-size: 2.4rem
+    font-weight: 700
+    color: $white
+    margin: 0
+    line-height: 1.1
+    letter-spacing: -0.5px
+    text-shadow: 0 2px 20px rgba(0,0,0,0.5)
+
+.title-marketing
+    font-size: 2.4rem
+    font-weight: 700
+    color: $white
+    margin: 0 0 20px
+    line-height: 1.1
+
+em
+    font-style: italic
+    color: $yellow
+    font-size: 2.6rem
+    font-weight: 700
+
+.title-digital
+    color: $white
+    font-weight: 700
+
+// === Date Badge ===
+.date-badge
+    display: inline-block
+    background: #0e6bf5
+    color: $white
+    font-weight: 700
+    font-size: 1rem
+    padding: 12px 28px
+    border-radius: 40px
+    letter-spacing: 0.3px
+    margin-bottom: 16px
+    box-shadow: 0 4px 20px rgba(14, 107, 245, 0.4)
+    animation: badgePulse 3s ease-in-out infinite
+
+
+// === Location ===
+.location-link
+    display: flex
+    align-items: center
+    justify-content: center
+    gap: 6px
+    color: $light-gray
+    font-size: 0.95rem
+    cursor: pointer
+    transition: color 0.2s
+
+i
+    color: $yellow
+    font-size: 1rem
+
+    &:hover
+        color: $white
+
+// === Form Card ===
+.form-card
+    background: rgba(255, 255, 255, 0.03)
+    border: 1px solid rgba(255, 255, 255, 0.08)
+    border-radius: 16px
+    padding: 36px 32px 32px
+    backdrop-filter: blur(10px)
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4)
+
+.form-title
+    text-align: center
+    color: $white
+    font-size: 2.2rem
+    font-weight: 800
+    letter-spacing: 2px
+    margin: 0 0 6px
+
+.form-subtitle
+    text-align: center
+    color: $white
+    font-size: 1.05rem
+    margin: 2px 0
+    font-weight: 400
+
+.highlight-yellow
+    color: #57b1f5
+    font-weight: 700
+
+// === Form Fields ===
+.registration-form
+    margin-top: 24px
+
+.form-row
+    display: grid
+    grid-template-columns: 1fr 1fr
+    gap: 14px
+    margin-bottom: 14px
+
+    &-three
+        grid-template-columns: 1fr 1fr 1fr
+
+.form-col
+    display: flex
+    flex-direction: column
+
+    &-sm
+        display: flex
+        flex-direction: column
+
+.field-label
+    color: $light-gray
+    font-size: 0.78rem
+    font-weight: 500
+    margin-bottom: 4px
+    letter-spacing: 0.2px
+
+.required
+    color: $required-red
+    margin-left: 2px
+
+// === Custom Input Override ===
+.custom-input.p-inputtext
+    background: $input-bg !important
+    border: 1px solid $input-border !important
+    border-radius: 8px !important
+    color: #1a1a1a !important
+    font-size: 0.85rem !important
+    padding: 9px 12px !important
+    width: 100% !important
+    transition: border-color 0.2s, box-shadow 0.2s !important
+
+    &::placeholder
+        color: #aab0bc !important
+
+    &:focus
+        box-shadow: 0 0 0 2px rgba(245, 197, 24, 0.2) !important
+        outline: none !important
+
+// === Privacy Box ===
+.privacy-box
+    background: $privacy-bg
+    border: 1px solid rgba(255,255,255,0.08)
+    border-radius: 8px
+    padding: 14px 16px
+    margin: 20px 0 16px
+
+.privacy-text
+    color: rgba(200, 208, 224, 0.8)
+    font-size: 0.72rem
+    line-height: 1.55
+    margin: 0
+
+.privacy-link
+    color: $yellow
+    text-decoration: underline
+    cursor: pointer
+
+// === Checkboxes ===
+.checkboxes-section
+    margin-bottom: 24px
+
+.checkbox-row
+    display: flex
+    align-items: center
+    gap: 10px
+    margin-bottom: 10px
+
+// Override PrimeNG checkbox colors
+::ng-deep 
+    .p-checkbox .p-checkbox-box
+        background: transparent
+        border: 1.5px solid rgba(255, 255, 255, 0.4)
+        border-radius: 4px
+        width: 16px
+        height: 16px
+
+    // &.p-highlight
+    //     background: $yellow !important
+    //     border-color: $yellow !important
+
+    .p-checkbox-icon
+        color: #1a1a1a !important
+
+    p-dropdown
+        span
+            color: black !important
+            font-size: 14px !important
+
+.checkbox-label
+    color: $light-gray
+    font-size: 0.8rem
+    cursor: pointer
+    line-height: 1.4
+
+// === Submit Button ===
+.submit-section
+    display: flex
+    justify-content: center
+
+.submit-btn.p-button
+    background: transparent !important
+    border: 1.5px solid $white !important
+    color: $white !important
+    font-size: 1rem !important
+    font-weight: 600 !important
+    padding: 12px 64px !important
+    border-radius: 40px !important
+    letter-spacing: 1px !important
+    transition: all 0.3s ease !important
+    min-width: 200px !important
+
+    &:hover
+        background: rgba(255, 255, 255, 0.1) !important
+        border-color: #0e6bf5 !important
+        color: #0e6bf5 !important
+        box-shadow: 0 4px 20px rgba(245, 197, 24, 0.2) !important
+
+    &:active
+        transform: scale(0.97) !important
+
+// === Responsive ===
+@media (max-width: 600px)
+.title-main,
+.title-marketing
+    font-size: 1.7rem
+
+    & em
+        font-size: 1.85rem
+
+.form-card
+    padding: 24px 18px 24px
+
+.form-row
+    grid-template-columns: 1fr
+
+    &-three
+        grid-template-columns: 1fr
+
+.date-badge
+    font-size: 0.85rem
+    padding: 10px 20px

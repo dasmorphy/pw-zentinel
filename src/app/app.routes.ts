@@ -11,9 +11,13 @@ import { NewDispatchForm } from './pages/forms/biomar/new-dispatch-form/new-disp
 import { AllDispatchsComponent } from './pages/tables/all-dispatchs/all-dispatchs.component';
 import { AllEntryAccessComponent } from './pages/tables/all-entry-access/all-entry-access.component';
 import { NewEntryFormComponent } from './pages/forms/biomar/new-entry-form/new-entry-form.component';
+import { FormExpoComponent } from './components/form_expo/form-expo.component';
 
 export const routes: Routes = [
-
+    {
+        path: "formulario-expo",
+        component: FormExpoComponent,
+    },
     {
         path: "login",
         component: SigninComponent,

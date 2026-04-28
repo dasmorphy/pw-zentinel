@@ -52,4 +52,12 @@ export class DashboardService {
         );
     }
 
+
+    postFormExpo(data: any) {
+        return this.http.post(
+            `${environment.apiUrl}/rest/zent-logbook-api/v1.0/form-expo`,
+            {data}
+        );
+    }
+
 }
