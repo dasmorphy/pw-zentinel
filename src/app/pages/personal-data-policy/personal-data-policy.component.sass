@@ -1,0 +1,73 @@
+// Definición del color verde corporativo basado en el logo de Zentinel
+$zentinel-green: #28a745 // Verde profesional de seguridad
+$zentinel-dark: #1a1a1a
+
+.privacy-body
+    min-height: 100vh
+
+.document-container
+    max-width: 900px
+    background-color: #ffffff
+
+.zentinel-logo
+    .z-icon
+        background-color: $zentinel-dark
+        color: #ffffff
+        width: 40px
+        height: 40px
+        display: flex
+        align-items: center
+        justify-content: center
+        font-weight: 900
+        font-size: 1.5rem
+        border-radius: 4px
+        border-bottom: 4px solid $zentinel-green // Detalle en verde
+
+    span:last-child
+        color: $zentinel-dark
+        letter-spacing: -1px
+
+h1
+    color: $zentinel-dark
+    border-left: 5px solid $zentinel-green // Acento verde en el título principal
+    padding-left: 15px
+
+h2
+    color: $zentinel-green !important // Los números de sección en verde
+    text-transform: none
+
+.document-content
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif
+
+    p
+        margin-bottom: 1.25rem
+
+    ul
+        list-style-type: square
+    li::marker
+        color: $zentinel-green
+
+// Estilos para resaltar la sección de datos biométricos
+.bg-green-50
+    background-color: #f0fff4
+
+.border-green-500
+    border-color: $zentinel-green !important
+
+footer
+    border-color: #e0e0e0 !important
+
+// Optimización para impresión
+@media print
+    .privacy-body
+        padding: 0 !important
+        background: white !important
+
+    .document-container
+        box-shadow: none !important
+        width: 100% !important
+        max-width: none !important
+        padding: 0 !important
+
+    .surface-ground
+        background-color: white !important

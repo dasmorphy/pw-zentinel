@@ -74,14 +74,17 @@ export class LogbookService {
     }
 
     saveLogbookEntry(formData: FormData) {
+        const headers = new HttpHeaders().set('Token', localStorage.getItem('sb_token') || '');
         return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/post/logbook-entry`,
-            formData
+            formData,
+            { headers }
         );
     }
 
 
     saveLogbookOut(formData: FormData) {
-        return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/post/logbook-out`, formData);
+        const headers = new HttpHeaders().set('Token', localStorage.getItem('sb_token') || '');
+        return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/post/logbook-out`, formData, { headers });
     }
 
     getHistoryLogbook(filter?: any) {

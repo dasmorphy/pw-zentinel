@@ -32,6 +32,7 @@ import { EntryAccess } from 'src/app/models/entry-access';
 import { EntryDetailsModalComponent } from 'src/app/components/modals/entry-details-modal/entry-details-modal.component';
 import { FileUploadModule } from 'primeng/fileupload';
 import { v4 as uuidv4} from 'uuid';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 @Component({
     selector: 'app-entry-access-table',
@@ -56,7 +57,8 @@ import { v4 as uuidv4} from 'uuid';
         TieredMenuModule,
         OverlayPanelModule,
         FileUploadModule,
-        EntryDetailsModalComponent
+        EntryDetailsModalComponent,
+        InputSwitchModule
     ],
     templateUrl: './all-entry-access.component.html',
     styleUrls: ['./all-entry-access.component.sass']
@@ -79,6 +81,7 @@ export class AllEntryAccessComponent {
     images: File[] = [];
     imagesError: string | null = null;
     user_json: any;
+    checkedMaterials = new Set<number>();
 
     items: any = [
         {
@@ -118,6 +121,7 @@ export class AllEntryAccessComponent {
     }
 
     optionsDispatch(entry: any) {
+        this.checkedMaterials.clear();
         this.selectedEntry = entry
     }
 
@@ -151,7 +155,6 @@ export class AllEntryAccessComponent {
     onSelectImages(event: any) {
         const selectedFiles: File[] = event.files;
 
-        // 🔄 acumular imágenes
         this.images = [...this.images, ...selectedFiles];
 
         if (this.images.length < 5) {
@@ -182,13 +185,30 @@ export class AllEntryAccessComponent {
         }
     }
 
+    onToggle(material: any, checked: boolean) {
+        if (checked) {
+            this.checkedMaterials.add(material.id_material);
+        } else {
+            this.checkedMaterials.delete(material.id_material);
+        }
+    }
+
     onSaveOut() {
-        this.isLoading = true;
+        const total = this.selectedEntry?.materials?.length || 0;
+
+        if (this.checkedMaterials.size !== total) {
+            this.utilsService.onError('Se debe marcar todos los materiales para continuar');
+            return;
+        }
+
+
         if (this.images.length < 5) {
             this.imagesError = 'Debes subir mínimo 5 imágenes';
             this.isLoading = false;
             return;
         }
+        
+        this.isLoading = true;
 
         const data_save = {
             observations: this.observationOut,

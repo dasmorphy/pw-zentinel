@@ -112,23 +112,28 @@ export class DispatchService {
     }
 
     saveEntryAccess(formData: FormData) {
-        return this.http.post(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/entry-access`, formData)
+        const headers = new HttpHeaders().set('Token', localStorage.getItem('sb_token') || '');
+        return this.http.post(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/entry-access`, formData, { headers })
     }
 
     saveDispatch(formData: FormData) {
-        return this.http.post(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/dispatch`, formData)
+        const headers = new HttpHeaders().set('Token', localStorage.getItem('sb_token') || '');
+        return this.http.post(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/dispatch`, formData, { headers })
     }
 
     patchDispatch(formData: FormData, id_dispatch: number) {
-        return this.http.patch(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/dispatch/${id_dispatch}`, formData)
+        const headers = new HttpHeaders().set('Token', localStorage.getItem('sb_token') || '');
+        return this.http.patch(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/dispatch/${id_dispatch}`, formData, { headers })
     }
 
     patchEntryAccess(formData: FormData, id_entry: number) {
-        return this.http.patch(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/entry-access/${id_entry}`, formData)
+        const headers = new HttpHeaders().set('Token', localStorage.getItem('sb_token') || '');
+        return this.http.patch(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/entry-access/${id_entry}`, formData, { headers })
     }
 
     saveReception(formData: FormData) {
-        return this.http.post(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/reception`, formData)
+        const headers = new HttpHeaders().set('Token', localStorage.getItem('sb_token') || '');
+        return this.http.post(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/reception`, formData, { headers })
     }
 
     getGraphs() {

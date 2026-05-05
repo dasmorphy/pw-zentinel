@@ -79,7 +79,7 @@ export class NewDispatchForm {
     ngOnInit() {
         this.user_json = this.userService.getDataSession();
 
-        let filters: any = {"business": this.user_json?.attributes?.id_business.toString()};
+        let filters: any = {business: "2"};
 
         this.dispatchService.getProductsSku()
         this.logbookService.getAllDestinyIntern(filters);

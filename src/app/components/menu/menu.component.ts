@@ -101,17 +101,25 @@ export class MenuComponent implements OnInit {
             command: () => { this.clickHiddenToggle() }
           },
           {
-            label: 'Ver registros de entrada',
-            icon: 'pi pi-list-check',
-            visible: this.user_permissions_signal()?.includes('VER_INGRESOS_BIOMAR'),
-            routerLink: ['tablero-ingresos'],
-            command: () => { this.clickHiddenToggle() }
-          },
-          {
             label: 'Crear despacho',
             icon: 'pi pi-file-check',
             visible: this.user_permissions_signal()?.includes('NUEVO_DESPACHO'),
             routerLink: ['crear-despacho'],
+            command: () => { this.clickHiddenToggle() }
+          },
+        ]
+      },
+      {
+        label: 'Ingresos',
+        icon: 'pi pi-id-card',
+        visible: this.user_permissions_signal()?.includes('VER_INGRESOS_BIOMAR'),
+        command: () => { this.clickHiddenToggle(true) },
+        items: [
+          {
+            label: 'Ver registros de entrada',
+            icon: 'pi pi-list-check',
+            visible: this.user_permissions_signal()?.includes('VER_INGRESOS_BIOMAR'),
+            routerLink: ['tablero-ingresos'],
             command: () => { this.clickHiddenToggle() }
           },
           {

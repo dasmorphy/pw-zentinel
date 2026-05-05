@@ -12,11 +12,16 @@ import { AllDispatchsComponent } from './pages/tables/all-dispatchs/all-dispatch
 import { AllEntryAccessComponent } from './pages/tables/all-entry-access/all-entry-access.component';
 import { NewEntryFormComponent } from './pages/forms/biomar/new-entry-form/new-entry-form.component';
 import { FormExpoComponent } from './components/form_expo/form-expo.component';
+import { PersonalDataPolicyComponent } from './pages/personal-data-policy/personal-data-policy.component';
 
 export const routes: Routes = [
     {
         path: "formulario-expo",
         component: FormExpoComponent,
+    },
+    {
+        path: "politica-privacidad",
+        component: PersonalDataPolicyComponent,
     },
     {
         path: "login",

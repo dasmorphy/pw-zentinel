@@ -50,11 +50,15 @@ export class DashboardComponent {
     user_session: any;
     isLoading: boolean = false;
     optionsDashboard = ["Expalsa", "Biomar"];
-    optionDashboardSelected = "Expalsa";
+    optionDashboardSelected = "";
 
 
     ngOnInit() {
         this.user_session = this.userService.getDataSession();
+
+        if (this.user_session.role === "admin_tlsg") {
+            this.optionDashboardSelected = "Expalsa";
+        }
     }
     
     onChangeDahboard(option: string) {

@@ -95,7 +95,7 @@ export class LogbookEntryComponent {
         this.logbookService.getAllCategories();
         this.logbookService.getAllUnitiesWeight();
         this.logbookService.getAllAuthorized();
-        this.logbookService.getAllDestinyIntern();
+        this.logbookService.getAllDestinyIntern({business: "1"});
         this.fetchGroupBusinessByBusiness();
     }
 
