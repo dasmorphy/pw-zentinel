@@ -71,12 +71,17 @@ export class AllEntryAccessComponent {
     public readonly userService = inject(UserService);
 
     entrySelected = computed(() => this.dispatchService.showModalSummaryEntry());
+    areasVisit = computed(() => this.dispatchService.areasVisit());
 
     dataEntries: EntryAccess[] = [];
     isLoading: boolean = false;
     showUpdate: boolean = false;
     observationOut: string = '';
     selectedEntry: EntryAccess | null = null;
+
+    dateRange: Date[] | null = null;
+    selectedAreasVisit:number[] = [];
+    filters: any = {};
 
     images: File[] = [];
     imagesError: string | null = null;
@@ -100,11 +105,13 @@ export class AllEntryAccessComponent {
     ngOnInit() {
         this.user_json = this.userService.getDataSession();
         this.fetchAllEntries();
+        this.dispatchService.getAllAreas();
     }
 
     fetchAllEntries() {
+        const filters = { ...this.filters };
         this.isLoading = true;
-        this.dispatchService.getAllEntryAccess().subscribe({
+        this.dispatchService.getAllEntryAccess(filters).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
                 this.dataEntries = data?.data;
@@ -191,6 +198,49 @@ export class AllEntryAccessComponent {
         } else {
             this.checkedMaterials.delete(material.id_material);
         }
+    }
+
+    formatLocalDate(date: Date): string {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        const h = String(date.getHours()).padStart(2, '0');
+        const min = String(date.getMinutes()).padStart(2, '0');
+        const s = String(date.getSeconds()).padStart(2, '0');
+
+        return `${y}-${m}-${d} ${h}:${min}:${s}`;
+    }
+
+    applyFilter(imagePanel: any) {
+        imagePanel.hide()
+        let filter_date: any = {}
+
+        if (Array.isArray(this.dateRange)) {
+            if (this.dateRange.length === 2) {
+                const [startDate, endDate] = this.dateRange;
+            
+                const start = new Date(startDate);
+                start.setHours(0, 0, 0, 0);
+            
+                const end = new Date(endDate);
+                end.setHours(23, 59, 59, 999);
+            
+                filter_date.start_date = this.formatLocalDate(start);
+                filter_date.end_date = this.formatLocalDate(end);
+            };
+        };
+
+        if (this.selectedAreasVisit.length > 0) {
+            filter_date.areas = this.selectedAreasVisit.join(',');
+        }
+
+        this.filters = filter_date;
+        console.log(this.filters)
+        this.fetchAllEntries();
+    }
+
+    clearFilter() {
+
     }
 
     onSaveOut() {

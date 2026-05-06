@@ -63,12 +63,42 @@ export class DispatchService {
     }
 
 
-    getAllDispatchs() {
-        return this.http.get(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/dispatch`)
+    getAllDispatchs(filter?: any) {
+        let params = new HttpParams();
+        let headers = new HttpHeaders();
+
+        if (filter?.start_date) {
+            params = params.set('start_date', filter.start_date);
+        }
+
+        if (filter?.end_date) {
+            params = params.set('end_date', filter.end_date);
+        }
+
+        if (filter?.destiny) {
+            headers = headers.set('destiny', filter?.destiny)
+        }
+
+        return this.http.get(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/dispatch`, { params, headers })
     }
 
-    getAllEntryAccess() {
-        return this.http.get(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/entry-access`)
+    getAllEntryAccess(filter?: any) {
+        let params = new HttpParams();
+        let headers = new HttpHeaders();
+
+        if (filter?.start_date) {
+            params = params.set('start_date', filter.start_date);
+        }
+
+        if (filter?.end_date) {
+            params = params.set('end_date', filter.end_date);
+        }
+
+        if (filter?.areas) {
+            headers = headers.set('areas', filter.areas);
+        }
+
+        return this.http.get(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/entry-access`, { params, headers })
     }
 
     getAllAreas() {
@@ -144,6 +174,13 @@ export class DispatchService {
                 },
                 error: ({ error }: any) => this.utilsService.onError(error.message)
             })
+    }
+
+    fetchDispatchStatusRecord(id_dispatch: number) {
+        let params = new HttpParams();
+        params = params.set('id_dispatch', id_dispatch);
+
+        return this.http.get(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/history-dispatch-status`, { params })
     }
 
 }

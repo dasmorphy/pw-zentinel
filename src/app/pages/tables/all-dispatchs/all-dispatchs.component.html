@@ -4,6 +4,27 @@
     <app-dispatch-details-modal [showModal]="dispatchSelected() ?? false"></app-dispatch-details-modal>
 }
 
+
+<p-dialog [(visible)]="showStatusRecord" [modal]="true" [draggable]="false" [closable]="false" [resizable]="false"
+[style]="{'max-height': '80vh', 'overflow-y': 'auto'}">
+    <ng-template pTemplate="header" >
+        <h1 style="margin: 0; font-size: 20px;" class="text-center font-verdana text-primary--custom">Historial de estados</h1>
+    </ng-template>
+    <p-timeline [value]="statusRecord">
+        <ng-template pTemplate="content" let-record>
+            <small class="p-text-secondary">{{ record.created_at | date: 'dd/MM/yyyy HH:mm:ss' : '+0000' }}</small>
+        </ng-template>
+        <ng-template pTemplate="opposite" let-record>
+            <p-tag styleClass="text-center" [value]="record?.status_name" [severity]="getSeverity(record?.status_name)"></p-tag>
+        </ng-template>
+    </p-timeline>
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-center mt-3">
+            <button pButton label="Cerrar" class="p-button-secondary" (click)="showStatusRecord = false"></button>
+        </div>
+    </ng-template>
+</p-dialog>
+
 <p-dialog header="Header" [closable]="false" [(visible)]="showUpdate" [draggable]="false" [modal]="true"
     [style]="{ 'width': '30vw', 'border-radius': '32px'}">
     <ng-template pTemplate="header">
@@ -188,8 +209,35 @@
                             <p-columnFilter #imagePanel id="dateFilter" style="position: relative; z-index: 3; right: 3rem; margin-top: 7px;" type="date" field="date" display="menu">
                                 <ng-template pTemplate="filter" let-value let-filter="filterCallback">
                                     <div class="flex w-full flex-column gap-3">
+                                        <p-multiSelect 
+                                            [style]="{ boxShadow: 'none' }"
+                                            styleClass="border-round w-full"
+                                            id="optionGroupDestiny"  
+                                            [options]="destinyIntern()"
+                                            [(ngModel)]="selectedDestinations"
+                                            optionLabel="name"
+                                            optionValue="id_destiny"
+                                            placeholder="Seleccione una opción"
+                                        ></p-multiSelect>
 
-                                
+                                        <p-calendar [(ngModel)]="dateRange" selectionMode="range" dateFormat="dd/mm/yy" [showIcon]="true"
+                                            [readonlyInput]="true" placeholder="Rango de fechas" [style]="{ boxShadow: 'none' }"
+                                            styleClass="border-round w-full">
+                                        </p-calendar>
+
+
+                                        <div class="flex gap-2">
+                                            <button (click)="applyFilter(imagePanel)" 
+                                            style="background: linear-gradient(0deg, #22a183 0%, #1f9f63 100%) !important; border: transparent;"
+                                            type="button" pbutton="" pripple="" class="p-element p-button-sm p-button p-component" ng-reflect-label="Apply">
+                                                <span style="font-size: 12px;" class="p-button-label b-apply">Aplicar</span>
+                                            </button>
+                                            <button (click)="clearFilter()" type="button" pbutton="" pripple="" 
+                                            style="background: white !important; border: 1px solid #038945; color: #129578;"
+                                            class="p-element p-button-outlined p-button-sm p-button p-component" ng-reflect-label="Clear">
+                                                <span style="font-size: 12px;" class="p-button-label">Limpiar</span>
+                                            </button>
+                                        </div>
                                     </div>
                                 </ng-template>
                             </p-columnFilter>
@@ -229,7 +277,7 @@
                         <td  data-titulo="Placa:">{{ dispatch?.truck_license ?? 'N/A' }}</td>
                         <!-- <td  data-titulo="Permanencia:" style="width: 20px;">{{ loogbook?.permanence_time ?? 'N/A' }}</td> -->
                         <td  data-titulo="Estado:">
-                            <p-tag [value]="dispatch?.status" [severity]="getSeverity(dispatch?.status)"></p-tag>
+                            <p-tag styleClass="cursor-pointer" [value]="dispatch?.status" (click)="openStatusRecord(dispatch)" [severity]="getSeverity(dispatch?.status)"></p-tag>
                         </td>
                     </tr>
                 </ng-template>

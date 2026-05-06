@@ -58,7 +58,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
         DispatchDetailsModalComponent,
         FileUploadModule,
         InputSwitchModule,
-        InputNumberModule
+        InputNumberModule,
     ],
     templateUrl: './all-dispatchs.component.html',
     styleUrls: ['./all-dispatchs.component.sass']
@@ -70,20 +70,33 @@ export class AllDispatchsComponent {
     public readonly dispatchService = inject(DispatchService);
     public readonly utilsService = inject(UtilsService);
     public readonly userService = inject(UserService);
+    private readonly logbookService = inject(LogbookService);
 
     dispatchSelected = computed(() => this.dispatchService.showModalSummary());
     statusDispatch = computed(() => this.dispatchService.statusDispatch());
+    destinyIntern = computed(() => this.logbookService.destinyIntern());
+
     
     receptionForm: FormGroup;
 
     dataDispatchs: Dispatch[] = [];
     isLoading: boolean = false;
     showUpdate: boolean = false;
+    showStatusRecord: boolean = false;
     showReception: boolean = false;
     selectedDispatch: Dispatch | null = null;
-
+    
     images: File[] = [];
     imagesError: string | null = null;
+    
+    dateRange: Date[] | null = null;
+    selectedDestinations: number[] = [];
+    optionDestiny: any = [];
+    statusRecord: any[] = [];
+    
+
+    filters: any = {
+    };
 
     user_json: any;
 
@@ -121,6 +134,8 @@ export class AllDispatchsComponent {
         this.user_json = this.userService.getDataSession();
         this.fetchAllDispatchs();
         this.dispatchService.getStatusDispatch();
+        this.logbookService.getAllDestinyIntern({business:"2"});
+
     }
 
     createProduct(product?: any): FormGroup {
@@ -150,7 +165,8 @@ export class AllDispatchsComponent {
 
     fetchAllDispatchs() {
         this.isLoading = true;
-        this.dispatchService.getAllDispatchs().subscribe({
+        const filters = { ...this.filters };
+        this.dispatchService.getAllDispatchs(filters).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
                 this.dataDispatchs = data?.data;
@@ -349,6 +365,49 @@ export class AllDispatchsComponent {
 
     }
 
+    formatLocalDate(date: Date): string {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        const h = String(date.getHours()).padStart(2, '0');
+        const min = String(date.getMinutes()).padStart(2, '0');
+        const s = String(date.getSeconds()).padStart(2, '0');
+
+        return `${y}-${m}-${d} ${h}:${min}:${s}`;
+    }
+
+    applyFilter(imagePanel: any) {
+        imagePanel.hide()
+        let filter_date: any = {}
+
+        if (Array.isArray(this.dateRange)) {
+            if (this.dateRange.length === 2) {
+                const [startDate, endDate] = this.dateRange;
+            
+                const start = new Date(startDate);
+                start.setHours(0, 0, 0, 0);
+            
+                const end = new Date(endDate);
+                end.setHours(23, 59, 59, 999);
+            
+                filter_date.start_date = this.formatLocalDate(start);
+                filter_date.end_date = this.formatLocalDate(end);
+            };
+        };
+
+        if (this.selectedDestinations.length > 0) {
+            filter_date.destiny = this.selectedDestinations.join(',');
+        }
+
+        this.filters = filter_date;
+        console.log(this.filters)
+        this.fetchAllDispatchs();
+    }
+
+    clearFilter() {
+
+    }
+
     fetchSaveReception(dataReception: any) {
         this.isLoading = true;
         this.showReception = false;
@@ -391,5 +450,22 @@ export class AllDispatchsComponent {
                 this.utilsService.onError(error_message)
             }
         })
+    }
+
+    openStatusRecord(dispatch: any) {
+        this.isLoading = true;
+        this.dispatchService.fetchDispatchStatusRecord(dispatch.id_dispatch).subscribe({
+            next: (data: any) => {
+                this.isLoading = false;
+                this.statusRecord = data?.data;
+                this.showStatusRecord = true;
+            },
+            error: (error: any) => {
+                console.log(error);
+                this.isLoading = false;
+                const error_message = error?.error?.message ?? 'Error al obtener el historial de estados, por favor intente nuevamente'
+                this.utilsService.onError(error_message)
+            }
+        })    
     }
 }
