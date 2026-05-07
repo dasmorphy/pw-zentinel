@@ -11,7 +11,7 @@
     <ng-template pTemplate="content">
 
         @if (dispatchSelected() != null) {
-            <div class="flex justify-content-between card-info gap-2">
+            <!-- <div class="flex justify-content-between card-info gap-2">
                 <div class="flex flex-column">
                     <div class="flex align-items-center mt-4">
                         <i style="font-size: 0.8rem;" class="pi pi-calendar mr-2"></i>
@@ -31,31 +31,64 @@
                 <div class="i-log">
                     <i class="pi pi-file-check" style="color: #0056b3; font-size: 30px;"></i>
                 </div>
-            </div>
+            </div> -->
 
             <h4>INFORMACIÓN DE CARGA</h4>
             <div class="div-responsive mt-2 gap-2">
 
                 <div class="flex flex-column w-full card-info">
-                    <i class="pi pi-truck mb-3" style="color: #0056b3;"></i>
+                    <i class="pi pi-truck mb-2" style="color: #0056b3;"></i>
                     <label class="font-bold cab-label" htmlFor="shipping_guide">PLACA VEHÍCULO: </label>
                     <label class="det-label" htmlFor="shipping_guide">{{dispatchSelected()?.truck_license}}</label>
                 </div>
 
                 <div class="flex flex-column w-full card-info">
-                    <i class="pi pi-shopping-bag mb-3" style="color: #0056b3;"></i>
+                    <i class="pi pi-shopping-bag mb-2" style="color: #0056b3;"></i>
                     <label class="font-bold cab-label" htmlFor="shipping_guide">PESO: </label>
                     <label class="det-label" htmlFor="shipping_guide">{{dispatchSelected()?.weight ?? 'N/A'}}</label>
                 </div>
 
                 <div class="flex flex-column w-full card-info">
-                    <i class="pi pi-compass mb-3" style="color: #0056b3;"></i>
+                    <i class="pi pi-compass mb-2" style="color: #0056b3;"></i>
                     <label class="font-bold cab-label" htmlFor="shipping_guide">DESTINO: </label>
                     <label class="det-label" htmlFor="shipping_guide">
                         {{dispatchSelected()?.name_destiny || 'N/A'}}
                     </label>
                 </div>
+
+                <div class="flex flex-column w-full card-info">
+                    <i class="pi pi-calendar mb-2" style="color: #0056b3;"></i>
+                    <label class="font-bold cab-label" htmlFor="shipping_guide">FECHA: </label>
+                    <label class="det-label" htmlFor="shipping_guide">
+                        {{dispatchSelected()?.created_at | date:'dd/MM/yyyy':'UTC'}}
+                    </label>
+                </div>
             </div>
+
+            @if (dispatchSelected()?.reception && dispatchSelected()?.reception!.reception_detail.length != 0) {
+                <h4>DISCREPANCIAS</h4>
+                <div class="flex flex-column gap-2">
+                    <div class="flex" *ngFor="let product of dispatchSelected()?.reception?.reception_detail">
+                        <div class="flex flex-column w-full card-info">
+                            <i class="pi pi-exclamation-triangle mb-2" style="color: #c4302b;"></i>
+                            <div class="flex gap-2">
+                                <div class="flex flex-column">
+                                    <label class="font-bold cab-label" htmlFor="shipping_guide">PRODUCTO: </label>
+                                    <label class="det-label" htmlFor="shipping_guide">{{product.name_product_sku}}</label>
+                                </div>
+                                <div class="flex flex-column">
+                                    <label class="font-bold cab-label" htmlFor="shipping_guide">CANTIDAD ESPERADA: </label>
+                                    <label class="det-label" htmlFor="shipping_guide">{{product.expected_quantity}}</label>
+                                </div>
+                                <div class="flex flex-column">
+                                    <label class="font-bold cab-label" htmlFor="shipping_guide">CANTIDAD RECIBIDA: </label>
+                                    <label class="det-label" htmlFor="shipping_guide">{{product.received_quantity}}</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
 
             <h4>PERSONAL RESPONSABLE</h4>
             <div class="flex flex-column card-info mt-2 gap-2">
@@ -87,7 +120,7 @@
                 <label class="det-label" htmlFor="shipping_guide">{{ dispatchSelected()!.observations || "N/A" }}</label>
             </div>
 
-
+            <button (click)="showImagesModal(dispatchSelected()!.images)">Ver Imágenes</button>
 
 
             @if (dispatchSelected()!.images.length > 0) {

@@ -1,4 +1,4 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { FormGroup } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import dataControlFormsJson  from '../../utils/controlsForms.json';
@@ -9,8 +9,17 @@ import dataControlFormsJson  from '../../utils/controlsForms.json';
 export class UtilsService {
     private readonly messageService = inject(MessageService)
 
+    showModalImage: WritableSignal<any> = signal<any>(null);
 
     firstControlForms: string;
+
+    openImagesPreview(images: any) {
+        this.showModalImage.set(images);
+    }
+
+    closeImagesPreview() {
+        this.showModalImage.set(null);
+    }
 
     validateControlsForms(form: FormGroup, controlsIgnore: any) {
         Object.keys(form.controls).forEach((key) => {

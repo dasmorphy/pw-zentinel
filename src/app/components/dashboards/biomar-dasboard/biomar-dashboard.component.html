@@ -6,6 +6,11 @@
     <app-dispatch-details-modal [showModal]="dispatchSelected() ?? false"></app-dispatch-details-modal>
 }
 
+@if (openModalImages()) {
+    <app-preview-image [showImages]="openModalImages()"></app-preview-image>
+}
+
+
 <div class="flex flex-column w-full px-5">
     <div class="flex w-full justify-content-center gap-3 indicators" >
         <div class="flex card-info justify-content-between align-items-center" *ngFor="let status of graphs()?.dispatch_by_status" style="width: 19rem; height: 10rem;"

@@ -28,29 +28,31 @@ import { EntryDetailsModalComponent } from '../../modals/entry-details-modal/ent
 import { DispatchDetailsModalComponent } from '../../modals/dispatch-details-modal/dispatch-details-modal.component';
 import { EventSourceService } from 'src/app/services/event-source.service';
 import { UtilsService } from 'src/app/services/utils.service';
+import { ImageGalleryComponent } from "../../modals/shared/preview-image/preview-image.component";
 
 @Component({
     selector: 'app-biomar-dashboard',
     standalone: true,
     imports: [
-        CommonModule,
-        ButtonModule,
-        AvatarModule,
-        InputTextModule,
-        DropdownModule,
-        InputNumberModule,
-        FormsModule,
-        ReactiveFormsModule,
-        ToastModule,
-        ProgressSpinnerModule,
-        DialogModule,
-        NgxTippyModule,
-        TableModule,
-        TagModule,
-        SplitButtonModule,
-        EntryDetailsModalComponent,
-        DispatchDetailsModalComponent
-    ],
+    CommonModule,
+    ButtonModule,
+    AvatarModule,
+    InputTextModule,
+    DropdownModule,
+    InputNumberModule,
+    FormsModule,
+    ReactiveFormsModule,
+    ToastModule,
+    ProgressSpinnerModule,
+    DialogModule,
+    NgxTippyModule,
+    TableModule,
+    TagModule,
+    SplitButtonModule,
+    EntryDetailsModalComponent,
+    DispatchDetailsModalComponent,
+    ImageGalleryComponent
+],
     templateUrl: './biomar-dashboard.component.html',
     styleUrls: ['./biomar-dashboard.component.sass'],
 })
@@ -69,6 +71,7 @@ export class BiomarDashboardComponent {
     graphs = computed(() => this.dispatchService.graphsDispatch());
     entrySelected = computed(() => this.dispatchService.showModalSummaryEntry());
     dispatchSelected = computed(() => this.dispatchService.showModalSummary());
+    openModalImages = computed(() => this.utilsService.showModalImage());
 
     user_session: any;
     isLoading: boolean = false;
@@ -160,7 +163,6 @@ export class BiomarDashboardComponent {
                 ].sort((a: any, b: any) => 
                     new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
                 );
-                console.log(this.dataBiomar);
             },
             error: (error: any) => {
                 console.log(error);

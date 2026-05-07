@@ -468,4 +468,17 @@ export class AllDispatchsComponent {
             }
         })    
     }
+
+    hasDiscrepancy(reception: any): string {
+        if (!reception || reception.length === 0) {
+            return 'Sin recepción';
+        }
+
+        if (reception?.reception_detail && reception.reception_detail.length > 0) {
+            return 'Si';
+
+        }
+        
+        return 'No';
+    }
 }
