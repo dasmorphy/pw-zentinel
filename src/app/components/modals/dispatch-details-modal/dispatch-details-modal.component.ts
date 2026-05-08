@@ -41,12 +41,11 @@ export class DispatchDetailsModalComponent {
     );
 
     showImagesModal(images: any) {
-        console.log('nnjjhkjkjk')
         this.utilsService.openImagesPreview(images);
     }
 
     closeModal() {
         this.dispatchService.closeSummary();
     }
- 
+
 }

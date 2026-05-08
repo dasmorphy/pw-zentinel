@@ -272,7 +272,13 @@ export class AllLogbookComponent {
     }
 
     clearFilter() {
-
+        this.dateRange = null;
+        this.selectedGroupBusiness = [];
+        this.selectedSector = [];
+        this.selectedTime = ['Diurna', 'Nocturna'];
+        this.selectedCategories = [];
+        this.filters = { first: 1, rows: 5 };
+        this.fetchHistoryLogbook();
     }
 
     onFilterChange(event: any) {

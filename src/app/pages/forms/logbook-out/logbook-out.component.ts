@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, ViewChild } from '@angular/core';
+import { Component, computed, ViewChild } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -68,7 +68,7 @@ export class LogbookOutComponent {
         this.logbookForm = this.fb.group({
             id_group_business: ['', Validators.required],
             id_category: ['', Validators.required],
-            id_unity: ['', Validators.required],
+            id_unity: [''],
             shipping_guide: [''],
             quantity: [''],
             truck_license: ['', Validators.required],
@@ -76,7 +76,7 @@ export class LogbookOutComponent {
             name_driver: ['', Validators.required],
             destiny: ['', Validators.required],
             person_withdraws: [''],
-            authorized_by: ['', Validators.required],
+            authorized_by: [''],
             observations: [''],
             id_logbook_entry: [null],
         });
@@ -126,6 +126,25 @@ export class LogbookOutComponent {
             this.logbookForm.patchValue({
                 quantity: null,
                 person_withdraws: null
+            })
+        }
+
+        if (this.hideEjectExpalsa()) {
+            controls_ignore.push('quantity', 'authorized_by', 'id_unity');
+            this.logbookForm.patchValue({
+                quantity: null,
+                authorized_by: null,
+                id_unity: null,
+                weight: null,
+            })
+        }
+
+        if (this.hidePersonal()) {
+            controls_ignore.push('quantity', 'id_unity');
+            this.logbookForm.patchValue({
+                quantity: null,
+                id_unity: null,
+                weight: null,
             })
         }
 
@@ -192,6 +211,19 @@ export class LogbookOutComponent {
         return categorys_hide.includes(category_found?.name_category)
     }
 
+    hideEjectExpalsa() {
+        const categorys_hide = ['Ejecutivos de expalsa'];
+        const category_found = this.categories().find((cat: any) => cat.id_category === this.logbookForm.get('id_category')?.value);
+
+        return categorys_hide.includes(category_found?.name_category)
+    }
+
+    hidePersonal() {
+        const categorys_hide = ['Personal interno', 'Personal externo'];
+        const category_found = this.categories().find((cat: any) => cat.id_category === this.logbookForm.get('id_category')?.value);
+
+        return categorys_hide.includes(category_found?.name_category)
+    }
 
     saveLogbook() {
         this.isLoading = true;

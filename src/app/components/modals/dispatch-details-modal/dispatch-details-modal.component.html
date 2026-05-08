@@ -120,49 +120,41 @@
                 <label class="det-label" htmlFor="shipping_guide">{{ dispatchSelected()!.observations || "N/A" }}</label>
             </div>
 
-            <button (click)="showImagesModal(dispatchSelected()!.images)">Ver Imágenes</button>
-
 
             @if (dispatchSelected()!.images.length > 0) {
-                @if (recepcionImages().length > 0) {
-                    <h4 class="mt-4">RECEPCIÓN</h4>
-                    <div class="div-responsive mt-3">
-                        <div class="flex justify-content-center" *ngFor="let image of recepcionImages()">
-                        <img
-                            style="object-fit: contain;"
-                            [src]="'http://st.telearseg.net' + image.image_path"
-                            height="190"
-                            width="180">
-                        </div>
-                    </div>
-                }
+                <h4>IMÁGENES</h4>
 
-                @if (despachoImages().length > 0) {
-                    <h4 class="mt-4">DESPACHO</h4>
-                    <div class="div-responsive mt-3">
-                        <div class="flex justify-content-center" *ngFor="let image of despachoImages()">
-                        <img
-                            style="object-fit: contain;"
-                            [src]="'http://st.telearseg.net' + image.image_path"
-                            height="190"
-                            width="180">
-                        </div>
-                    </div>
-                }
+                <div class="flex gap-2 w-full mb-2">
+                    @if (despachoImages().length > 0) {
+                        <p-button
+                            label="Despacho"
+                            icon="pi pi-external-link"
+                            iconPos="left"
+                            (click)="showImagesModal(despachoImages())"
+                            styleClass="w-full button-image border-round-1xl h-full">
+                        </p-button>
+                    }
 
-                @if (updateImages().length > 0) {
-                    <h4 class="mt-4">SALIDA DESPACHO</h4>
-                    <div class="div-responsive mt-3">
-                        <div class="flex justify-content-center" *ngFor="let image of updateImages()">
-                        <img
-                            style="object-fit: contain;"
-                            [src]="'http://st.telearseg.net' + image.image_path"
-                            height="190"
-                            width="180">
-                        </div>
-                    </div>
-                }
-
+                    @if (updateImages().length > 0) {
+                        <p-button
+                            label="Salida"
+                            icon="pi pi-external-link"
+                            iconPos="left"
+                            (click)="showImagesModal(updateImages())"
+                            styleClass="w-full button-image border-round-1xl h-full">
+                        </p-button>
+                    }
+            
+                    @if (recepcionImages().length > 0) {
+                        <p-button
+                            label="Recepción"
+                            icon="pi pi-external-link"
+                            iconPos="left"
+                            (click)="showImagesModal(recepcionImages())"
+                            styleClass="w-full button-image border-round-1xl h-full">
+                        </p-button>
+                    }
+                </div>
             }
         }
 

@@ -32,6 +32,7 @@ import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { v4 as uuidv4} from 'uuid';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { ImageGalleryComponent } from 'src/app/components/modals/shared/preview-image/preview-image.component';
 
 @Component({
     selector: 'app-logbooks-table',
@@ -59,6 +60,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
         FileUploadModule,
         InputSwitchModule,
         InputNumberModule,
+        ImageGalleryComponent
     ],
     templateUrl: './all-dispatchs.component.html',
     styleUrls: ['./all-dispatchs.component.sass']
@@ -75,6 +77,7 @@ export class AllDispatchsComponent {
     dispatchSelected = computed(() => this.dispatchService.showModalSummary());
     statusDispatch = computed(() => this.dispatchService.statusDispatch());
     destinyIntern = computed(() => this.logbookService.destinyIntern());
+    openModalImages = computed(() => this.utilsService.showModalImage());
 
     
     receptionForm: FormGroup;

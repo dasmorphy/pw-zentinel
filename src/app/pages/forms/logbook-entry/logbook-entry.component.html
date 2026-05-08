@@ -58,17 +58,20 @@
                             </div>
                         </span>
 
-                        <span class="w-full">
-                            <label class="text-account" htmlFor="ciudad">Unidad <span
-                                    style="color: red;">*</span></label>
-                            <p-dropdown [style]="{ boxShadow: 'none', maxWidth: '100%' }"
-                                styleClass="border-round mt-2 w-full" id="id_unity" optionValue="id_unity"
-                                formControlName="id_unity" [options]="unitiesWeight()" optionLabel="name"
-                                [autoDisplayFirst]="false" [emptyMessage]="messageEmpty"></p-dropdown>
-                            <div *ngIf="logbookForm.get('id_unity')?.hasError('campoVacio')">
-                                <span class="validate-data">El campo unidad es obligatorio</span>
-                            </div>
-                        </span>
+                        @if (!hideEjectExpalsa() && !hideGuide()) {
+                            <span class="w-full">
+                                <label class="text-account" htmlFor="ciudad">Unidad <span
+                                        style="color: red;">*</span></label>
+                                <p-dropdown [style]="{ boxShadow: 'none', maxWidth: '100%' }"
+                                    styleClass="border-round mt-2 w-full" id="id_unity" optionValue="id_unity"
+                                    formControlName="id_unity" [options]="unitiesWeight()" optionLabel="name"
+                                    [autoDisplayFirst]="false" [emptyMessage]="messageEmpty"></p-dropdown>
+                                <div *ngIf="logbookForm.get('id_unity')?.hasError('campoVacio')">
+                                    <span class="validate-data">El campo unidad es obligatorio</span>
+                                </div>
+                            </span>
+                        }
+                        
                         
                         @if (!hideGuide()) {
                             <span class="w-full">
@@ -82,24 +85,28 @@
                             </span>
                         }
 
-                        <span class="w-full">
-                            <label htmlFor="username">Descripción <span style="color: red;">*</span></label>
-                            <input class="border-round w-full mt-2" pInputText
-                                formControlName="description"
-                                id="descripcion"
-                            />
-                            <div *ngIf="logbookForm.get('description')?.hasError('campoVacio')">
-                                <span class="validate-data">Este campo es obligatorio</span>
-                            </div>
-                        </span>
+                    @if (!hideEjectExpalsa() && !hideGuide()) {
+                            <span class="w-full">
+                                <label htmlFor="username">Descripción <span style="color: red;">*</span></label>
+                                <input class="border-round w-full mt-2" pInputText
+                                    formControlName="description"
+                                    id="descripcion"
+                                />
+                                <div *ngIf="logbookForm.get('description')?.hasError('campoVacio')">
+                                    <span class="validate-data">Este campo es obligatorio</span>
+                                </div>
+                            </span>
+                        }
 
-                        <span class="w-full">
-                            <label htmlFor="username">Cantidad <span style="color: red;">*</span></label>
-                            <p-inputNumber class="border-round w-full mt-2" formControlName="quantity" styleClass="w-full"></p-inputNumber>
-                            <div *ngIf="logbookForm.get('quantity')?.hasError('campoVacio')">
-                                <span class="validate-data">Este campo es obligatorio</span>
-                            </div>
-                        </span>
+                        @if (!hideEjectExpalsa() && !hideGuide() && !hidePersonal()) {
+                            <span class="w-full">
+                                <label htmlFor="username">Cantidad <span style="color: red;">*</span></label>
+                                <p-inputNumber class="border-round w-full mt-2" formControlName="quantity" styleClass="w-full"></p-inputNumber>
+                                <div *ngIf="logbookForm.get('quantity')?.hasError('campoVacio')">
+                                    <span class="validate-data">Este campo es obligatorio</span>
+                                </div>
+                            </span>
+                        }
 
                         @if (!hideGuide()) {
                             <span class="w-full">
@@ -111,7 +118,7 @@
                         <span class="w-full">
                             <label htmlFor="truck_license">Placa del camión <span style="color: red;">*</span></label>
                             <input class="border-round w-full mt-2" pInputText type="text" id="truck_license"
-                                name="truck_license" formControlName="truck_license" maxlength="8" />
+                                name="truck_license" formControlName="truck_license" maxlength="10" />
                             <div *ngIf="logbookForm.get('truck_license')?.hasError('campoVacio')">
                                 <span class="validate-data">Este campo es obligatorio</span>
                             </div>
@@ -126,14 +133,17 @@
                             </div>
                         </span>
 
-                        <span class="w-full">
-                            <label htmlFor="email">Proveedor / Origin <span style="color: red;">*</span></label>
-                            <input class="border-round w-full mt-2" pInputText type="text" id="provider" name="provider"
-                                formControlName="provider" />
-                            <div *ngIf="logbookForm.get('provider')?.hasError('campoVacio')">
-                                <span class="validate-data">Este campo es obligatorio</span>
-                            </div>
-                        </span>
+                        @if (!hideEjectExpalsa() && !hideGuide()) {
+                            <span class="w-full">
+                                <label htmlFor="email">Proveedor / Origin <span style="color: red;">*</span></label>
+                                <input class="border-round w-full mt-2" pInputText type="text" id="provider" name="provider"
+                                    formControlName="provider" />
+                                <div *ngIf="logbookForm.get('provider')?.hasError('campoVacio')">
+                                    <span class="validate-data">Este campo es obligatorio</span>
+                                </div>
+                            </span>
+                        }
+
                         <span class="w-full">
                             <label htmlFor="destiny_intern">Destino interno <span style="color: red;">*</span></label>
                             <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" formControlName="destiny_intern"
@@ -144,15 +154,18 @@
                             </div>
                         </span>
 
-                        <span class="w-full">
-                            <label htmlFor="authorized_by">Autorizado por <span style="color: red;">*</span></label>
-                            <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" formControlName="authorized_by"
-                                id="authorized_by" [options]="authorized()" optionLabel="name" optionValue="name"
-                                [emptyMessage]="messageEmpty"></p-dropdown>
-                            <div *ngIf="logbookForm.get('authorized_by')?.hasError('campoVacio')">
-                                <span class="validate-data">El campo autorizado es obligatorio</span>
-                            </div>
-                        </span>
+                        @if (!hideEjectExpalsa()) {
+                            <span class="w-full">
+                                <label htmlFor="authorized_by">Autorizado por <span style="color: red;">*</span></label>
+                                <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" formControlName="authorized_by"
+                                    id="authorized_by" [options]="authorized()" optionLabel="name" optionValue="name"
+                                    [emptyMessage]="messageEmpty"></p-dropdown>
+                                <div *ngIf="logbookForm.get('authorized_by')?.hasError('campoVacio')">
+                                    <span class="validate-data">El campo autorizado es obligatorio</span>
+                                </div>
+                            </span>
+                        }
+
 
                         <span class="w-full">
                             <label htmlFor="username">Observaciones</label>

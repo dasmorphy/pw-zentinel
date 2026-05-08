@@ -4,8 +4,8 @@
     <app-dispatch-details-modal [showModal]="dispatchSelected() ?? false"></app-dispatch-details-modal>
 }
 
-@if (dispatchSelected()) {
-    <app-dispatch-details-modal [showModal]="dispatchSelected() ?? false"></app-dispatch-details-modal>
+@if (openModalImages()) {
+    <app-preview-image [showImages]="openModalImages()"></app-preview-image>
 }
 
 

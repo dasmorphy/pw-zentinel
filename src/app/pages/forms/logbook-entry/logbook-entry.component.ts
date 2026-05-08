@@ -3,11 +3,7 @@ import { Component, computed, ViewChild } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { RouterOutlet } from "@angular/router";
-import { HeaderComponent } from "src/app/components/header/header.component";
-import { MenuService } from 'src/app/services/menu.service';
-import { MenuComponent } from "src/app/components/menu/menu.component";
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { ToastModule } from 'primeng/toast';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -73,14 +69,14 @@ export class LogbookEntryComponent {
             name_driver: ['', Validators.required],
             id_group_business: ['', Validators.required],
             id_category: ['', Validators.required],
-            id_unity: ['', Validators.required],
+            id_unity: [''],
             shipping_guide: [''],
-            quantity: [0, Validators.required],
-            description: ['', Validators.required],
+            quantity: [0],
+            description: [''],
             weight: [null],
-            provider: ['', Validators.required],
+            provider: [''],
             destiny_intern: ['', Validators.required],
-            authorized_by: ['', Validators.required],
+            authorized_by: [''],
             observations: [''],
         });
     }
@@ -153,6 +149,29 @@ export class LogbookEntryComponent {
             })
         }
 
+        if (this.hideEjectExpalsa()) {
+            controls_ignore.push('quantity', 'provider', 'description', 'authorized_by', 'id_unity');
+            this.logbookForm.patchValue({
+                quantity: null,
+                provider: null,
+                description: null,
+                authorized_by: null,
+                id_unity: null,
+                weight: null,
+
+            })
+        }
+
+        if (this.hidePersonal()) {
+            controls_ignore.push('quantity', 'provider', 'id_unity');
+            this.logbookForm.patchValue({
+                quantity: null,
+                provider: null,
+                id_unity: null,
+                weight: null,
+            })
+        }
+
         this.utilsService.validateControlsForms(this.logbookForm, controls_ignore);
         this.utilsService.showControlVoiled();
 
@@ -169,6 +188,20 @@ export class LogbookEntryComponent {
 
     hideGuide() {
         const categorys_hide = ['Ejecutivos de expalsa', 'Personal interno', 'Personal externo', 'Cuadrillas para pesca'];
+        const category_found = this.categories().find((cat: any) => cat.id_category === this.logbookForm.get('id_category')?.value);
+
+        return categorys_hide.includes(category_found?.name_category)
+    }
+
+    hideEjectExpalsa() {
+        const categorys_hide = ['Ejecutivos de expalsa'];
+        const category_found = this.categories().find((cat: any) => cat.id_category === this.logbookForm.get('id_category')?.value);
+
+        return categorys_hide.includes(category_found?.name_category)
+    }
+
+    hidePersonal() {
+        const categorys_hide = ['Personal interno', 'Personal externo'];
         const category_found = this.categories().find((cat: any) => cat.id_category === this.logbookForm.get('id_category')?.value);
 
         return categorys_hide.includes(category_found?.name_category)
@@ -216,46 +249,5 @@ export class LogbookEntryComponent {
             }
         })
     }
-
-    // setUnityByCategory(name_category: string) {
-    //     let id_unity = 1;
-
-    //     switch (name_category) {
-    //         case 'Suministros':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'UNIDAD')?.id_unity;
-    //             break;
-    //         case 'Repuestos':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'UNIDAD')?.id_unity;
-    //             break;
-    //         case 'Balanceado':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'SACOS')?.id_unity;
-    //             break;
-    //         case 'Larvas':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'UNIDAD')?.id_unity;
-    //             break;
-    //         case 'Maquinaria':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'UNIDAD')?.id_unity;
-    //             break;
-    //         case 'Combustibles /lubricantes':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'GALONES')?.id_unity;
-    //             break;
-    //         case 'Otros':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'BINES')?.id_unity;
-    //             break;
-    //         case 'Camarón':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'LIBRAS')?.id_unity;
-    //             break;
-    //         case 'Tilapia':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'LIBRAS')?.id_unity;
-    //             break;
-    //         case 'Insumos':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'UNIDAD')?.id_unity;
-    //             break;
-    //         default:
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'LIBRAS')?.id_unity;
-    //             break;
-    //     }
-    //     this.logbookForm.get('id_unity')?.setValue(id_unity);
-    // }    
 
 }
