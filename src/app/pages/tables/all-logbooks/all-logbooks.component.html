@@ -89,22 +89,22 @@
                                                 optionValue="id_sector"
                                                 placeholder="Seleccione una opción"
                                             ></p-multiSelect>
-
+                                            
+                                            <p-multiSelect 
+                                                [style]="{ boxShadow: 'none' }"
+                                                styleClass="border-round w-full"
+                                                id="optionGroupBusiness"  
+                                                [options]="optionGroupBusiness"
+                                                [(ngModel)]="selectedGroupBusiness"
+                                                optionLabel="name"
+                                                optionValue="id_group_business"
+                                                placeholder="Seleccione una opción"
+                                            ></p-multiSelect>
                                         }
 
 
 
 
-                                        <p-multiSelect 
-                                            [style]="{ boxShadow: 'none' }"
-                                            styleClass="border-round w-full"
-                                            id="optionGroupBusiness"  
-                                            [options]="optionGroupBusiness"
-                                            [(ngModel)]="selectedGroupBusiness"
-                                            optionLabel="name"
-                                            optionValue="id_group_business"
-                                            placeholder="Seleccione una opción"
-                                        ></p-multiSelect>
 
                                         <p-multiSelect 
                                             [style]="{ boxShadow: 'none' }"
