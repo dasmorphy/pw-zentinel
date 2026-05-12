@@ -14,7 +14,7 @@
           [options]="optionFilterCategory" optionLabel="label" optionValue="value" (onChange)="onFilterChange($event)">
         </p-dropdown>
         
-        @if (!user_permissions_signal().includes('DATA_BY_GROUP_BUSINESS')) {
+        @if (user_session.role == 'admin_tlsg' || user_session.role == 'admin') {
           <p-multiSelect 
             [style]="{ boxShadow: 'none' }"
             styleClass="border-round w-full"

@@ -117,6 +117,10 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
             filters.groups_business_id = attributes?.group_business?.toString()
         }
 
+        if (this.user_permissions_signal().includes('DATA_BY_SECTOR')) {
+            filters.sectors = attributes?.sector?.join(',') || '';
+        }
+
         this.logbookService.getHistoryLogbook(filters).subscribe({
             next: (data: any) => {
                 this.isLoading = false;

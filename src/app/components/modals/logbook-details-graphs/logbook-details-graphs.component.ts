@@ -104,6 +104,10 @@ export class LogbookDetailsGraphsComponent {
             this.filtersLogbook.groups_business_id = attributes?.group_business?.toString()
         }
 
+        if (this.user_permissions_signal().includes('DATA_BY_SECTOR')) {
+            this.filtersLogbook.sectors = attributes?.sector?.join(',') || '';
+        }
+
         this.logbookService.getHistoryLogbook(this.filtersLogbook).subscribe({
             next: (data: any) => {
                 this.isLoading = false;

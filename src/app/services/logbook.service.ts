@@ -88,6 +88,7 @@ export class LogbookService {
     }
 
     getHistoryLogbook(filter?: any) {
+        console.log('filter', filter)
         let params = new HttpParams();
         let headers = new HttpHeaders();
 
@@ -101,6 +102,10 @@ export class LogbookService {
 
         if (filter?.groups_business_id) {
             headers = headers.set('groups-business-id', filter?.groups_business_id)
+        }
+
+        if (filter?.sectors) {
+            headers = headers.set('sectors', filter?.sectors)
         }
 
         if (filter?.workday) {

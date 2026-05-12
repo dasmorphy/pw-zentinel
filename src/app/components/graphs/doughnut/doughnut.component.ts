@@ -128,6 +128,10 @@ export class DoughnutComponent {
       filterss.groups_business_id = attributes?.group_business?.toString()
     }
 
+    if (this.user_permissions_signal().includes('DATA_BY_SECTOR')) {
+      filterss.sectors = attributes?.sector?.join(',') || '';
+    }
+
     this.dashboardService.getResumeChart(filterss).subscribe({
       next: (resp: any) => {
         this.createLogbookChart(

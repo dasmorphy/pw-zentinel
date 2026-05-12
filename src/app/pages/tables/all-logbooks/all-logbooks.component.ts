@@ -176,6 +176,10 @@ export class AllLogbookComponent {
             filters.groups_business_id = attributes?.group_business?.toString()
         }
 
+        if (this.user_permissions_signal().includes('DATA_BY_SECTOR')) {
+            filters.sectors = attributes?.sector?.join(',') || '';
+        }
+
         this.logbookService.getAllLogbooksPaginated(filters).subscribe({
             next: (data: any) => {
                 this.isLoading = false;

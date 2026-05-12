@@ -26,6 +26,10 @@ export class DashboardService {
             headers = headers.set('groups-business-id', filter?.groups_business_id)
         }
 
+        if (filter?.sectors) {
+            headers = headers.set('sectors', filter?.sectors)
+        }
+
         if (filter?.workday) {
             headers = headers.set('workday', filter?.workday)
         }
