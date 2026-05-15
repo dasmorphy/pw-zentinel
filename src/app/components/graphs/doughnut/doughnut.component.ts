@@ -34,18 +34,18 @@ import { UserService } from 'src/app/services/user.service';
   styleUrls: ['./doughnut.component.sass'],
 })
 export class DoughnutComponent {
-  
+
   private readonly menuService = inject(MenuService);
   private readonly dashboardService = inject(DashboardService);
   private readonly logbookService = inject(LogbookService);
   private readonly authService = inject(AuthService);
   private readonly utilsService = inject(UtilsService);
   private readonly userService = inject(UserService);
-  
+
   toggle = computed(() => this.menuService.toggle());
   categories = computed(() => this.logbookService.categories());
   user_permissions_signal = computed(() => this.authService.user_permissions_signal());
-  
+
   dataCategoryQuantity: any = [];
   categoriesData: any[] = [];
   dateRange: Date[] | null = null;
@@ -67,14 +67,21 @@ export class DoughnutComponent {
     { value: 'salida', label: 'Salida' }
   ]
 
-  optionTime= [ 'Diurna', 'Nocturna']
+  optionTime = ['Diurna', 'Nocturna']
   user_session: any;
 
   ngOnInit() {
     this.user_session = this.userService.getDataSession();
+    const user_attributes = this.user_session?.attributes;
     this.fetchDataGraphs()
     this.fetchSectorByBusiness();
-    this.fetchGroupBusinessByBusiness();
+
+    if (this.user_permissions_signal()?.includes('DATA_BY_SECTOR')) {
+      this.fetchGroupBusinessBySector(user_attributes?.sector?.[0])
+    } else {
+      this.fetchGroupBusinessByBusiness();
+    }
+
     this.logbookService.getAllCategories();
   }
 
@@ -87,6 +94,16 @@ export class DoughnutComponent {
       },
       error: (err) => console.error(err)
     });
+  }
+
+  fetchGroupBusinessBySector(id_sector: number) {
+    this.logbookService.getGroupBusinessBySector(id_sector).subscribe({
+      next: (resp: any) => {
+        this.optionGroupBusiness = resp?.data
+        // this.selectedGroupBusiness  = this.optionGroupBusiness?.map((group_business: any) => group_business.id_group_business)
+      },
+      error: (err) => console.error(err)
+    })
   }
 
   fetchGroupBusinessByBusiness() {
@@ -119,7 +136,7 @@ export class DoughnutComponent {
 
       filterss.start_date = formatDate(today);
       filterss.end_date = formatDate(tomorrow);
-      
+
       this.filters.start_date = formatDate(today);
       this.filters.end_date = formatDate(tomorrow);
     }
@@ -153,13 +170,13 @@ export class DoughnutComponent {
     if (Array.isArray(this.dateRange)) {
       if (this.dateRange.length === 2) {
         const [startDate, endDate] = this.dateRange;
-    
+
         const start = new Date(startDate);
         start.setHours(0, 0, 0, 0);
-    
+
         const end = new Date(endDate);
         end.setHours(23, 59, 59, 999);
-    
+
         filter_date.start_date = this.formatLocalDate(start);
         filter_date.end_date = this.formatLocalDate(end);
       };
@@ -259,7 +276,7 @@ export class DoughnutComponent {
   }
 
   fetchHistoryLogbooks() {
-    
+
   }
 
   // =====================
@@ -329,7 +346,7 @@ export class DoughnutComponent {
           legend: { position: 'bottom' },
           centerText: {
             text: `${this.utilsService.formatNumber(total)}` // 👈 el texto que quieras mostrar
-        }
+          }
         }
       } as any,
       // plugins: [centerTextPlugin]

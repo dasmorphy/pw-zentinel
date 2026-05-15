@@ -13,19 +13,21 @@
         <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full" id="cuentaCliente"
           [options]="optionFilterCategory" optionLabel="label" optionValue="value" (onChange)="onFilterChange($event)">
         </p-dropdown>
-        
-        @if (user_session.role == 'admin_tlsg' || user_session.role == 'admin') {
+
+        @if (user_session?.role == "admin" || user_session?.role == "admin_tlsg") {
           <p-multiSelect 
             [style]="{ boxShadow: 'none' }"
             styleClass="border-round w-full"
-            id="optionGroupBusiness"  
+            id="optionSector"  
             [options]="optionSector"
             [(ngModel)]="selectedSector"
             optionLabel="name"
             optionValue="id_sector"
             placeholder="Seleccione una opción"
           ></p-multiSelect>
-  
+        }
+        
+        @if (!user_permissions_signal().includes('DATA_BY_GROUP_BUSINESS')) {
           <p-multiSelect 
             [style]="{ boxShadow: 'none' }"
             styleClass="border-round w-full"

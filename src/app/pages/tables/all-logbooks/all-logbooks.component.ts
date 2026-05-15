@@ -130,15 +130,31 @@ export class AllLogbookComponent {
 
     ngOnInit() {
         this.user_session = this.userService.getDataSession();
+        const user_attributes = this.user_session?.attributes;
 
         if (this.dataModal) {
             this.dataLogbooks = this.dataModal
         }
 
-        this.fetchGroupBusinessByBusiness();
+        if (this.user_permissions_signal()?.includes('DATA_BY_SECTOR')) {
+            this.fetchGroupBusinessBySector(user_attributes?.sector?.[0])
+        }else{
+            this.fetchGroupBusinessByBusiness();
+        }
+
         this.fetchSectorByBusiness();
         this.logbookService.getAllCategories();
         this.debounceSearch();
+    }
+
+    fetchGroupBusinessBySector(id_sector: number) {
+        this.logbookService.getGroupBusinessBySector(id_sector).subscribe({
+            next: (resp: any) => {
+                this.optionGroupBusiness = resp?.data
+                // this.selectedGroupBusiness  = this.optionGroupBusiness?.map((group_business: any) => group_business.id_group_business)
+            },
+            error: (err) => console.error(err)
+        })
     }
 
     fetchSectorByBusiness() {
@@ -155,11 +171,11 @@ export class AllLogbookComponent {
     fetchGroupBusinessByBusiness() {
         const id_business = this.user_session?.attributes?.id_business
         this.dashboardService.getGroupBusinessByBusiness(id_business).subscribe({
-        next: (resp: any) => {
-            this.optionGroupBusiness = resp?.data
-            // this.selectedGroupBusiness  = this.optionGroupBusiness?.map((group_business: any) => group_business.id_group_business)
-        },
-        error: (err) => console.error(err)
+            next: (resp: any) => {
+                this.optionGroupBusiness = resp?.data
+                // this.selectedGroupBusiness  = this.optionGroupBusiness?.map((group_business: any) => group_business.id_group_business)
+            },
+            error: (err) => console.error(err)
         });
     }
 

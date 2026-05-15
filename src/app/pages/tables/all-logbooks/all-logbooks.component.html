@@ -67,6 +67,19 @@
                                             [options]="optionFilterCategory" optionLabel="label" optionValue="value" >
                                         </p-dropdown> -->
 
+                                        @if (user_session?.role == "admin" || user_session?.role == "admin_tlsg") {
+                                            <p-multiSelect 
+                                                [style]="{ boxShadow: 'none' }"
+                                                styleClass="border-round w-full"
+                                                id="optionSector"  
+                                                [options]="optionSector"
+                                                [(ngModel)]="selectedSector"
+                                                optionLabel="name"
+                                                optionValue="id_sector"
+                                                placeholder="Seleccione una opción"
+                                            ></p-multiSelect>
+                                        }
+
                                         @if (!user_permissions_signal().includes('DATA_BY_GROUP_BUSINESS')) {
                                             <p-multiSelect 
                                                 [style]="{ boxShadow: 'none' }"
@@ -79,16 +92,6 @@
                                                 placeholder="Seleccione categoría"
                                             ></p-multiSelect>
     
-                                            <p-multiSelect 
-                                                [style]="{ boxShadow: 'none' }"
-                                                styleClass="border-round w-full"
-                                                id="optionSector"  
-                                                [options]="optionSector"
-                                                [(ngModel)]="selectedSector"
-                                                optionLabel="name"
-                                                optionValue="id_sector"
-                                                placeholder="Seleccione una opción"
-                                            ></p-multiSelect>
                                             
                                             <p-multiSelect 
                                                 [style]="{ boxShadow: 'none' }"

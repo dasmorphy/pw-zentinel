@@ -34,6 +34,12 @@ export class LogbookService {
             })
     }
 
+    getGroupBusinessBySector(id_sector: number) {
+        return this.http.get(
+            `${environment.apiUrl}/rest/zent-logbook-api/v1.0/group-business-by-sector/${id_sector}`,
+        );
+    }
+
     getAllAuthorized() {
         this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/get/allAuthorized`)
             .subscribe({
