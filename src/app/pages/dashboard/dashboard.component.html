@@ -4,15 +4,30 @@
   class="container xl:justify-content-evenly p-3-responsive border-box bg-white mt-dashboard flex-column">
   <div class="flex w-full justify-content-between align-items-center mb-3 px-5">
     <h2>¡Hola {{user_session?.attributes?.fullname ?? 'Desconocido'}}!</h2>
-    @if (user_session?.role == 'admin_tlsg') {
-      <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full" id="cuentaCliente"
-        [options]="optionsDashboard" (onChange)="onChangeDahboard($event.value)">
-      </p-dropdown>
-    }
+    <div class="flex gap-2">
+      @if (user_permissions_signal().includes('VER_DASHBOARD_BIOMAR') || optionDashboardSelected == 'Biomar') {
+        <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full" id="cuentaCliente"
+          [options]="optionsGraphBiomar" (onChange)="onChangeGraphBiomar($event.value)">
+        </p-dropdown>
+      }
+      @if (user_session?.role == 'admin_tlsg') {
+        <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full" id="cuentaCliente"
+          [options]="optionsDashboard" (onChange)="onChangeDahboard($event.value)">
+        </p-dropdown>
+      }
+    </div>
   </div>
-
+<!-- 
   @if (user_permissions_signal().includes('VER_DASHBOARD_BIOMAR') || optionDashboardSelected == 'Biomar') {
     <app-biomar-dashboard class="w-full"></app-biomar-dashboard>
+  } -->
+
+  @if (optionDashboardSelected == 'Biomar') {
+    @if (optionGraphBiomarSelected == 'Control de acceso') {      
+      <app-access-dashboard></app-access-dashboard>
+    }
+
+    <!-- <app-biomar-dashboard class="w-full"></app-biomar-dashboard> -->
   }
 
   @if (user_permissions_signal().includes('VER_DASHBOARD_EXPALSA') || optionDashboardSelected == 'Expalsa') {

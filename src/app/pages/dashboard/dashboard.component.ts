@@ -15,6 +15,7 @@ import { DialogModule } from 'primeng/dialog';
 import { LogbookRecentComponent } from 'src/app/components/logbook/logbook-recent/logbook-recent.component';
 import { BiomarDashboardComponent } from 'src/app/components/dashboards/biomar-dasboard/biomar-dashboard.component';
 import { AuthService } from 'src/app/services/auth.service';
+import { AccessControlComponent } from 'src/app/components/dashboards/biomar/access-control/access-control.component';
 
 @Component({
     selector: 'app-dashboard',
@@ -33,7 +34,8 @@ import { AuthService } from 'src/app/services/auth.service';
         DoughnutComponent,
         DialogModule,
         LogbookRecentComponent,
-        BiomarDashboardComponent
+        BiomarDashboardComponent,
+        AccessControlComponent
     ],
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.sass'],
@@ -50,7 +52,9 @@ export class DashboardComponent {
     user_session: any;
     isLoading: boolean = false;
     optionsDashboard = ["Expalsa", "Biomar"];
+    optionsGraphBiomar = ["Control de acceso", "Despacho de materia prima", "Despacho de producto terminado"];
     optionDashboardSelected = "";
+    optionGraphBiomarSelected = "Control de acceso";
 
 
     ngOnInit() {
@@ -63,6 +67,11 @@ export class DashboardComponent {
     
     onChangeDahboard(option: string) {
         this.optionDashboardSelected = option
+    }
+
+    onChangeGraphBiomar(option: string) {
+        console.log("jkjkkjjk")
+        this.optionGraphBiomarSelected = option
     }
 
 }

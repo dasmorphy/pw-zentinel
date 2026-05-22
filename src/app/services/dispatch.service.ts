@@ -167,13 +167,7 @@ export class DispatchService {
     }
 
     getGraphs() {
-        this.http.get(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/get/resume_graphs`)
-        .subscribe({
-                next: (data: any) => {
-                    this.graphsDispatch.set(data?.data || []);
-                },
-                error: ({ error }: any) => this.utilsService.onError(error.message)
-            })
+        return this.http.get(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/get/resume_graphs`)
     }
 
     fetchDispatchStatusRecord(id_dispatch: number) {
