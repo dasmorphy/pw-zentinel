@@ -1,58 +1,118 @@
 <div class="flex flex-column w-full px-5">
-    <div class="flex w-full justify-content-center gap-3 indicators" >
-        <div class="flex card-info justify-content-between align-items-center"  style="width: 19rem; height: 10rem;">
-            <div class="flex bg-white border-circle justify-content-center align-items-center" style="height: 5rem; width: 5rem;">
-                <i class="pi pi-megaphone" style="font-size: 45px; color: rgb(6 92 141);"></i>
+    <div class="flex w-full justify-content-center gap-3 column-responsive">
+        <p-card class="flex-1">
+            <div class="flex justify-content-between gap-5">
+                <div class="flex flex-column gap-1">
+                    <span class="text-secondary text-xl">Total</span>
+                    <span class="font-bold text-lg">{{graphEntryStatus?.[2]?.count}}</span>
+                </div>
+                <span
+                    class="w-2rem h-2rem border-circle inline-flex justify-content-center align-items-center text-center"
+                    [style]="{ color: '#00000' }">
+                    <i class="pi pi-users text-lg font-bold"></i>
+                </span>
             </div>
-            <div class="flex flex-column" style="max-width: 90px;">
-                <span style="font-weight: 600;">Total Accesos</span>
-                <span style="color: black; font-weight: 600; font-size: 28px;">{{graphEntryStatus?.[2]?.count}}</span>
-            </div>
-        </div>
+        </p-card>
 
 
-        <div class="flex card-info justify-content-between align-items-center"  style="width: 19rem; height: 10rem;">
-            <div class="flex bg-white border-circle justify-content-center align-items-center" style="height: 5rem; width: 5rem;">
-                <i class="pi pi-megaphone" style="font-size: 45px; color: rgb(6 92 141);"></i>
+        <p-card class="flex-1" 
+            [style]="{
+                'border-left': '5px solid #ef4444',
+                'border-radius': '12px'
+            }"
+        >
+            <div class="flex justify-content-between gap-5">
+                <div class="flex flex-column gap-1">
+                    <span class="text-secondary text-lg">Pendientes de salida</span>
+                    <span class="font-bold text-lg">{{graphEntryStatus?.[1]?.count}}</span>
+                </div>
+                <span
+                    class="w-2rem h-2rem border-circle inline-flex justify-content-center align-items-center text-center"
+                    [style]="{ color: '#00000' }">
+                    <i class="pi pi-stopwatch text-lg font-bold" style="color: #ef4444;"></i>
+                </span>
             </div>
-            <div class="flex flex-column" style="max-width: 90px;">
-                <span style="font-weight: 600;">Pendientes de salida</span>
-                <span style="color: black; font-weight: 600; font-size: 28px;">{{graphEntryStatus?.[1]?.count}}</span>
-            </div>
-        </div>
+        </p-card>
 
-        <div class="flex card-info justify-content-between align-items-center"  style="width: 19rem; height: 10rem;">
-            <div class="flex bg-white border-circle justify-content-center align-items-center" style="height: 5rem; width: 5rem;">
-                <i class="pi pi-megaphone" style="font-size: 45px; color: rgb(6 92 141);"></i>
+        <p-card class="flex-1">
+            <div class="flex justify-content-between gap-5">
+                <div class="flex flex-column gap-1">
+                    <span class="text-secondary text-lg">Proveedores</span>
+                    <span class="font-bold text-lg">{{graphCountTypeAccess?.[0]?.count}}</span>
+                </div>
+                <span
+                    class="w-2rem h-2rem border-circle inline-flex justify-content-center align-items-center text-center"
+                    [style]="{ color: '#00000' }">
+                    <i class="pi pi-list-check text-lg font-bold"></i>
+                </span>
             </div>
-            <div class="flex flex-column" style="max-width: 90px;">
-                <span style="font-weight: 600;">Proveedores</span>
-                <span style="color: black; font-weight: 600; font-size: 28px;">{{graphCountTypeAccess?.[0]?.count}}</span>
-            </div>
-        </div>
+        </p-card>
 
-
-        <div class="flex card-info justify-content-between align-items-center"  style="width: 19rem; height: 10rem;">
-            <div class="flex bg-white border-circle justify-content-center align-items-center" style="height: 5rem; width: 5rem;">
-                <i class="pi pi-megaphone" style="font-size: 45px; color: rgb(6 92 141);"></i>
+        <p-card class="flex-1">
+            <div class="flex justify-content-between gap-5">
+                <div class="flex flex-column gap-1">
+                    <span class="text-secondary text-lg">Visitantes</span>
+                    <span class="font-bold text-lg">{{graphCountTypeAccess?.[1]?.count}}</span>
+                </div>
+                <span
+                    class="w-2rem h-2rem border-circle inline-flex justify-content-center align-items-center text-center"
+                    [style]="{ color: '#00000' }">
+                    <i class="pi pi-id-card text-lg font-bold"></i>
+                </span>
             </div>
-            <div class="flex flex-column" style="max-width: 90px;">
-                <span style="font-weight: 600;">Visitantes</span>
-                <span style="color: black; font-weight: 600; font-size: 28px;">{{graphCountTypeAccess?.[1]?.count}}</span>
-            </div>
-        </div>
+        </p-card>
 
     </div>
 
 
-    <div class="flex w-full justify-content-center gap-3" >
-        <div class="flex card-info justify-content-between align-items-center"  style="width: 19rem; height: 10rem;">
-            <div class="flex flex-column" style="max-width: 90px;">
-                <span style="font-weight: 600;">Proveedores vs Visitantes</span>
-                <canvas class="dona" id="myDoughnutChart"></canvas>
+    <div class="flex w-full gap-3 mt-5 column-responsive">
+        <div class="flex card-info justify-content-center align-items-center w-full" style="height: 25rem;">
+            <div class="flex flex-column">
+                <span class="text-center" style="font-weight: 600;">Proveedores vs Visitantes</span>
+                <canvas class="dona mt-3" id="myDoughnutChart"></canvas>
+            </div>
+        </div>
+
+        <div class="flex flex-column gap-3 w-full" style="height: 25rem;">
+
+            <div class="flex card-info justify-content-center align-items-center h-full">
+                <div class="flex flex-column w-full h-full">
+                    <span style="font-weight: 600;">Flujo de salidas</span>
+
+                    <div class="flex flex-column w-full h-full justify-content-center">
+                        <div class="flex flex-column">
+                            <span class="mt-3" style="font-weight: 600;">Completadas</span>
+                            <p-progressBar class="mt-2" id="completed-bar"
+                                [value]="valueProgressBar(graphEntryStatus?.[0]?.count, graphEntryStatus?.[2]?.count)">
+                            </p-progressBar>
+                        </div>
+
+                        <div class="flex flex-column">
+                            <span class="mt-3" style="font-weight: 600;">Pendientes</span>
+                            <p-progressBar class="mt-2" id="pend-bar"
+                                [value]="valueProgressBar(graphEntryStatus?.[1]?.count, graphEntryStatus?.[2]?.count)">
+                            </p-progressBar>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="flex card-info justify-content-center align-items-center h-full">
+                <div class="flex flex-column w-full h-full">
+                    <span class="mb-3" style="font-weight: 600;">Activos ingresados</span>
+
+                    <div class="flex h-full flex-column gap-2">
+                        <div class="flex flex-column w-full" *ngFor="let material of graphTopMaterials;">
+                            <div class="flex justify-content-between">
+                                <span>{{material.material_name}}</span>
+                                <span>{{material.count}}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
             </div>
         </div>
     </div>
-
-    
 </div>

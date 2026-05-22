@@ -120,6 +120,12 @@ export class AllLogbookComponent {
             command: () => this.routeOut()
         },
         {
+            label: 'Pdf',
+            icon: 'pi pi-file-pdf',
+            visible: () => this.user_permissions_signal().includes('BITACORA_PDF'),
+            command: () => this.routeOut()
+        },
+        {
             label: 'Eliminar',
             icon: 'pi pi-trash',
             visible: () => this.user_permissions_signal().includes('ELIMINAR_BITACORA'),

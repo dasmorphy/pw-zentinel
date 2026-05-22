@@ -16,6 +16,8 @@ import { LogbookRecentComponent } from 'src/app/components/logbook/logbook-recen
 import { BiomarDashboardComponent } from 'src/app/components/dashboards/biomar-dasboard/biomar-dashboard.component';
 import { AuthService } from 'src/app/services/auth.service';
 import { AccessControlComponent } from 'src/app/components/dashboards/biomar/access-control/access-control.component';
+import { RawMaterialDispatchComponent } from 'src/app/components/dashboards/biomar/raw-material-dispatch/raw-material-dispatch.component';
+import { FinishedProductDispatchComponent } from 'src/app/components/dashboards/biomar/finished-product-dispatch/finished-product-dispatch.component';
 
 @Component({
     selector: 'app-dashboard',
@@ -35,6 +37,8 @@ import { AccessControlComponent } from 'src/app/components/dashboards/biomar/acc
         DialogModule,
         LogbookRecentComponent,
         BiomarDashboardComponent,
+        RawMaterialDispatchComponent,
+        FinishedProductDispatchComponent,
         AccessControlComponent
     ],
     templateUrl: './dashboard.component.html',

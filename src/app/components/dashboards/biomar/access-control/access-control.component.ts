@@ -30,6 +30,10 @@ import { EntryDetailsModalComponent } from 'src/app/components/modals/entry-deta
 import { DispatchDetailsModalComponent } from 'src/app/components/modals/dispatch-details-modal/dispatch-details-modal.component';
 import { ImageGalleryComponent } from 'src/app/components/modals/shared/preview-image/preview-image.component';
 import { Chart, ChartConfiguration } from 'chart.js';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { MeterGroupModule } from 'primeng/metergroup';
+import { CardModule } from 'primeng/card';
+
 
 @Component({
     selector: 'app-access-dashboard',
@@ -50,9 +54,9 @@ import { Chart, ChartConfiguration } from 'chart.js';
     TableModule,
     TagModule,
     SplitButtonModule,
-    EntryDetailsModalComponent,
-    DispatchDetailsModalComponent,
-    ImageGalleryComponent
+    ProgressBarModule,
+    MeterGroupModule,
+    CardModule
 ],
     templateUrl: './access-control.component.html',
     styleUrls: ['./access-control.component.sass'],
@@ -105,8 +109,8 @@ export class AccessControlComponent {
                 this.graphTopMaterials = dataGraph?.entry_biomar?.top_materials
 
                 this.createDoughnutChart(
-                    this.graphCountTypeAccess?.[0],
-                    this.graphCountTypeAccess?.[1],
+                    this.graphCountTypeAccess?.[0]?.percentage,
+                    this.graphCountTypeAccess?.[1]?.percentage,
                 );
             },
             error: ({ error }: any) => this.utilsService.onError(error.message)
@@ -165,27 +169,38 @@ export class AccessControlComponent {
 
 
     createDoughnutChart(entrada: number, salida: number) {
-        console.log(entrada)
-        console.log(salida)
         const total = entrada + salida;
         const centerTextPlugin = {
-          id: 'centerText',
-          beforeDraw(chart: any) {
-            const { ctx, width, height } = chart;
-    
-            ctx.save();
-    
-            const text = chart.config.options.plugins.centerText.text;
-    
-            ctx.font = 'bold 24px Arial';
-            ctx.fillStyle = '#333';
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-    
-            ctx.fillText(text, width / 2, height / 2);
-    
-            ctx.restore();
-          }
+            id: 'centerText',
+            beforeDraw(chart: any) {
+
+                const { ctx, width, height } = chart;
+
+                ctx.save();
+
+                const centerX = width / 2;
+                const centerY = height / 2;
+
+                // TEXTO SUPERIOR
+                ctx.font = '500 14px Arial';
+                ctx.fillStyle = '#6b7280';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+
+                ctx.fillText('Proveedores', centerX, centerY - 30);
+
+                // VALOR
+                ctx.font = 'bold 24px Arial';
+                ctx.fillStyle = '#111827';
+
+                ctx.fillText(
+                    entrada,
+                    centerX,
+                    centerY - 8
+                );
+
+                ctx.restore();
+            }
         };
     
         const config: ChartConfiguration<'doughnut'> = {
@@ -193,12 +208,17 @@ export class AccessControlComponent {
           data: {
             labels: ['Proveedor', 'Visitante'],
             datasets: [{
-              data: [entrada, salida],
-              backgroundColor: ['#42A5F5', '#66BB6A'],
-              hoverBackgroundColor: ['#1E88E5', '#43A047'],
+                data: [entrada, salida],
+                backgroundColor: ['#091426', '#515f74'],
+                hoverBackgroundColor: ['#091426', '#515f74'],
+
+                borderRadius: 10,
+                spacing: 2,
+                borderWidth: 0
             }]
           },
           options: {
+            cutout: '80%',
             responsive: true,
             plugins: {
               legend: { position: 'bottom' },
@@ -207,7 +227,7 @@ export class AccessControlComponent {
               }
             }
           } as any,
-          // plugins: [centerTextPlugin]
+          plugins: [centerTextPlugin]
         };
     
         const canvas = document.getElementById('myDoughnutChart') as HTMLCanvasElement;
@@ -233,5 +253,9 @@ export class AccessControlComponent {
         }
     }
 
+    valueProgressBar(value: number = 0, valueTotal: number) {
+        const valueCalc = (value) / valueTotal * 100
+        return valueCalc.toFixed(0)
+    }
 
 }

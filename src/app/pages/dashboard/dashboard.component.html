@@ -2,7 +2,7 @@
 
 <div [class]="{ 'w-calc': toggle(), 'w-screen-dashboard': !toggle() }"
   class="container xl:justify-content-evenly p-3-responsive border-box bg-white mt-dashboard flex-column">
-  <div class="flex w-full justify-content-between align-items-center mb-3 px-5">
+  <div class="flex w-full justify-content-between align-items-center mb-3 px-5 column-responsive">
     <h2>¡Hola {{user_session?.attributes?.fullname ?? 'Desconocido'}}!</h2>
     <div class="flex gap-2">
       @if (user_permissions_signal().includes('VER_DASHBOARD_BIOMAR') || optionDashboardSelected == 'Biomar') {
@@ -24,7 +24,15 @@
 
   @if (optionDashboardSelected == 'Biomar') {
     @if (optionGraphBiomarSelected == 'Control de acceso') {      
-      <app-access-dashboard></app-access-dashboard>
+      <app-access-dashboard class="w-full"></app-access-dashboard>
+    }
+
+    @if (optionGraphBiomarSelected == 'Despacho de materia prima') {      
+      <app-raw-material-dispatch class="w-full"></app-raw-material-dispatch>
+    }
+
+    @if (optionGraphBiomarSelected == 'Despacho de producto terminado') {      
+      <app-finished-product-dispatch class="w-full"></app-finished-product-dispatch>
     }
 
     <!-- <app-biomar-dashboard class="w-full"></app-biomar-dashboard> -->

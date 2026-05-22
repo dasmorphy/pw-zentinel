@@ -1,0 +1,112 @@
+<div class="flex flex-column w-full px-5">
+    <!-- Tarjetas superiores con métricas clave -->
+    <div class="flex w-full justify-content-center gap-3 column-responsive mb-5">
+        <!-- Total Despachos -->
+        <p-card class="flex-1">
+            <div class="flex justify-content-between gap-5">
+                <div class="flex flex-column gap-1">
+                    <span class="text-secondary text-xl">Total Despachos</span>
+                    <span class="font-bold text-3xl">{{totalDispatches}}</span>
+                </div>
+                <div class="flex flex-column align-items-end gap-1">
+                    <span class="text-sm text-secondary">+{{totalDispatchesPercent}} %</span>
+                    <i class="pi pi-arrow-up text-lg" style="color: #22c55e;"></i>
+                </div>
+            </div>
+        </p-card>
+
+        <!-- SKU Despachados -->
+        <p-card class="flex-1">
+            <div class="flex justify-content-between gap-5">
+                <div class="flex flex-column gap-1">
+                    <span class="text-secondary text-xl">SKU Despachados</span>
+                    <span class="font-bold text-3xl">{{skuDispatched}} SKU</span>
+                </div>
+                <div class="flex flex-column align-items-end gap-1">
+                    <span class="text-sm text-secondary">{{skuDispatchedPercent}} %</span>
+                    <i class="pi pi-check text-lg" style="color: #22c55e;"></i>
+                </div>
+            </div>
+        </p-card>
+
+        <!-- Novedades -->
+        <p-card class="flex-1"
+            [style]="{
+                'border-left': '5px solid #ef4444',
+                'border-radius': '12px'
+            }"
+        >
+            <div class="flex justify-content-between gap-5">
+                <div class="flex flex-column gap-1">
+                    <span class="text-secondary text-xl">Novedades</span>
+                    <span class="font-bold text-3xl" [style]="{ color: '#ef4444' }">{{newsCount}}</span>
+                </div>
+                <div class="flex flex-column align-items-end gap-1">
+                    <span class="text-sm text-secondary">+{{newsPercent}} %</span>
+                    <i class="pi pi-exclamation-triangle text-lg" style="color: #ef4444;"></i>
+                </div>
+            </div>
+        </p-card>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="flex w-full gap-3 mt-5 column-responsive">
+        <!-- Destinos - Gráfico de Dona -->
+        <div class="flex card-info justify-content-center align-items-center w-full" style="min-height: 25rem;">
+            <div class="flex flex-column align-items-center w-full">
+                <span class="font-bold mb-3">Destinos</span>
+                <canvas id="destinosChart"></canvas>
+                <div class="flex flex-column gap-2 mt-3 w-full">
+                    <div class="flex gap-2" *ngFor="let dest of graphDestinations">
+                        <span 
+                            class="w-1rem h-1rem border-circle" 
+                            [style]="{
+                                'background-color': dest.percentage > 50 ? '#091426' : '#515f74'
+                            }">
+                        </span>
+                        <span class="text-sm">{{dest.name}} - {{dest.value}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Calidad de Recepción y Tendencia -->
+        <div class="flex flex-column gap-3 w-full" style="min-height: 25rem;">
+            <!-- Calidad de Recepción -->
+            <div class="flex card-info justify-content-center align-items-center h-full">
+                <div class="flex flex-column w-full h-full">
+                    <span class="font-bold mb-2">Calidad de Recepción</span>
+                    <span class="text-secondary text-sm mb-3">Desempeño de entregas a bodega</span>
+
+                    <div class="flex flex-column gap-3 flex-1 justify-content-center">
+                        <div *ngFor="let quality of graphReceptionQuality" class="flex flex-column gap-2">
+                            <div class="flex justify-content-between">
+                                <span class="text-sm font-semibold">{{quality.name}}</span>
+                                <span class="text-sm font-bold">{{quality.value}}%</span>
+                            </div>
+                            <p-progressBar 
+                                [value]="quality.value"
+                                [showValue]="false"
+                                [style]="{ height: '8px', backgroundColor: '#e5e7eb' }">
+                            </p-progressBar>
+                        </div>
+                    </div>
+
+                    <div class="mt-3 pt-3" style="border-top: 1px solid #e5e7eb;">
+                        <span class="text-secondary text-xs font-semibold">MÉTRICA GLOBAL</span>
+                        <span class="text-xs text-secondary block mt-1">Basado en los últimos 450 recepciones confirmadas.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tendencia -->
+            <div class="flex card-info justify-content-center align-items-center h-full">
+                <div class="flex flex-column w-full h-full">
+                    <span class="font-bold mb-2">Tendencia</span>
+                    <span class="text-secondary text-sm mb-3">Correctos vs Novedades</span>
+                    <canvas id="tendencyChart" style="max-height: 150px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
