@@ -31,22 +31,35 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
     doughnutChart!: Chart;
     barChart!: Chart;
 
-    // Data para tarjetas superiores
-    totalDispatches: number = 1284;
-    totalDispatchesPercent: number = 12;
-    skuDispatched: number = 45302;
-    skuDispatchedPercent: number = 98.2;
-    newsCount: number = 18;
-    newsPercent: number = 4;
+    graphProductTerm: any = [];
+    graphLast7Days: any = [];
+    graphDiscrepancy: number = 0;
+    graphWithoutDiscrepancy: number = 0;
+    graphDispatchStatus: any = [];
 
-    // Data para gráficos
-    graphDestinations: any = [];
-    graphReceptionQuality: any = [];
-    graphTrendency: any = [];
+    filters: any = {};
 
     ngOnInit() {
         this.user_session = this.userService.getDataSession();
-        this.loadData();
+        const filters = { ...this.filters };
+        filters.type_process = 'product_term';
+        this.filters = filters;
+
+        this.dispatchService.getGraphs(this.filters).subscribe({
+            next: (data: any) => {
+                const dataGraph = data?.data;
+                this.graphProductTerm = dataGraph?.product_term;
+                // this.graphDestiny = dataGraph?.destiny_count;
+                this.graphDispatchStatus = dataGraph?.dispatch_by_status;
+                this.graphDiscrepancy = dataGraph?.discrepancy;
+                this.graphWithoutDiscrepancy = dataGraph?.without_discrepancy;
+                this.graphLast7Days = dataGraph?.discrepancy_7_days;
+                
+                this.createDoughnutChart();
+                this.createBarChart();
+            },
+            error: ({ error }: any) => this.utilsService.onError(error.message)
+        })
     }
 
     ngOnDestroy() {
@@ -58,34 +71,11 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
         }
     }
 
-    loadData() {
-        // Emular datos del backend
-        this.graphDestinations = [
-            { name: 'Ingresado a Bodegas', value: 873, percentage: 68 },
-            { name: 'Ingresado a Clientes', value: 411, percentage: 32 }
-        ];
-
-        this.graphReceptionQuality = [
-            { name: 'Correctas', value: 96.5, color: '#22c55e' },
-            { name: 'Incorrectas', value: 3.5, color: '#ef4444' }
-        ];
-
-        this.graphTrendency = [
-            { date: 'LUN', correct: 45, news: 5 },
-            { date: 'MAR', correct: 32, news: 8 },
-            { date: 'MIE', correct: 22, news: 6 },
-            { date: 'JUE', correct: 49, news: 4 },
-            { date: 'VIE', correct: 60, news: 2 },
-            { date: 'SÁB', correct: 35, news: 9 },
-            { date: 'DOM', correct: 49, news: 7 }
-        ];
-
-        // Crear gráficos
-        this.createDoughnutChart();
-        this.createBarChart();
-    }
-
     createDoughnutChart() {
+        console.log('ffjkfjkfjkfjk')
+        const store_count = this.graphProductTerm?.warehouse_count ?? 0;
+        const client_count = this.graphProductTerm?.client_count ?? 0;
+
         const centerTextPlugin = {
             id: 'centerText',
             beforeDraw(chart: any) {
@@ -114,9 +104,9 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
         const config: ChartConfiguration<'doughnut'> = {
             type: 'doughnut',
             data: {
-                labels: this.graphDestinations.map((d: any) => d.name),
+                labels: ['Cliente', 'Bodegas'],
                 datasets: [{
-                    data: this.graphDestinations.map((d: any) => d.value),
+                    data: [client_count, store_count],
                     backgroundColor: ['#091426', '#515f74'],
                     hoverBackgroundColor: ['#091426', '#515f74'],
                     borderRadius: 10,
@@ -149,6 +139,9 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
 
     createBarChart() {
         const canvas = document.getElementById('tendencyChart') as HTMLCanvasElement;
+        const labels = this.graphLast7Days?.map((x: any) => x.day);
+        const withDiscrepancy = this.graphLast7Days?.map((x: any) => x.with_discrepancy);
+        const withoutDiscrepancy = this.graphLast7Days?.map((x: any) => x.without_discrepancy);
 
         if (!canvas) {
             return;
@@ -157,18 +150,18 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
         const config: ChartConfiguration<'bar'> = {
             type: 'bar',
             data: {
-                labels: this.graphTrendency.map((d: any) => d.date),
+                labels: labels,
                 datasets: [
                     {
                         label: 'Correctos',
-                        data: this.graphTrendency.map((d: any) => d.correct),
+                        data: withoutDiscrepancy,
                         backgroundColor: '#111827',
                         borderRadius: 4,
                         barThickness: 20
                     },
                     {
                         label: 'Novedades',
-                        data: this.graphTrendency.map((d: any) => d.news),
+                        data: withDiscrepancy,
                         backgroundColor: '#ef4444',
                         borderRadius: 4,
                         barThickness: 20
@@ -186,7 +179,7 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: Math.max(...this.graphTrendency.map((d: any) => d.correct + d.news))
+                        max: Math.max(...this.graphLast7Days.map((d: any) => d.without_discrepancy + d.with_discrepancy))
                     }
                 }
             }
@@ -197,5 +190,14 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
         }
 
         this.barChart = new Chart(canvas, config);
+    }
+
+    getTotalDispatch() {
+        return this.graphDispatchStatus?.reduce((total: number, item: any) => total + item.count, 0);
+    }
+
+    valueProgressBar(value: number = 0): number {
+        const total = this.graphDispatchStatus[2] ?? 1;
+        return Number(((value / total) * 100).toFixed(0));
     }
 }

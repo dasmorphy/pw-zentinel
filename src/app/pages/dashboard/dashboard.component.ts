@@ -13,7 +13,6 @@ import { DoughnutComponent } from 'src/app/components/graphs/doughnut/doughnut.c
 import { UserService } from 'src/app/services/user.service';
 import { DialogModule } from 'primeng/dialog';
 import { LogbookRecentComponent } from 'src/app/components/logbook/logbook-recent/logbook-recent.component';
-import { BiomarDashboardComponent } from 'src/app/components/dashboards/biomar-dasboard/biomar-dashboard.component';
 import { AuthService } from 'src/app/services/auth.service';
 import { AccessControlComponent } from 'src/app/components/dashboards/biomar/access-control/access-control.component';
 import { RawMaterialDispatchComponent } from 'src/app/components/dashboards/biomar/raw-material-dispatch/raw-material-dispatch.component';
@@ -36,7 +35,6 @@ import { FinishedProductDispatchComponent } from 'src/app/components/dashboards/
         DoughnutComponent,
         DialogModule,
         LogbookRecentComponent,
-        BiomarDashboardComponent,
         RawMaterialDispatchComponent,
         FinishedProductDispatchComponent,
         AccessControlComponent
@@ -74,7 +72,6 @@ export class DashboardComponent {
     }
 
     onChangeGraphBiomar(option: string) {
-        console.log("jkjkkjjk")
         this.optionGraphBiomarSelected = option
     }
 

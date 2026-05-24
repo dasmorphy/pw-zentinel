@@ -33,31 +33,31 @@ export class RawMaterialDispatchComponent implements OnInit, OnDestroy {
     user_session: any;
     barChart!: Chart;
 
-    // Data para gráficos
-    totalDispatches: number = 1284.4;
-    warehouseOccupancy: number = 45302;
-    newsInReception: number = 18;
+    graphDestiny: any = [];
+    graphDispatchStatus: any = [];
+    graphLast7Days: any = [];
+    graphDiscrepancy: number = 0;
 
-    graphWarehouseStatus: any = [];
-    graphNewsData: any = [];
+    filters: any = {};
 
     ngOnInit() {
         this.user_session = this.userService.getDataSession();
-        // this.dispatchService.getGraphs().subscribe({
-        //     next: (data: any) => {
-        //         const dataGraph = data?.data;
-        //         this.graphEntryStatus = dataGraph?.entry_biomar?.entry_by_status
-        //         this.graphCountTypeAccess = dataGraph?.entry_biomar?.count_type_access
-        //         this.graphTopMaterials = dataGraph?.entry_biomar?.top_materials
-
-        //         this.createDoughnutChart(
-        //             this.graphCountTypeAccess?.[0]?.percentage,
-        //             this.graphCountTypeAccess?.[1]?.percentage,
-        //         );
-        //     },
-        //     error: ({ error }: any) => this.utilsService.onError(error.message)
-        // })
-        this.loadData();
+        const filters = { ...this.filters };
+        filters.type_process = 'dispatch';
+        this.filters = filters;
+        this.dispatchService.getGraphs(this.filters).subscribe({
+            next: (data: any) => {
+                const dataGraph = data?.data;
+                this.graphDestiny = dataGraph?.destiny_count;
+                this.graphDispatchStatus = dataGraph?.dispatch_by_status;
+                this.graphDiscrepancy = dataGraph?.discrepancy;
+                this.graphLast7Days = dataGraph?.discrepancy_7_days;
+                
+                // Crear gráfico de barras
+                this.createBarChart();
+            },
+            error: ({ error }: any) => this.utilsService.onError(error.message)
+        })
     }
 
     ngOnDestroy() {
@@ -66,32 +66,16 @@ export class RawMaterialDispatchComponent implements OnInit, OnDestroy {
         }
     }
 
-    loadData() {
-        // Emular datos del backend
-        this.graphWarehouseStatus = [
-            { name: 'Bodega Principal', dispatches: 45, capacity: 122 },
-            { name: 'Bodega Norte', dispatches: 29, capacity: 75 },
-            { name: 'Bodega Logística 2', dispatches: 12, capacity: 48 },
-            { name: 'Cámara de Frío', dispatches: 34, capacity: 42 }
-        ];
-
-        this.graphNewsData = [
-            { date: 'LUN', correct: 45, news: 5 },
-            { date: 'MAR', correct: 32, news: 8 },
-            { date: 'MIE', correct: 22, news: 6 },
-            { date: 'JUE', correct: 49, news: 4 },
-            { date: 'VIE', correct: 60, news: 2 },
-            { date: 'SÁB', correct: 35, news: 9 },
-            { date: 'DOM', correct: 49, news: 7 }
-        ];
-
-        // Crear gráfico de barras
-        this.createBarChart();
+    getTotalDispatch() {
+        return this.graphDispatchStatus?.reduce((total: number, item: any) => total + item.count, 0);
     }
 
     createBarChart() {
         const canvas = document.getElementById('newsBarChart') as HTMLCanvasElement;
-        
+        const labels = this.graphLast7Days?.map((x: any) => x.day);
+        const withDiscrepancy = this.graphLast7Days?.map((x: any) => x.with_discrepancy);
+        const withoutDiscrepancy = this.graphLast7Days?.map((x: any) => x.without_discrepancy);
+
         if (!canvas) {
             return;
         }
@@ -99,18 +83,18 @@ export class RawMaterialDispatchComponent implements OnInit, OnDestroy {
         const config: ChartConfiguration<'bar'> = {
             type: 'bar',
             data: {
-                labels: this.graphNewsData.map((d: any) => d.date),
+                labels: labels,
                 datasets: [
                     {
                         label: 'Correctos',
-                        data: this.graphNewsData.map((d: any) => d.correct),
+                        data: withoutDiscrepancy,
                         backgroundColor: '#111827',
                         borderRadius: 4,
                         barThickness: 20
                     },
                     {
                         label: 'Novedades',
-                        data: this.graphNewsData.map((d: any) => d.news),
+                        data: withDiscrepancy,
                         backgroundColor: '#ef4444',
                         borderRadius: 4,
                         barThickness: 20
@@ -128,7 +112,7 @@ export class RawMaterialDispatchComponent implements OnInit, OnDestroy {
                 scales: {
                     y: {
                         beginAtZero: true,
-                        max: Math.max(...this.graphNewsData.map((d: any) => d.correct + d.news))
+                        max: Math.max(...this.graphLast7Days.map((d: any) => d.without_discrepancy + d.with_discrepancy))
                     }
                 }
             }
@@ -139,9 +123,5 @@ export class RawMaterialDispatchComponent implements OnInit, OnDestroy {
         }
 
         this.barChart = new Chart(canvas, config);
-    }
-
-    getWarehousePercentage(dispatches: number, capacity: number): number {
-        return (dispatches / capacity * 100);
     }
 }

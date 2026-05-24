@@ -166,8 +166,23 @@ export class DispatchService {
         return this.http.post(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/reception`, formData, { headers })
     }
 
-    getGraphs() {
-        return this.http.get(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/get/resume_graphs`)
+    getGraphs(filter?: any) {
+        let params = new HttpParams();
+        let headers = new HttpHeaders();
+
+        if (filter?.start_date) {
+            params = params.set('start_date', filter.start_date);
+        }
+
+        if (filter?.end_date) {
+            params = params.set('end_date', filter.end_date);
+        }
+
+        if (filter?.type_process) {
+            headers = headers.set('type-process', filter.type_process);
+        }
+
+        return this.http.get(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/get/resume_graphs`, {params, headers})
     }
 
     fetchDispatchStatusRecord(id_dispatch: number) {

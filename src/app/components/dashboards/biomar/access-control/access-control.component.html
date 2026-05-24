@@ -4,12 +4,12 @@
             <div class="flex justify-content-between gap-5">
                 <div class="flex flex-column gap-1">
                     <span class="text-secondary text-xl">Total</span>
-                    <span class="font-bold text-lg">{{graphEntryStatus?.[2]?.count}}</span>
+                    <span class="font-bold text-3xl">{{graphEntryStatus?.[2]?.count}}</span>
                 </div>
                 <span
                     class="w-2rem h-2rem border-circle inline-flex justify-content-center align-items-center text-center"
                     [style]="{ color: '#00000' }">
-                    <i class="pi pi-users text-lg font-bold"></i>
+                    <i class="pi pi-users text-2xl font-bold"></i>
                 </span>
             </div>
         </p-card>
@@ -23,13 +23,13 @@
         >
             <div class="flex justify-content-between gap-5">
                 <div class="flex flex-column gap-1">
-                    <span class="text-secondary text-lg">Pendientes de salida</span>
-                    <span class="font-bold text-lg">{{graphEntryStatus?.[1]?.count}}</span>
+                    <span class="text-secondary text-xl">Pendiente de salida</span>
+                    <span class="font-bold text-3xl">{{graphEntryStatus?.[1]?.count}}</span>
                 </div>
                 <span
                     class="w-2rem h-2rem border-circle inline-flex justify-content-center align-items-center text-center"
                     [style]="{ color: '#00000' }">
-                    <i class="pi pi-stopwatch text-lg font-bold" style="color: #ef4444;"></i>
+                    <i class="pi pi-stopwatch text-2xl font-bold" style="color: #ef4444;"></i>
                 </span>
             </div>
         </p-card>
@@ -37,13 +37,13 @@
         <p-card class="flex-1">
             <div class="flex justify-content-between gap-5">
                 <div class="flex flex-column gap-1">
-                    <span class="text-secondary text-lg">Proveedores</span>
-                    <span class="font-bold text-lg">{{graphCountTypeAccess?.[0]?.count}}</span>
+                    <span class="text-secondary text-xl">Proveedores</span>
+                    <span class="font-bold text-3xl">{{graphCountTypeAccess?.[0]?.count}}</span>
                 </div>
                 <span
                     class="w-2rem h-2rem border-circle inline-flex justify-content-center align-items-center text-center"
                     [style]="{ color: '#00000' }">
-                    <i class="pi pi-list-check text-lg font-bold"></i>
+                    <i class="pi pi-list-check text-2xl font-bold"></i>
                 </span>
             </div>
         </p-card>
@@ -51,13 +51,13 @@
         <p-card class="flex-1">
             <div class="flex justify-content-between gap-5">
                 <div class="flex flex-column gap-1">
-                    <span class="text-secondary text-lg">Visitantes</span>
-                    <span class="font-bold text-lg">{{graphCountTypeAccess?.[1]?.count}}</span>
+                    <span class="text-secondary text-xl">Visitantes</span>
+                    <span class="font-bold text-3xl">{{graphCountTypeAccess?.[1]?.count}}</span>
                 </div>
                 <span
                     class="w-2rem h-2rem border-circle inline-flex justify-content-center align-items-center text-center"
                     [style]="{ color: '#00000' }">
-                    <i class="pi pi-id-card text-lg font-bold"></i>
+                    <i class="pi pi-id-card text-2xl font-bold"></i>
                 </span>
             </div>
         </p-card>
@@ -67,9 +67,16 @@
 
     <div class="flex w-full gap-3 mt-5 column-responsive">
         <div class="flex card-info justify-content-center align-items-center w-full" style="height: 25rem;">
-            <div class="flex flex-column">
+            <div class="flex flex-column h-full">
                 <span class="text-center" style="font-weight: 600;">Proveedores vs Visitantes</span>
-                <canvas class="dona mt-3" id="myDoughnutChart"></canvas>
+                @if (this.graphCountTypeAccess?.[0]?.percentage == 0 && 
+                this.graphCountTypeAccess?.[1]?.percentage == 0) {
+                    <div class="h-full w-full flex justify-content-center align-items-center">
+                        <span>Sin datos disponibles</span>
+                    </div>
+                }@else {
+                    <canvas class="dona mt-5" id="myDoughnutChart"></canvas>
+                }
             </div>
         </div>
 

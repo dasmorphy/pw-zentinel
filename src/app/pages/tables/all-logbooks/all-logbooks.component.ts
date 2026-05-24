@@ -293,7 +293,6 @@ export class AllLogbookComponent {
         }
 
         this.filters = filter_date;
-        console.log(this.filters)
         this.fetchHistoryLogbook();
     }
 

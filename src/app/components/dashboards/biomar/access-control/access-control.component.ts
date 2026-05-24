@@ -89,6 +89,7 @@ export class AccessControlComponent {
     graphCountTypeAccess: any = [];
     graphTopMaterials: any = [];
 
+    filters: any = {};
     dataBiomar: any [] = [];
 
     items: any = [
@@ -101,7 +102,10 @@ export class AccessControlComponent {
 
     ngOnInit() {
         this.user_session = this.userService.getDataSession();
-        this.dispatchService.getGraphs().subscribe({
+        const filters = { ...this.filters };
+        filters.type_process = 'dispatch';
+        this.filters = filters;
+        this.dispatchService.getGraphs(this.filters).subscribe({
             next: (data: any) => {
                 const dataGraph = data?.data;
                 this.graphEntryStatus = dataGraph?.entry_biomar?.entry_by_status
@@ -194,7 +198,7 @@ export class AccessControlComponent {
                 ctx.fillStyle = '#111827';
 
                 ctx.fillText(
-                    entrada,
+                    `${entrada}%`,
                     centerX,
                     centerY - 8
                 );

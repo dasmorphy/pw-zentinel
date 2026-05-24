@@ -1,16 +1,12 @@
 <div class="flex flex-column w-full px-5">
     <!-- Tarjetas superiores con métricas clave -->
-    <div class="flex w-full justify-content-center gap-3 column-responsive mb-5">
+    <div class="flex w-full justify-content-center gap-3 column-responsive mb-3">
         <!-- Total Despachos -->
         <p-card class="flex-1">
             <div class="flex justify-content-between gap-5">
                 <div class="flex flex-column gap-1">
                     <span class="text-secondary text-xl">Total Despachos</span>
-                    <span class="font-bold text-3xl">{{totalDispatches}}</span>
-                </div>
-                <div class="flex flex-column align-items-end gap-1">
-                    <span class="text-sm text-secondary">+{{totalDispatchesPercent}} %</span>
-                    <i class="pi pi-arrow-up text-lg" style="color: #22c55e;"></i>
+                    <span class="font-bold text-3xl">{{getTotalDispatch()}}</span>
                 </div>
             </div>
         </p-card>
@@ -19,12 +15,8 @@
         <p-card class="flex-1">
             <div class="flex justify-content-between gap-5">
                 <div class="flex flex-column gap-1">
-                    <span class="text-secondary text-xl">SKU Despachados</span>
-                    <span class="font-bold text-3xl">{{skuDispatched}} SKU</span>
-                </div>
-                <div class="flex flex-column align-items-end gap-1">
-                    <span class="text-sm text-secondary">{{skuDispatchedPercent}} %</span>
-                    <i class="pi pi-check text-lg" style="color: #22c55e;"></i>
+                    <span class="text-secondary text-xl">Recepción skus</span>
+                    <span class="font-bold text-3xl">{{graphDispatchStatus?.[2]?.count}} SKU</span>
                 </div>
             </div>
         </p-card>
@@ -39,34 +31,27 @@
             <div class="flex justify-content-between gap-5">
                 <div class="flex flex-column gap-1">
                     <span class="text-secondary text-xl">Novedades</span>
-                    <span class="font-bold text-3xl" [style]="{ color: '#ef4444' }">{{newsCount}}</span>
-                </div>
-                <div class="flex flex-column align-items-end gap-1">
-                    <span class="text-sm text-secondary">+{{newsPercent}} %</span>
-                    <i class="pi pi-exclamation-triangle text-lg" style="color: #ef4444;"></i>
+                    <span class="font-bold text-3xl" [style]="{ color: '#ef4444' }">{{graphDiscrepancy}}</span>
                 </div>
             </div>
         </p-card>
     </div>
 
     <!-- Gráficos -->
-    <div class="flex w-full gap-3 mt-5 column-responsive">
+    <div class="flex w-full gap-3 mt-3 column-responsive">
         <!-- Destinos - Gráfico de Dona -->
         <div class="flex card-info justify-content-center align-items-center w-full" style="min-height: 25rem;">
-            <div class="flex flex-column align-items-center w-full">
-                <span class="font-bold mb-3">Destinos</span>
-                <canvas id="destinosChart"></canvas>
-                <div class="flex flex-column gap-2 mt-3 w-full">
-                    <div class="flex gap-2" *ngFor="let dest of graphDestinations">
-                        <span 
-                            class="w-1rem h-1rem border-circle" 
-                            [style]="{
-                                'background-color': dest.percentage > 50 ? '#091426' : '#515f74'
-                            }">
-                        </span>
-                        <span class="text-sm">{{dest.name}} - {{dest.value}}</span>
+            <div class="flex flex-column align-items-center w-full h-full">
+                <span class="w-full font-bold mb-3">Destinos</span>
+                
+                @if (this.graphProductTerm?.warehouse_count == 0 
+                && this.graphProductTerm?.client_count == 0) {
+                    <div class="h-full w-full flex justify-content-center align-items-center">
+                        <span class="text-center mt-5 font-medium" style="color: #6c7673;">Sin datos disponibles</span>
                     </div>
-                </div>
+                }@else {
+                    <canvas id="destinosChart"></canvas>
+                }
             </div>
         </div>
 
@@ -79,13 +64,25 @@
                     <span class="text-secondary text-sm mb-3">Desempeño de entregas a bodega</span>
 
                     <div class="flex flex-column gap-3 flex-1 justify-content-center">
-                        <div *ngFor="let quality of graphReceptionQuality" class="flex flex-column gap-2">
+                        <div class="flex flex-column gap-2">
                             <div class="flex justify-content-between">
-                                <span class="text-sm font-semibold">{{quality.name}}</span>
-                                <span class="text-sm font-bold">{{quality.value}}%</span>
+                                <span class="text-sm font-semibold">Completadas</span>
+                                <span class="text-sm font-bold">{{graphWithoutDiscrepancy}}%</span>
                             </div>
                             <p-progressBar 
-                                [value]="quality.value"
+                                [value]="valueProgressBar(graphWithoutDiscrepancy)"
+                                [showValue]="false"
+                                [style]="{ height: '8px', backgroundColor: '#e5e7eb' }">
+                            </p-progressBar>
+                        </div>
+
+                        <div class="flex flex-column gap-2">
+                            <div class="flex justify-content-between">
+                                <span class="text-sm font-semibold">Novedades</span>
+                                <span class="text-sm font-bold">{{graphWithoutDiscrepancy}}%</span>
+                            </div>
+                            <p-progressBar 
+                                [value]="valueProgressBar(graphWithoutDiscrepancy)"
                                 [showValue]="false"
                                 [style]="{ height: '8px', backgroundColor: '#e5e7eb' }">
                             </p-progressBar>
@@ -94,7 +91,7 @@
 
                     <div class="mt-3 pt-3" style="border-top: 1px solid #e5e7eb;">
                         <span class="text-secondary text-xs font-semibold">MÉTRICA GLOBAL</span>
-                        <span class="text-xs text-secondary block mt-1">Basado en los últimos 450 recepciones confirmadas.</span>
+                        <span class="text-xs text-secondary block mt-1">Basado en los últimos {{this.graphDispatchStatus[2]?.count}} recepciones confirmadas.</span>
                     </div>
                 </div>
             </div>
