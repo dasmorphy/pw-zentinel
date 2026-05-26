@@ -95,10 +95,7 @@
                             <div class="flex justify-content-between align-items-center">
                                 <div class="flex flex-column">
                                     <span style="margin-bottom: .5rem;" class="font-semibold">
-                                        {{ material.get('product_name')?.value }}
-                                    </span>
-                                    <span>
-                                        Cantidad esperada: {{ material.get('expected_quantity')?.value }}
+                                        Sku {{ i + 1 }}
                                     </span>
                                 </div>
                                 
@@ -113,27 +110,12 @@
                             </div>
 
                             @if (material.get('has_discrepancy')?.value == false) {
-                                <!-- Cantidad -->
-                                <span class="w-full mt-4">
-                                    <label>Cantidad Recibida<span style="color: red;">*</span></label>
-                                    <p-inputNumber class="border-round w-full mt-2" formControlName="received_quantity" [useGrouping]="false" styleClass="w-full">
-                                    </p-inputNumber>
-                                    <!-- <input class="border-round w-full mt-2" pInputText formControlName="received_quantity" /> -->
-                                    <div *ngIf="material.get('received_quantity')?.invalid">
-                                        <span class="validate-data">Este campo es obligatorio</span>
-                                    </div>
-                                </span>
-
                                 <label class="mt-3 flex">Observaciones </label>
                                 <div class="flex flex-column card-info mt-1 gap-2">
                                     <input class="border-round w-full mt-2 mb-3" pInputText formControlName="observations"
                                     id="descripcion" />
                                 </div>
                             }
-
-                            <div *ngIf="material.get('id_material')?.invalid">
-                                <span class="validate-data">El material es obligatorio</span>
-                            </div>
                         </span>
 
 

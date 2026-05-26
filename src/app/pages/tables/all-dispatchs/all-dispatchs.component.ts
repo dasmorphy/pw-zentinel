@@ -109,16 +109,16 @@ export class AllDispatchsComponent {
             icon: 'pi pi-eye',
             command: () => this.viewDispatchDetails(this.selectedDispatch!)
         },
-        {
-            label: 'Continuar Salida',
-            icon: 'pi pi-play-circle',
-            visible: () => this.selectedDispatch?.status === 'Listo para despacho',
-            command: () => this.showUpdate = true
-        },
+        // {
+        //     label: 'Continuar Salida',
+        //     icon: 'pi pi-play-circle',
+        //     visible: () => this.selectedDispatch?.status === 'Listo para despacho',
+        //     command: () => this.showUpdate = true
+        // },
         {
             label: 'Continuar Recepción',
             icon: 'pi pi-play-circle',
-            visible: () => this.selectedDispatch?.status === 'En tránsito',
+            visible: () => this.selectedDispatch?.status === 'Salida de planta',
             command: () => this.setReception()
         },
     ];
@@ -135,6 +135,9 @@ export class AllDispatchsComponent {
 
     ngOnInit() {
         this.user_json = this.userService.getDataSession();
+        const filters = { ...this.filters };
+        filters.type_process = 'dispatch';
+        this.filters = filters;
         this.fetchAllDispatchs();
         this.dispatchService.getStatusDispatch();
         this.logbookService.getAllDestinyIntern({business:"2"});
@@ -144,12 +147,12 @@ export class AllDispatchsComponent {
     createProduct(product?: any): FormGroup {
         return this.fb.group({
             has_discrepancy: [true],
-            expected_quantity: [product?.quantity, Validators.required],
-            received_quantity: [null, Validators.required],
+            // expected_quantity: [product?.quantity, Validators.required],
+            // received_quantity: [null, Validators.required],
             observations: [''],
-            product_id: [product?.id_product, Validators.required],
-            product_sku_id: [product?.id_product_sku, Validators.required],
-            product_name: [product?.name]
+            // product_id: [product?.id_product, Validators.required],
+            product_sku_id: [product?.id_sku, Validators.required],
+            // product_name: [product?.name]
         });
     }
 
@@ -169,6 +172,7 @@ export class AllDispatchsComponent {
     fetchAllDispatchs() {
         this.isLoading = true;
         const filters = { ...this.filters };
+
         this.dispatchService.getAllDispatchs(filters).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
@@ -308,9 +312,8 @@ export class AllDispatchsComponent {
     setReception() {
         this.showReception = true;
         this.productsReception.clear();
-        const allProducts = this.selectedDispatch!.skus.flatMap(sku => sku.products);
 
-        allProducts.forEach(product => {
+        this.selectedDispatch!.skus.forEach(product => {
             this.productsReception.push(this.createProduct(product));
         });
 
@@ -326,12 +329,8 @@ export class AllDispatchsComponent {
 
         const has_discrepancy: any[] = this.productsReception?.value.filter((p: any) => p.has_discrepancy === false);
         const reception_details = has_discrepancy.length > 0 ? has_discrepancy.map((p: any) => ({
-            expected_quantity: p.expected_quantity,
             observations: p.observations,
-            product_sku_id: p.product_sku_id,
-            received_quantity: p.received_quantity != null
-            ? parseInt(p.received_quantity, 10)
-            : null
+            product_sku_id: p.product_sku_id
         })) 
         : null;
 

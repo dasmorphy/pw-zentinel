@@ -42,7 +42,7 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.user_session = this.userService.getDataSession();
         const filters = { ...this.filters };
-        filters.type_process = 'product_term';
+        filters.type_process = 'product';
         this.filters = filters;
 
         this.dispatchService.getGraphs(this.filters).subscribe({
@@ -95,7 +95,11 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
                 // VALOR
                 ctx.font = 'bold 32px Arial';
                 ctx.fillStyle = '#111827';
-                ctx.fillText('68%', centerX, centerY + 5);
+                ctx.fillText(
+                    `${store_count}%`,
+                    centerX,
+                    centerY - 8
+                );
 
                 ctx.restore();
             }
@@ -116,7 +120,7 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
             },
             options: {
                 cutout: '80%',
-                responsive: true,
+                responsive: false,
                 plugins: {
                     legend: { position: 'bottom' }
                 }

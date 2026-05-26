@@ -75,6 +75,10 @@ export class DispatchService {
             params = params.set('end_date', filter.end_date);
         }
 
+        if (filter?.type_process) {
+            headers = headers.set('type-process', filter.type_process);
+        }
+
         if (filter?.destiny) {
             headers = headers.set('destiny', filter?.destiny)
         }

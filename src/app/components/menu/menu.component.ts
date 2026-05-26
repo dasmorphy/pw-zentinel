@@ -94,7 +94,7 @@ export class MenuComponent implements OnInit {
         command: () => { this.clickHiddenToggle(true) },
         items: [
           {
-            label: 'Ver despachos',
+            label: 'Ver despachos materia prima',
             icon: 'pi pi-list-check',
             visible: this.user_permissions_signal()?.includes('VER_DESPACHOS'),
             routerLink: ['tablero-despacho'],
@@ -104,6 +104,28 @@ export class MenuComponent implements OnInit {
             label: 'Crear despacho',
             icon: 'pi pi-file-check',
             visible: this.user_permissions_signal()?.includes('NUEVO_DESPACHO'),
+            routerLink: ['crear-despacho'],
+            command: () => { this.clickHiddenToggle() }
+          },
+        ]
+      },
+      {
+        label: 'Producto terminado',
+        icon: 'pi pi-box',
+        visible: this.user_permissions_signal()?.includes('VER_PRODUCTOS_TERMINADOS'),
+        command: () => { this.clickHiddenToggle(true) },
+        items: [
+          {
+            label: 'Ver producto terminado',
+            icon: 'pi pi-list-check',
+            visible: this.user_permissions_signal()?.includes('VER_PRODUCTOS_TERMINADOS'),
+            routerLink: ['tablero-despacho'],
+            command: () => { this.clickHiddenToggle() }
+          },
+          {
+            label: 'Crear producto terminado',
+            icon: 'pi pi-file-check',
+            visible: this.user_permissions_signal()?.includes('NUEVO_PRODUCTO_TERMINADO'),
             routerLink: ['crear-despacho'],
             command: () => { this.clickHiddenToggle() }
           },

@@ -40,9 +40,9 @@
     <!-- Gráficos -->
     <div class="flex w-full gap-3 mt-3 column-responsive">
         <!-- Destinos - Gráfico de Dona -->
-        <div class="flex card-info justify-content-center align-items-center w-full" style="min-height: 25rem;">
+        <div class="flex card-info justify-content-center align-items-center w-full">
             <div class="flex flex-column align-items-center w-full h-full">
-                <span class="w-full font-bold mb-3">Destinos</span>
+                <span class="w-full font-bold">Destinos</span>
                 
                 @if (this.graphProductTerm?.warehouse_count == 0 
                 && this.graphProductTerm?.client_count == 0) {
@@ -50,13 +50,15 @@
                         <span class="text-center mt-5 font-medium" style="color: #6c7673;">Sin datos disponibles</span>
                     </div>
                 }@else {
-                    <canvas id="destinosChart"></canvas>
+                    <div class="h-full w-full flex justify-content-center align-items-center">
+                        <canvas class="dona" id="destinosChart"></canvas>
+                    </div>
                 }
             </div>
         </div>
 
         <!-- Calidad de Recepción y Tendencia -->
-        <div class="flex flex-column gap-3 w-full" style="min-height: 25rem;">
+        <div class="flex flex-column gap-3 w-full">
             <!-- Calidad de Recepción -->
             <div class="flex card-info justify-content-center align-items-center h-full">
                 <div class="flex flex-column w-full h-full">
