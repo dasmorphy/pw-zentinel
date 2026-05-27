@@ -161,8 +161,8 @@ export class AllDispatchsComponent {
 
     createProductDiscrepancy(product: any): FormGroup {
         return this.fb.group({
-            expected_quantity: [product?.expected_quantity, Validators.required],
-            received_quantity: [product?.received_quantity, Validators.required],
+            // expected_quantity: [product?.expected_quantity, Validators.required],
+            // received_quantity: [product?.received_quantity, Validators.required],
             observations: [product?.observations],
             product_id: [product?.product_sku_id, Validators.required],
         });
@@ -353,13 +353,14 @@ export class AllDispatchsComponent {
         if (has_discrepancy.length === 0) {
             this.fetchSaveReception(data);
         }else {
-            for (const product of has_discrepancy) {
-                const formProductDiscrepancy = this.createProductDiscrepancy(product);
+            for (const sku of has_discrepancy) {
+                const formProductDiscrepancy = this.createProductDiscrepancy(sku);
 
                 this.utilsService.validateControlsForms(formProductDiscrepancy, controls_ignore);
                 this.utilsService.showControlVoiled();
 
                 if (!formProductDiscrepancy.valid) {
+                    this.utilsService.onWarn("campos de skus incompletos o no válidos");
                     return;
                 }
 

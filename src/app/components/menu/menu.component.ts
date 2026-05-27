@@ -129,7 +129,7 @@ export class MenuComponent implements OnInit {
           {
             label: 'Crear producto terminado',
             icon: 'pi pi-file-check',
-            visible: this.user_permissions_signal()?.includes('NUEVO_PRODUCTO_TERMINADO'),
+            visible: this.user_permissions_signal()?.includes('NUEVO_PRODUCTO_INTERNO'),
             routerLink: ['crear-despacho'],
             command: () => { this.clickHiddenToggle() }
           },

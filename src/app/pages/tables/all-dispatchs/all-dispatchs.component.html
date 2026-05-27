@@ -9,7 +9,7 @@
 }
 
 
-<p-dialog [(visible)]="showStatusRecord" [modal]="true" [draggable]="false" [closable]="false" [resizable]="false"
+<p-dialog id="historyModal" [(visible)]="showStatusRecord" [modal]="true" [draggable]="false" [closable]="false" [resizable]="false"
 [style]="{'max-height': '80vh', 'overflow-y': 'auto'}">
     <ng-template pTemplate="header" >
         <h1 style="margin: 0; font-size: 20px;" class="text-center font-verdana text-primary--custom">Historial de estados</h1>
@@ -86,7 +86,7 @@
     <ng-template pTemplate="content">
         <form [formGroup]="receptionForm">
             
-            <h3>Productos a recibir</h3>
+            <h3>Skus a recibir</h3>
             <div formArrayName="reception_details">
                 <div *ngFor="let material of productsReception.controls; let i = index" [formGroupName]="i">
 

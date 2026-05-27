@@ -83,7 +83,7 @@ export class DispatchService {
             headers = headers.set('destiny', filter?.destiny)
         }
 
-        return this.http.get(`http://localhost:2125/rest/zent-dispatch-api/v1.0/dispatch`, { params, headers })
+        return this.http.get(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/dispatch`, { params, headers })
     }
 
     getAllEntryAccess(filter?: any) {
