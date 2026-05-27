@@ -97,7 +97,9 @@ export class MenuComponent implements OnInit {
             label: 'Ver despachos materia prima',
             icon: 'pi pi-list-check',
             visible: this.user_permissions_signal()?.includes('VER_DESPACHOS'),
-            routerLink: ['tablero-despacho'],
+            routerLink: ['tablero-despacho'], queryParams: {
+              type_process: 'dispatch'
+            },
             command: () => { this.clickHiddenToggle() }
           },
           {
@@ -119,7 +121,9 @@ export class MenuComponent implements OnInit {
             label: 'Ver producto terminado',
             icon: 'pi pi-list-check',
             visible: this.user_permissions_signal()?.includes('VER_PRODUCTOS_TERMINADOS'),
-            routerLink: ['tablero-despacho'],
+            routerLink: ['tablero-despacho'], queryParams: {
+              type_process: 'product'
+            },
             command: () => { this.clickHiddenToggle() }
           },
           {

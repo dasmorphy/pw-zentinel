@@ -10,7 +10,7 @@ import { ToastModule } from 'primeng/toast';
 import { TableModule } from 'primeng/table';
 import { DropdownModule } from 'primeng/dropdown';
 import { TagModule } from 'primeng/tag';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { CalendarModule } from 'primeng/calendar';
 import { TimelineModule } from 'primeng/timeline';
@@ -96,6 +96,7 @@ export class AllDispatchsComponent {
     selectedDestinations: number[] = [];
     optionDestiny: any = [];
     statusRecord: any[] = [];
+    title: string = '';
     
 
     filters: any = {
@@ -124,7 +125,7 @@ export class AllDispatchsComponent {
     ];
 
 
-    constructor(private fb: FormBuilder,) {
+    constructor(private fb: FormBuilder, private route: ActivatedRoute) {
         this.receptionForm = this.fb.group({
             observations: [''],
             reception_details: this.fb.array([
@@ -136,9 +137,15 @@ export class AllDispatchsComponent {
     ngOnInit() {
         this.user_json = this.userService.getDataSession();
         const filters = { ...this.filters };
-        filters.type_process = 'dispatch';
-        this.filters = filters;
-        this.fetchAllDispatchs();
+        
+        this.route.queryParams.subscribe(params => {
+            const typeProcess = params['type_process'];
+            filters.type_process = typeProcess;
+            this.title = typeProcess == "product" ? "Total productos" : "Total despachos";
+            this.filters = filters;
+            this.fetchAllDispatchs();
+        });
+
         this.dispatchService.getStatusDispatch();
         this.logbookService.getAllDestinyIntern({business:"2"});
 
@@ -147,12 +154,8 @@ export class AllDispatchsComponent {
     createProduct(product?: any): FormGroup {
         return this.fb.group({
             has_discrepancy: [true],
-            // expected_quantity: [product?.quantity, Validators.required],
-            // received_quantity: [null, Validators.required],
             observations: [''],
-            // product_id: [product?.id_product, Validators.required],
             product_sku_id: [product?.id_sku, Validators.required],
-            // product_name: [product?.name]
         });
     }
 

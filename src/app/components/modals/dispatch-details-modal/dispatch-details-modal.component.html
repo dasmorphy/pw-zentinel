@@ -68,21 +68,17 @@
             @if (dispatchSelected()?.reception && dispatchSelected()?.reception!.reception_detail.length != 0) {
                 <h4>DISCREPANCIAS</h4>
                 <div class="flex flex-column gap-2">
-                    <div class="flex" *ngFor="let product of dispatchSelected()?.reception?.reception_detail">
+                    <div class="flex" *ngFor="let sku of dispatchSelected()?.reception?.reception_detail, let i = index">
                         <div class="flex flex-column w-full card-info">
                             <i class="pi pi-exclamation-triangle mb-2" style="color: #c4302b;"></i>
-                            <div class="flex gap-2">
+                            <div class="flex justify-content-between">
                                 <div class="flex flex-column">
-                                    <label class="font-bold cab-label" htmlFor="shipping_guide">PRODUCTO: </label>
-                                    <label class="det-label" htmlFor="shipping_guide">{{product.name_product_sku}}</label>
+                                    <label class="font-bold cab-label" htmlFor="shipping_guide">N. SKU: </label>
+                                    <label class="det-label" htmlFor="shipping_guide">Sku {{i + 1}}</label>
                                 </div>
                                 <div class="flex flex-column">
-                                    <label class="font-bold cab-label" htmlFor="shipping_guide">CANTIDAD ESPERADA: </label>
-                                    <label class="det-label" htmlFor="shipping_guide">{{product.expected_quantity}}</label>
-                                </div>
-                                <div class="flex flex-column">
-                                    <label class="font-bold cab-label" htmlFor="shipping_guide">CANTIDAD RECIBIDA: </label>
-                                    <label class="det-label" htmlFor="shipping_guide">{{product.received_quantity}}</label>
+                                    <label class="font-bold cab-label" htmlFor="shipping_guide">OBSERVACIÓN: </label>
+                                    <label class="det-label" htmlFor="shipping_guide">{{sku.observations}}</label>
                                 </div>
                             </div>
                         </div>

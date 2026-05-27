@@ -18,6 +18,7 @@ import { DashboardService } from 'src/app/services/dashboard.service';
 import { Router } from '@angular/router';
 import { DispatchService } from 'src/app/services/dispatch.service';
 import { UserService } from 'src/app/services/user.service';
+import { InputSwitchModule } from 'primeng/inputswitch';
 
 @Component({
     selector: 'app-logbook-out',
@@ -34,7 +35,8 @@ import { UserService } from 'src/app/services/user.service';
         ToastModule,
         ProgressSpinnerModule,
         DialogModule,
-        FileUploadModule
+        FileUploadModule,
+        InputSwitchModule
     ],
     templateUrl: './new-dispatch-form.component.html',
     styleUrls: ['./new-dispatch-form.component.sass'],
@@ -89,9 +91,7 @@ export class NewDispatchForm {
     createSku(): FormGroup {
         return this.fb.group({
             type_sku: ['Individual', Validators.required],
-            products: this.fb.array([
-                this.createProduct()
-            ])
+            is_multiple: [false],
         });
     }
 
@@ -108,6 +108,17 @@ export class NewDispatchForm {
 
     products(index: number): FormArray {
         return this.sku.at(index).get('products') as FormArray;
+    }
+
+    onSkuChange(value: boolean, index: number) {
+
+        const skuGroup = this.sku.at(index);
+
+        skuGroup.patchValue({
+            type_sku: value
+                ? 'Multiple'
+                : 'Individual'
+        });
     }
 
     addSku() {

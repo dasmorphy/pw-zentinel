@@ -50,48 +50,11 @@
                                         <span class="sku-tag">
                                             {{ skuItem.get('type_sku')?.value }}
                                         </span>
-        
+                                        <p-inputSwitch formControlName="is_multiple" (onChange)="onSkuChange($event.checked, i)"/>
                                         <button pButton style="height: 35px; width: 35px;" type="button" icon="pi pi-trash" class="p-button-danger" (click)="removeSku(i)"></button>
                                     </div>
     
                                 </div>
-                                
-    
-                                <div formArrayName="products">
-    
-                                    <div class="card-product flex gap-3 align-items-center mb-3" *ngFor="let product of products(i).controls; let j = index" [formGroupName]="j">
-    
-                                        <span class="w-full">
-                                            <label htmlFor="username">Producto <span style="color: red;">*</span></label>
-                                            <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" formControlName="id_product"
-                                                id="cuentaCliente" [options]="productsSku()" optionLabel="name" optionValue="id_product"
-                                                [emptyMessage]="messageEmpty">
-                                            </p-dropdown>
-                                            <div *ngIf="product.get('id_product')?.invalid">
-                                                <span class="validate-data">Este campo es obligatorio</span>
-                                            </div>
-                                        </span>
-                                        
-                                        <span class="w-full">
-                                            <label htmlFor="username">Cantidad <span style="color: red;">*</span></label>
-                                            <!-- <input class="border-round w-full mt-2" pInputText
-                                                id="shipping_guide"
-                                                formControlName="quantity" /> -->
-                                            <p-inputNumber min="1" class="border-round w-full mt-2" formControlName="quantity" [useGrouping]="false" styleClass="w-full">
-                                            </p-inputNumber>
-                                            <div *ngIf="product.get('quantity')?.invalid">
-                                                <span class="validate-data">Este campo es obligatorio</span>
-                                            </div>
-                                        </span>
-    
-                                        <button pButton type="button" icon="pi pi-trash" class="p-button-danger size-btn-remove mt-3" (click)="removeProduct(i, j)"></button>
-    
-                                    </div>
-                                    
-                                </div>
-                                
-                                <button icon="pi pi-plus" pButton type="button" label="Agregar Producto" class="p-button-primary mt-3 align-self-center btn-add" (click)="addProduct(i)"></button>
-                                
                             </div>
     
                             
