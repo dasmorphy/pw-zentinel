@@ -90,14 +90,14 @@
                         <div class="flex flex-column">
                             <span class="mt-3" style="font-weight: 600;">Completadas</span>
                             <p-progressBar class="mt-2" id="completed-bar"
-                                [value]="valueProgressBar(graphEntryStatus?.[0]?.count, graphEntryStatus?.[2]?.count)">
+                                [value]="valueProgressBar('finalized')">
                             </p-progressBar>
                         </div>
 
                         <div class="flex flex-column">
                             <span class="mt-3" style="font-weight: 600;">Pendientes</span>
                             <p-progressBar class="mt-2" id="pend-bar"
-                                [value]="valueProgressBar(graphEntryStatus?.[1]?.count, graphEntryStatus?.[2]?.count)">
+                                [value]="valueProgressBar('pending')">
                             </p-progressBar>
                         </div>
                     </div>

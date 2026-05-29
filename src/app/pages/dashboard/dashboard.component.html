@@ -5,6 +5,40 @@
   <div class="flex w-full justify-content-between align-items-center mb-3 px-5 column-responsive">
     <h2>¡Hola {{user_session?.attributes?.fullname ?? 'Desconocido'}}!</h2>
     <div class="flex gap-2">
+      @if (optionDashboardSelected == 'Biomar') {
+        <i class="flex justify-content-center align-items-center pi pi-filter cursor-pointer" (click)="op.toggle($event)"></i>      
+          <p-overlayPanel #op [dismissable]="true" [style]="{ width: '320px' }">
+            <div class="flex w-full flex-column gap-3">
+              @if (optionGraphBiomarSelected == 'Despacho de materia prima') {      
+                <p-multiSelect 
+                  [style]="{ boxShadow: 'none' }"
+                  styleClass="border-round w-full"
+                  id="optionSector"  
+                  [options]="destinyIntern()"
+                  [(ngModel)]="selectedDestiny"
+                  optionLabel="name"
+                  optionValue="id_destiny"
+                  placeholder="Seleccione una opción"
+                ></p-multiSelect>
+              }
+      
+              <p-calendar [(ngModel)]="dateRange" selectionMode="range" dateFormat="dd/mm/yy" [showIcon]="true"
+                [readonlyInput]="true" placeholder="Rango de fechas" [style]="{ boxShadow: 'none' }"
+                styleClass="border-round w-full">
+              </p-calendar>
+            </div>
+      
+            <div class="flex justify-content-center gap-3 mt-4">
+              <p-button label="Aplicar" icon="pi pi-filter-fill" size="small" (onClick)="onFilterDate(op)">
+              </p-button>
+      
+              <p-button label="Limpiar" icon="pi pi-filter-slash" size="small" (onClick)="clearFilter(op)" class="p-button-secondary">
+              </p-button>
+      
+            </div>
+      
+          </p-overlayPanel>
+      }
       @if (user_permissions_signal().includes('VER_DASHBOARD_BIOMAR') || optionDashboardSelected == 'Biomar') {
         <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full" id="cuentaCliente"
           [options]="optionsGraphBiomar" (onChange)="onChangeGraphBiomar($event.value)">
@@ -24,15 +58,15 @@
 
   @if (optionDashboardSelected == 'Biomar') {
     @if (optionGraphBiomarSelected == 'Control de acceso') {      
-      <app-access-dashboard class="w-full"></app-access-dashboard>
+      <app-access-dashboard class="w-full" [filtersGraph]="filters"></app-access-dashboard>
     }
 
     @if (optionGraphBiomarSelected == 'Despacho de materia prima') {      
-      <app-raw-material-dispatch class="w-full"></app-raw-material-dispatch>
+      <app-raw-material-dispatch class="w-full" [filtersGraph]="filters"></app-raw-material-dispatch>
     }
 
     @if (optionGraphBiomarSelected == 'Despacho de producto terminado') {      
-      <app-finished-product-dispatch class="w-full"></app-finished-product-dispatch>
+      <app-finished-product-dispatch class="w-full" [filtersGraph]="filters"></app-finished-product-dispatch>
     }
 
     <!-- <app-biomar-dashboard class="w-full"></app-biomar-dashboard> -->

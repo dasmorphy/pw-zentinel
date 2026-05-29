@@ -29,7 +29,7 @@
         <div class="flex justify-content-start w-full">
             <div class="flex flex-column card-form w-full">
 
-                <h2>Nuevo Despacho</h2>
+                <h2>{{title}}</h2>
 
 
                 <form [formGroup]="dispatchForm">
@@ -99,17 +99,53 @@
                                 </div>
                             </span>
 
+                            @if (isProduct) {
+                                <span class="w-full mt-3">
+                                    <label htmlFor="destiny">Destino <span style="color: red;">*</span></label>
+                                    <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" formControlName="option_product"
+                                        id="destiny_intern" [options]="destinyProducts"
+                                        [emptyMessage]="messageEmpty" (onChange)="onChangeDestinyProduct($event)">
+                                    </p-dropdown>
+                                    <div *ngIf="dispatchForm.get('option_product')?.hasError('campoVacio')">
+                                        <span class="validate-data">Este campo es obligatorio</span>
+                                    </div>
+                                </span>
 
-                            <span class="w-full mt-3">
-                                <label htmlFor="destiny">Destino <span style="color: red;">*</span></label>
-                                <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" formControlName="destiny"
-                                    id="destiny_intern" [options]="destinyIntern()" optionLabel="name" optionValue="id_destiny"
-                                    [emptyMessage]="messageEmpty">
-                                </p-dropdown>
-                                <div *ngIf="dispatchForm.get('destiny')?.hasError('campoVacio')">
-                                    <span class="validate-data">Este campo es obligatorio</span>
-                                </div>
-                            </span>
+                                @if (dispatchForm.get('option_product')?.value == 'Bodega') {
+                                    <span class="w-full mt-3">
+                                        <label htmlFor="destiny">Bodega <span style="color: red;">*</span></label>
+                                        <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" formControlName="destiny"
+                                            id="destiny_intern" [options]="destinyIntern()" optionLabel="name" optionValue="id_destiny"
+                                            [emptyMessage]="messageEmpty">
+                                        </p-dropdown>
+                                        <div *ngIf="dispatchForm.get('destiny')?.hasError('campoVacio')">
+                                            <span class="validate-data">Este campo es obligatorio</span>
+                                        </div>
+                                    </span>
+                                }
+                                @else if (dispatchForm.get('option_product')?.value == 'Cliente') {
+                                    <span class="w-full mt-3">
+                                        <label htmlFor="email">Cliente <span style="color: red;">*</span></label>
+                                        <input class="border-round w-full mt-2" pInputText type="text" id="order_number" name="order_number"
+                                            formControlName="destiny_product" />
+                                        <div *ngIf="dispatchForm.get('destiny_product')?.hasError('campoVacio')">
+                                            <span class="validate-data">Este campo es obligatorio</span>
+                                        </div>
+                                    </span>
+                                }
+                            }
+                            @else {
+                                <span class="w-full mt-3">
+                                    <label htmlFor="destiny">Destino <span style="color: red;">*</span></label>
+                                    <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" formControlName="destiny"
+                                        id="destiny_intern" [options]="destinyIntern()" optionLabel="name" optionValue="id_destiny"
+                                        [emptyMessage]="messageEmpty">
+                                    </p-dropdown>
+                                    <div *ngIf="dispatchForm.get('destiny')?.hasError('campoVacio')">
+                                        <span class="validate-data">Este campo es obligatorio</span>
+                                    </div>
+                                </span>
+                            }   
 
                             <span class="w-full mt-3">
                                 <label htmlFor="destiny">Tipo transporte <span style="color: red;">*</span></label>

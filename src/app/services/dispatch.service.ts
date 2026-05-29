@@ -186,7 +186,11 @@ export class DispatchService {
             headers = headers.set('type-process', filter.type_process);
         }
 
-        return this.http.get(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/get/resume_graphs`, {params, headers})
+        if (filter?.destiny) {
+            headers = headers.set('destiny', filter.destiny);
+        }
+
+        return this.http.get(`http://localhost:2125/rest/zent-dispatch-api/v1.0/get/resume_graphs`, {params, headers})
     }
 
     fetchDispatchStatusRecord(id_dispatch: number) {

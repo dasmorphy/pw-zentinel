@@ -17,6 +17,10 @@ import { AuthService } from 'src/app/services/auth.service';
 import { AccessControlComponent } from 'src/app/components/dashboards/biomar/access-control/access-control.component';
 import { RawMaterialDispatchComponent } from 'src/app/components/dashboards/biomar/raw-material-dispatch/raw-material-dispatch.component';
 import { FinishedProductDispatchComponent } from 'src/app/components/dashboards/biomar/finished-product-dispatch/finished-product-dispatch.component';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { CalendarModule } from 'primeng/calendar';
+import { LogbookService } from 'src/app/services/logbook.service';
+import { MultiSelectModule } from 'primeng/multiselect';
 
 @Component({
     selector: 'app-dashboard',
@@ -37,7 +41,10 @@ import { FinishedProductDispatchComponent } from 'src/app/components/dashboards/
         LogbookRecentComponent,
         RawMaterialDispatchComponent,
         FinishedProductDispatchComponent,
-        AccessControlComponent
+        AccessControlComponent,
+        OverlayPanelModule,
+        CalendarModule,
+        MultiSelectModule
     ],
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.sass'],
@@ -46,9 +53,10 @@ export class DashboardComponent {
     private readonly menuService = inject(MenuService);
     private readonly authService = inject(AuthService);
     private readonly userService = inject(UserService);
+    private readonly logbookService = inject(LogbookService);
 
     toggle = computed(() => this.menuService.toggle());
-
+    destinyIntern = computed(() => this.logbookService.destinyIntern());
     user_permissions_signal = computed(() => this.authService.user_permissions_signal());
 
     user_session: any;
@@ -57,6 +65,11 @@ export class DashboardComponent {
     optionsGraphBiomar = ["Control de acceso", "Despacho de materia prima", "Despacho de producto terminado"];
     optionDashboardSelected = "";
     optionGraphBiomarSelected = "Control de acceso";
+    
+    filters: any = {};
+
+    dateRange: Date[] | null = null;
+    selectedDestiny: any = [];
 
 
     ngOnInit() {
@@ -65,6 +78,8 @@ export class DashboardComponent {
         if (this.user_session.role === "admin_tlsg") {
             this.optionDashboardSelected = "Expalsa";
         }
+        this.logbookService.getAllDestinyIntern({business: "2"});
+
     }
     
     onChangeDahboard(option: string) {
@@ -73,6 +88,49 @@ export class DashboardComponent {
 
     onChangeGraphBiomar(option: string) {
         this.optionGraphBiomarSelected = option
+    }
+
+
+    onFilterDate(op: any) {
+        op.hide()
+        let filter_date: any = {}
+
+        if (Array.isArray(this.dateRange)) {
+        if (this.dateRange.length === 2) {
+            const [startDate, endDate] = this.dateRange;
+
+            const start = new Date(startDate);
+            start.setHours(0, 0, 0, 0);
+
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+
+            filter_date.start_date = this.formatLocalDate(start);
+            filter_date.end_date = this.formatLocalDate(end);
+        };
+        };
+
+        filter_date.destiny = this.selectedDestiny.length > 0 ? this.selectedDestiny.join(',') : null;
+
+        this.filters = filter_date;
+    }
+
+    clearFilter(op: any) {
+        op.hide()
+        this.dateRange = null;
+        this.selectedDestiny = [];
+        this.filters = {};
+    }
+
+    formatLocalDate(date: Date): string {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        const h = String(date.getHours()).padStart(2, '0');
+        const min = String(date.getMinutes()).padStart(2, '0');
+        const s = String(date.getSeconds()).padStart(2, '0');
+
+        return `${y}-${m}-${d} ${h}:${min}:${s}`;
     }
 
 }

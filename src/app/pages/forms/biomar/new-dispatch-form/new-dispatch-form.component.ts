@@ -15,7 +15,7 @@ import { DialogModule } from 'primeng/dialog';
 import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { v4 as uuidv4 } from 'uuid';
 import { DashboardService } from 'src/app/services/dashboard.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { DispatchService } from 'src/app/services/dispatch.service';
 import { UserService } from 'src/app/services/user.service';
 import { InputSwitchModule } from 'primeng/inputswitch';
@@ -53,18 +53,21 @@ export class NewDispatchForm {
     productsSku = computed(() => this.dispatchService.productsSku());
     destinyIntern = computed(() => this.logbookService.destinyIntern());
     vehiclesTypes = computed(() => this.dispatchService.vehiclesTypes());
+    destinyProducts = ["Cliente", "Bodega"];
 
     dispatchForm: FormGroup;
 
     user_json: any;
     isLoading: boolean = false;
+    isProduct: boolean = false;
     showConfirmSave: boolean = false;
     messageEmpty: string = "No hay opciones disponibles";
+    title: string = '';
 
     images: File[] = [];
     imagesError: string | null = null;
 
-    constructor(private fb: FormBuilder,) {
+    constructor(private fb: FormBuilder, private route: ActivatedRoute) {
         this.dispatchForm = this.fb.group({
             destiny: ['', Validators.required],
             driver: ['', Validators.required],
@@ -72,6 +75,7 @@ export class NewDispatchForm {
             order_number: ['', Validators.required],
             truck_license: ['', Validators.required],
             vehicle_type: ['', Validators.required],
+            type_process: ['dispatch', Validators.required],
             sku: this.fb.array([
                 this.createSku()
             ])
@@ -82,6 +86,16 @@ export class NewDispatchForm {
         this.user_json = this.userService.getDataSession();
 
         let filters: any = {business: "2"};
+
+        this.route.queryParams.subscribe(params => {
+            const typeProcess = params['type_process'];
+            this.title = typeProcess == "product" ? "Nuevo producto" : "Nuevo despacho";
+            if (typeProcess == "product") {
+                this.isProduct = true;
+                this.dispatchForm.get('type_process')?.setValue(typeProcess);
+                this.dispatchForm.addControl('option_product', this.fb.control('', Validators.required))
+            }
+        });
 
         this.dispatchService.getProductsSku()
         this.logbookService.getAllDestinyIntern(filters);
@@ -160,6 +174,17 @@ export class NewDispatchForm {
         }
     }
 
+    onChangeDestinyProduct(event: any) {
+        if (event.value === 'Cliente') {
+            this.dispatchForm.addControl('destiny_product', this.fb.control('', Validators.required));
+            this.dispatchForm.removeControl('destiny');
+        }else {
+            // this.dispatchForm.addControl('destiny_intern', this.fb.control('', Validators.required));
+            this.dispatchForm.addControl('destiny', this.fb.control('', Validators.required));
+            this.dispatchForm.removeControl('destiny_product');
+        }
+    }
+
     onSelectImages(event: any) {
         const selectedFiles: File[] = event.files;
 
@@ -214,7 +239,7 @@ export class NewDispatchForm {
     }
 
     saveDispatch() {
-        this.isLoading = true;
+        // this.isLoading = true;
         this.showConfirmSave = false;
  
         const data_save = {
@@ -224,6 +249,8 @@ export class NewDispatchForm {
             channel: 'ZENTINEL_WEB',
             external_transaction_id: uuidv4()
         };
+
+        console.log(data_save)
 
         const formData = new FormData();
 

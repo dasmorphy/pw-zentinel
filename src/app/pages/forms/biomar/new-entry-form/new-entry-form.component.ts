@@ -53,6 +53,7 @@ export class NewEntryFormComponent {
     areasVisit = computed(() => this.dispatchService.areasVisit());
     staffCharge = computed(() => this.dispatchService.staffCharge());
     materials = computed(() => this.dispatchService.materials());
+    typeAccess = ["Visitante", "Proveedor"]
 
 
     entryForm: FormGroup;
@@ -70,6 +71,7 @@ export class NewEntryFormComponent {
 
     constructor(private fb: FormBuilder,) {
         this.entryForm = this.fb.group({
+            type_access: ['', Validators.required],
             area_visit: ['', Validators.required],
             names_visit: ['', Validators.required],
             dni: ['', Validators.required],

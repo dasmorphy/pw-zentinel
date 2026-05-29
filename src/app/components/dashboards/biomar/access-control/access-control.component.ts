@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, Input } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -62,6 +62,8 @@ import { CardModule } from 'primeng/card';
     styleUrls: ['./access-control.component.sass'],
 })
 export class AccessControlComponent {
+    @Input() filtersGraph: any;
+    
     private readonly menuService = inject(MenuService);
     private readonly logbookService = inject(LogbookService);
     private readonly dispatchService = inject(DispatchService);
@@ -105,6 +107,31 @@ export class AccessControlComponent {
         const filters = { ...this.filters };
         filters.type_process = 'dispatch';
         this.filters = filters;
+        this.initializeGraph();
+        
+    }
+
+    ngOnChanges(changes: any) {
+        const filtersGraph = changes.filtersGraph?.currentValue;
+
+        if (
+            filtersGraph &&
+            typeof filtersGraph === 'object' &&
+            !Array.isArray(filtersGraph) &&
+            Object.keys(filtersGraph).length > 0
+        ) {
+            const filters = { ...this.filters, ...this.filtersGraph };
+            this.filters = filters;
+            this.initializeGraph();
+        }
+    }
+
+    ngOnDestroy() {
+        this.sseSub?.unsubscribe();
+        this.sseSubDispatch?.unsubscribe();
+    }
+
+    initializeGraph() {
         this.dispatchService.getGraphs(this.filters).subscribe({
             next: (data: any) => {
                 const dataGraph = data?.data;
@@ -119,12 +146,7 @@ export class AccessControlComponent {
             },
             error: ({ error }: any) => this.utilsService.onError(error.message)
         })
-        this.fetchAllData();
-    }
-
-    ngOnDestroy() {
-        this.sseSub?.unsubscribe();
-        this.sseSubDispatch?.unsubscribe();
+        // this.fetchAllData(); //TODO
     }
 
     getStatusStyles(statusName: string) {
@@ -257,8 +279,20 @@ export class AccessControlComponent {
         }
     }
 
-    valueProgressBar(value: number = 0, valueTotal: number) {
-        const valueCalc = (value) / valueTotal * 100
+    valueProgressBar(process: string) {
+        const pending = this.graphEntryStatus?.find((item: any) => item.status_name === 'Pendiente Salida')?.count || 0;
+        const total = this.graphEntryStatus?.find((item: any) => item.status_name === 'Total')?.count || 0;
+        const finalized = this.graphEntryStatus?.find((item: any) => item.status_name === 'Finalizado')?.count || 0;
+
+        let value = 0;
+
+        if (process === 'pending') {
+            value = pending;
+        } else if (process === 'finalized') {
+            value = finalized;
+        }
+
+        const valueCalc = (value) / total * 100
         return valueCalc.toFixed(0)
     }
 

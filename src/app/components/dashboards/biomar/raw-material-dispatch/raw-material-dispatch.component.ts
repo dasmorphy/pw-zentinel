@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, OnInit, OnDestroy } from '@angular/core';
+import { Component, computed, inject, OnInit, OnDestroy, Input } from '@angular/core';
 import { CardModule } from 'primeng/card';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TableModule } from 'primeng/table';
@@ -23,6 +23,7 @@ import { catchError, of, Subscription } from 'rxjs';
     styleUrls: ['./raw-material-dispatch.component.sass'],
 })
 export class RawMaterialDispatchComponent implements OnInit, OnDestroy {
+    @Input() filtersGraph: any;
     private readonly menuService = inject(MenuService);
     private readonly dispatchService = inject(DispatchService);
     private readonly userService = inject(UserService);
@@ -45,6 +46,33 @@ export class RawMaterialDispatchComponent implements OnInit, OnDestroy {
         const filters = { ...this.filters };
         filters.type_process = 'dispatch';
         this.filters = filters;
+        this.initializeGraph();
+    }
+
+    ngOnChanges(changes: any) {
+        const filtersGraph = changes.filtersGraph?.currentValue;
+
+        if (
+            filtersGraph &&
+            typeof filtersGraph === 'object' &&
+            !Array.isArray(filtersGraph) &&
+            Object.keys(filtersGraph).length > 0
+        ) {
+            const filters = { ...this.filters, ...this.filtersGraph };
+            filters.type_process = 'dispatch';
+            this.filters = filters;
+            this.initializeGraph();
+        }
+    }
+
+    ngOnDestroy() {
+        if (this.barChart) {
+            this.barChart.destroy();
+        }
+    }
+
+
+    initializeGraph() {
         this.dispatchService.getGraphs(this.filters).subscribe({
             next: (data: any) => {
                 const dataGraph = data?.data;
@@ -58,12 +86,6 @@ export class RawMaterialDispatchComponent implements OnInit, OnDestroy {
             },
             error: ({ error }: any) => this.utilsService.onError(error.message)
         })
-    }
-
-    ngOnDestroy() {
-        if (this.barChart) {
-            this.barChart.destroy();
-        }
     }
 
     getTotalDispatch() {

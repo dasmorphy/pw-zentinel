@@ -106,7 +106,9 @@ export class MenuComponent implements OnInit {
             label: 'Crear despacho',
             icon: 'pi pi-file-check',
             visible: this.user_permissions_signal()?.includes('NUEVO_DESPACHO'),
-            routerLink: ['crear-despacho'],
+            routerLink: ['crear-despacho'], queryParams: {
+              type_process: 'dispatch'
+            },
             command: () => { this.clickHiddenToggle() }
           },
         ]
@@ -130,7 +132,9 @@ export class MenuComponent implements OnInit {
             label: 'Crear producto terminado',
             icon: 'pi pi-file-check',
             visible: this.user_permissions_signal()?.includes('NUEVO_PRODUCTO_INTERNO'),
-            routerLink: ['crear-despacho'],
+            routerLink: ['crear-despacho'], queryParams: {
+              type_process: 'product'
+            },
             command: () => { this.clickHiddenToggle() }
           },
         ]

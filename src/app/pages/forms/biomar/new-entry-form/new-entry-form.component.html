@@ -32,6 +32,16 @@
                     <div class="div-responsive mt-3">
 
                         <span class="w-full">
+                            <label htmlFor="username">Tipo de acceso <span style="color: red;">*</span></label>
+                            <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2"
+                                formControlName="type_access" id="cuentaCliente" [options]="typeAccess"
+                                [emptyMessage]="messageEmpty"></p-dropdown>
+                            <div *ngIf="entryForm.get('type_access')?.hasError('campoVacio')">
+                                <span class="validate-data">El campo categoria es obligatorio</span>
+                            </div>
+                        </span>
+
+                        <span class="w-full">
                             <label htmlFor="dni">Identificación <span style="color: red;">*</span></label>
                             <input class="border-round w-full mt-2" pInputText id="dni" maxlength="10" oninput="this.value = this.value.replace(/\D/g, '');"
                                 formControlName="dni" />
@@ -42,7 +52,7 @@
 
 
                         <span class="w-full">
-                            <label htmlFor="username">Visitante <span style="color: red;">*</span></label>
+                            <label htmlFor="username">Nombres completos <span style="color: red;">*</span></label>
                             <input class="border-round w-full mt-2" pInputText formControlName="names_visit"
                                 id="descripcion" />
                             <div *ngIf="entryForm.get('names_visit')?.hasError('campoVacio')">
@@ -73,7 +83,7 @@
                         </span>
 
                         <span class="w-full">
-                            <label htmlFor="username">Razón de visita <span style="color: red;">*</span></label>
+                            <label htmlFor="username">Razón de ingreso <span style="color: red;">*</span></label>
                             <input class="border-round w-full mt-2" pInputText formControlName="reason_visit"
                                 id="descripcion" />
                             <div *ngIf="entryForm.get('reason_visit')?.hasError('campoVacio')">
