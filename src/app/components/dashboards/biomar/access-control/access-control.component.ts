@@ -3,36 +3,31 @@ import { Component, computed, inject, Input } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { RouterOutlet } from "@angular/router";
-import { HeaderComponent } from "src/app/components/header/header.component";
 import { MenuService } from 'src/app/services/menu.service';
-import { MenuComponent } from "src/app/components/menu/menu.component";
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
 import { ToastModule } from 'primeng/toast';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { DoughnutComponent } from 'src/app/components/graphs/doughnut/doughnut.component';
 import { LogbookService } from 'src/app/services/logbook.service';
 import { UserService } from 'src/app/services/user.service';
 import { DialogModule } from 'primeng/dialog';
-import { LogbookRecentComponent } from 'src/app/components/logbook/logbook-recent/logbook-recent.component';
 import { DispatchService } from 'src/app/services/dispatch.service';
 import { TableModule } from 'primeng/table';
 import { NgxTippyModule } from 'ngx-tippy-wrapper';
 import { TagModule } from 'primeng/tag';
 import { SplitButtonModule } from 'primeng/splitbutton';
-import { forkJoin, catchError, of, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { EventSourceService } from 'src/app/services/event-source.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { EntryDetailsModalComponent } from 'src/app/components/modals/entry-details-modal/entry-details-modal.component';
-import { DispatchDetailsModalComponent } from 'src/app/components/modals/dispatch-details-modal/dispatch-details-modal.component';
 import { ImageGalleryComponent } from 'src/app/components/modals/shared/preview-image/preview-image.component';
 import { Chart, ChartConfiguration } from 'chart.js';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { MeterGroupModule } from 'primeng/metergroup';
 import { CardModule } from 'primeng/card';
+import { CalendarModule } from 'primeng/calendar';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
 
 
 @Component({
@@ -56,7 +51,11 @@ import { CardModule } from 'primeng/card';
     SplitButtonModule,
     ProgressBarModule,
     MeterGroupModule,
-    CardModule
+    CardModule,
+    OverlayPanelModule,
+    CalendarModule,
+    EntryDetailsModalComponent,
+    ImageGalleryComponent
 ],
     templateUrl: './access-control.component.html',
     styleUrls: ['./access-control.component.sass'],
@@ -69,7 +68,7 @@ export class AccessControlComponent {
     private readonly dispatchService = inject(DispatchService);
     private readonly userService = inject(UserService);
     private readonly eventSourceService = inject(EventSourceService);
-    private readonly utilsService = inject(UtilsService);
+    readonly utilsService = inject(UtilsService);
 
     private sseSub?: Subscription;
     private sseSubDispatch?: Subscription;
@@ -83,6 +82,7 @@ export class AccessControlComponent {
     user_session: any;
     isLoading: boolean = false;
     selectedDispatch: any = null;
+    dateRange: Date[] | null = null;
 
     doughnutChart!: Chart;
     
@@ -146,7 +146,7 @@ export class AccessControlComponent {
             },
             error: ({ error }: any) => this.utilsService.onError(error.message)
         })
-        // this.fetchAllData(); //TODO
+        this.fetchAllData(); //TODO
     }
 
     getStatusStyles(statusName: string) {
@@ -175,17 +175,9 @@ export class AccessControlComponent {
     }
 
     fetchAllData() {
-        forkJoin({
-            entryAccess: this.dispatchService.getAllEntryAccess().pipe(catchError(() => of([]))),
-            dispatchs: this.dispatchService.getAllDispatchs().pipe(catchError(() => of([])))
-        }).subscribe({
-            next: ({ entryAccess, dispatchs }: any) => {
-                this.dataBiomar = [
-                    ...(entryAccess?.data || []),
-                    ...(dispatchs?.data || [])
-                ].sort((a: any, b: any) => 
-                    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-                );
+        this.dispatchService.getAllEntryAccess().subscribe({
+            next: (data: any) => {
+                this.dataBiomar = data?.data || [];
             },
             error: (error: any) => {
                 console.log(error);
@@ -220,7 +212,7 @@ export class AccessControlComponent {
                 ctx.fillStyle = '#111827';
 
                 ctx.fillText(
-                    `${entrada}%`,
+                    `${entrada ?? 0}%`,
                     centerX,
                     centerY - 8
                 );
@@ -293,7 +285,41 @@ export class AccessControlComponent {
         }
 
         const valueCalc = (value) / total * 100
-        return valueCalc.toFixed(0)
+
+        if (isNaN(valueCalc)) {
+            return 0;
+        }
+
+        return valueCalc.toFixed(0) ?? 0
+    }
+
+
+    onFilterDate(op: any) {
+        op.hide()
+        let filter_date: any = {}
+
+        if (Array.isArray(this.dateRange)) {
+        if (this.dateRange.length === 2) {
+            const [startDate, endDate] = this.dateRange;
+
+            const start = new Date(startDate);
+            start.setHours(0, 0, 0, 0);
+
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+
+            filter_date.start_date = this.utilsService.formatLocalDate(start);
+            filter_date.end_date = this.utilsService.formatLocalDate(end);
+        };
+        };
+
+        this.filters = filter_date;
+    }
+
+    clearFilter(op: any) {
+        op.hide()
+        this.dateRange = null;
+        this.filters = {};
     }
 
 }

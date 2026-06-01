@@ -185,7 +185,7 @@
                         <td  data-titulo="Responsable:">{{ dispatch?.staff_charge_name ?? 'N/A' }}</td>
                         <!-- <td  data-titulo="Permanencia:" style="width: 20px;">{{ loogbook?.permanence_time ?? 'N/A' }}</td> -->
                         <td  data-titulo="Estado:">
-                            <p-tag [value]="dispatch?.status" [severity]="getSeverity(dispatch?.status)"></p-tag>
+                            <p-tag [value]="dispatch?.status" [severity]="utilsService.getSeverityEntryControl(dispatch?.status)"></p-tag>
                         </td>
                     </tr>
                 </ng-template>

@@ -7,15 +7,37 @@ import { MenuService } from 'src/app/services/menu.service';
 import { DispatchService } from 'src/app/services/dispatch.service';
 import { UserService } from 'src/app/services/user.service';
 import { UtilsService } from 'src/app/services/utils.service';
+import { ImageGalleryComponent } from 'src/app/components/modals/shared/preview-image/preview-image.component';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+
+import { PanelMenuModule } from "primeng/panelmenu";
+import { TagModule } from 'primeng/tag';
+import { SplitButtonModule } from 'primeng/splitbutton';
+import { DispatchDetailsModalComponent } from 'src/app/components/modals/dispatch-details-modal/dispatch-details-modal.component';
+import { TableModule } from 'primeng/table';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CalendarModule } from 'primeng/calendar';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
     selector: 'app-finished-product-dispatch',
     standalone: true,
     imports: [
-        CommonModule,
-        CardModule,
-        ProgressBarModule
-    ],
+    CommonModule,
+    CardModule,
+    ProgressBarModule,
+    OverlayPanelModule,
+    CalendarModule,
+    SplitButtonModule,
+    TagModule,
+    FormsModule,
+    DispatchDetailsModalComponent,
+    ImageGalleryComponent,
+    PanelMenuModule,
+    TableModule,
+    ReactiveFormsModule,
+    InputTextModule
+],
     templateUrl: './finished-product-dispatch.component.html',
     styleUrls: ['./finished-product-dispatch.component.sass'],
 })
@@ -25,8 +47,11 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
     private readonly menuService = inject(MenuService);
     private readonly dispatchService = inject(DispatchService);
     private readonly userService = inject(UserService);
-    private readonly utilsService = inject(UtilsService);
+    readonly utilsService = inject(UtilsService);
 
+
+    dispatchSelected = computed(() => this.dispatchService.showModalSummary());
+    openModalImages = computed(() => this.utilsService.showModalImage());
     toggle = computed(() => this.menuService.toggle());
 
     user_session: any;
@@ -38,8 +63,19 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
     graphDiscrepancy: number = 0;
     graphWithoutDiscrepancy: number = 0;
     graphDispatchStatus: any = [];
+    selectedDispatch: any = null;
+    dateRange: Date[] | null = null;
 
     filters: any = {};
+    dataBiomar: any [] = [];
+
+    items: any = [
+        {
+            label: 'Ver detalles',
+            icon: 'pi pi-eye',
+            command: () => this.viewDispatchDetails(this.selectedDispatch!)
+        },
+    ];
 
     ngOnInit() {
         this.user_session = this.userService.getDataSession();
@@ -47,6 +83,7 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
         filters.type_process = 'product';
         this.filters = filters;
         this.initializeGraph();
+        this.fetchAllData();
     }
 
     ngOnChanges(changes: any) {
@@ -74,6 +111,10 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
         }
     }
 
+    optionsDispatch(loogbook: any) {
+        this.selectedDispatch = loogbook
+    }
+
     initializeGraph() {
         this.dispatchService.getGraphs(this.filters).subscribe({
             next: (data: any) => {
@@ -90,6 +131,14 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
             },
             error: ({ error }: any) => this.utilsService.onError(error.message)
         })
+    }
+
+    viewDispatchDetails(data: any) {
+        if (data?.id_access_control) {
+            this.dispatchService.openSummaryEntry(data);
+        }else{
+            this.dispatchService.openSummary(data);
+        }
     }
 
     createDoughnutChart() {
@@ -223,5 +272,45 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
     valueProgressBar(value: number = 0): number {
         const total = this.graphDispatchStatus[2] ?? 1;
         return Number(((value / total) * 100).toFixed(0));
+    }
+
+    onFilterDate(op: any) {
+        op.hide()
+        let filter_date: any = {}
+
+        if (Array.isArray(this.dateRange)) {
+        if (this.dateRange.length === 2) {
+            const [startDate, endDate] = this.dateRange;
+
+            const start = new Date(startDate);
+            start.setHours(0, 0, 0, 0);
+
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+
+            filter_date.start_date = this.utilsService.formatLocalDate(start);
+            filter_date.end_date = this.utilsService.formatLocalDate(end);
+        };
+        };
+
+        this.filters = filter_date;
+    }
+
+    clearFilter(op: any) {
+        op.hide()
+        this.dateRange = null;
+        this.filters = {};
+    }
+
+
+    fetchAllData() {
+        this.dispatchService.getAllDispatchs({type_process: 'product'}).subscribe({
+            next: (data: any) => {
+                this.dataBiomar = data?.data || [];
+            },
+            error: (error: any) => {
+                console.log(error);
+            }
+        });
     }
 }

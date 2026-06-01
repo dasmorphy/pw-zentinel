@@ -265,7 +265,7 @@
                         <td  data-titulo="Discrepancia:">{{ hasDiscrepancy(dispatch?.reception) }}</td>
                         <!-- <td  data-titulo="Permanencia:" style="width: 20px;">{{ loogbook?.permanence_time ?? 'N/A' }}</td> -->
                         <td  data-titulo="Estado:">
-                            <p-tag styleClass="cursor-pointer" [value]="dispatch?.status" (click)="openStatusRecord(dispatch)" [severity]="getSeverity(dispatch?.status)"></p-tag>
+                            <p-tag styleClass="cursor-pointer" [value]="dispatch?.status" (click)="openStatusRecord(dispatch)" [severity]="utilsService.getSeverityDispatch(dispatch?.status)"></p-tag>
                         </td>
                     </tr>
                 </ng-template>

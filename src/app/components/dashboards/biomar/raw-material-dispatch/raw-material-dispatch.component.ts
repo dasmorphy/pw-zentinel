@@ -8,7 +8,16 @@ import { MenuService } from 'src/app/services/menu.service';
 import { DispatchService } from 'src/app/services/dispatch.service';
 import { UserService } from 'src/app/services/user.service';
 import { UtilsService } from 'src/app/services/utils.service';
-import { catchError, of, Subscription } from 'rxjs';
+import { ButtonModule } from 'primeng/button';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { CalendarModule } from 'primeng/calendar';
+import { SplitButtonModule } from 'primeng/splitbutton';
+import { TagModule } from 'primeng/tag';
+import { Dispatch } from 'src/app/models/dispatch';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DispatchDetailsModalComponent } from 'src/app/components/modals/dispatch-details-modal/dispatch-details-modal.component';
+import { ImageGalleryComponent } from 'src/app/components/modals/shared/preview-image/preview-image.component';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
     selector: 'app-raw-material-dispatch',
@@ -17,7 +26,17 @@ import { catchError, of, Subscription } from 'rxjs';
         CommonModule,
         CardModule,
         ProgressBarModule,
-        TableModule
+        TableModule,
+        CalendarModule,
+        ReactiveFormsModule,
+        FormsModule,
+        OverlayPanelModule,
+        SplitButtonModule,
+        TagModule,
+        ButtonModule,
+        DispatchDetailsModalComponent,
+        ImageGalleryComponent,
+        InputTextModule
     ],
     templateUrl: './raw-material-dispatch.component.html',
     styleUrls: ['./raw-material-dispatch.component.sass'],
@@ -27,9 +46,11 @@ export class RawMaterialDispatchComponent implements OnInit, OnDestroy {
     private readonly menuService = inject(MenuService);
     private readonly dispatchService = inject(DispatchService);
     private readonly userService = inject(UserService);
-    private readonly utilsService = inject(UtilsService);
+    readonly utilsService = inject(UtilsService);
+    dispatchSelected = computed(() => this.dispatchService.showModalSummary());
 
     toggle = computed(() => this.menuService.toggle());
+    openModalImages = computed(() => this.utilsService.showModalImage());
 
     user_session: any;
     barChart!: Chart;
@@ -38,8 +59,19 @@ export class RawMaterialDispatchComponent implements OnInit, OnDestroy {
     graphDispatchStatus: any = [];
     graphLast7Days: any = [];
     graphDiscrepancy: number = 0;
+    selectedDispatch: Dispatch | null = null;
+    dateRange: Date[] | null = null;
+    dataDispatchs: Dispatch[] = [];
 
     filters: any = {};
+
+    items: any = [
+        {
+            label: 'Ver detalles',
+            icon: 'pi pi-eye',
+            command: () => this.viewDispatchDetails(this.selectedDispatch!)
+        },
+    ];
 
     ngOnInit() {
         this.user_session = this.userService.getDataSession();
@@ -71,6 +103,15 @@ export class RawMaterialDispatchComponent implements OnInit, OnDestroy {
         }
     }
 
+    viewDispatchDetails(dispatch: Dispatch) {
+        const dispatch_found = this.dataDispatchs.find(
+            item => item.id_dispatch === dispatch.id_dispatch
+        );
+        
+        if (dispatch_found) {
+            this.dispatchService.openSummary(dispatch_found);
+        } 
+    }
 
     initializeGraph() {
         this.dispatchService.getGraphs(this.filters).subscribe({
@@ -86,6 +127,11 @@ export class RawMaterialDispatchComponent implements OnInit, OnDestroy {
             },
             error: ({ error }: any) => this.utilsService.onError(error.message)
         })
+        this.fetchDataDispatch();
+    }
+
+    optionsDispatch(loogbook: any) {
+        this.selectedDispatch = loogbook
     }
 
     getTotalDispatch() {
@@ -146,4 +192,44 @@ export class RawMaterialDispatchComponent implements OnInit, OnDestroy {
 
         this.barChart = new Chart(canvas, config);
     }
+
+    fetchDataDispatch() {
+        this.dispatchService.getAllDispatchs({type_process: 'dispatch'}).subscribe({
+            next: (data: any) => {
+                this.dataDispatchs = data?.data || [];
+            },
+            error: (error: any) => {
+                console.log(error);
+            }
+        });
+    }
+
+    onFilterDate(op: any) {
+        op.hide()
+        let filter_date: any = {}
+
+        if (Array.isArray(this.dateRange)) {
+        if (this.dateRange.length === 2) {
+            const [startDate, endDate] = this.dateRange;
+
+            const start = new Date(startDate);
+            start.setHours(0, 0, 0, 0);
+
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+
+            filter_date.start_date = this.utilsService.formatLocalDate(start);
+            filter_date.end_date = this.utilsService.formatLocalDate(end);
+        };
+        };
+
+        this.filters = filter_date;
+    }
+
+    clearFilter(op: any) {
+        op.hide()
+        this.dateRange = null;
+        this.filters = {};
+    }
+    
 }
