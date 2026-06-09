@@ -140,6 +140,7 @@ export class LogbookEntryComponent {
     }
 
     onSubmit() {
+        console.log("f,sd,.fds,.f,.,.sf")
         const controls_ignore = ['weight', 'observations'];
 
         if (this.hideGuide()) {
@@ -163,12 +164,13 @@ export class LogbookEntryComponent {
         }
 
         if (this.hidePersonal()) {
-            controls_ignore.push('quantity', 'provider', 'id_unity');
+            controls_ignore.push('quantity', 'provider', 'id_unity', 'description');
             this.logbookForm.patchValue({
                 quantity: null,
                 provider: null,
                 id_unity: null,
                 weight: null,
+                description: null
             })
         }
 
