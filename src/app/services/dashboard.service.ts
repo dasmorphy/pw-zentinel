@@ -57,10 +57,10 @@ export class DashboardService {
     }
 
 
-    postFormExpo(data: any) {
+    postFormExpo(lead: any) {
         return this.http.post(
-            `${environment.apiUrl}/rest/zent-logbook-api/v1.0/form-expo`,
-            {data}
+            `${environment.apiUrl}/rest/zent-logbook-api/v1.0/register-leads`,
+            {lead}
         );
     }
 

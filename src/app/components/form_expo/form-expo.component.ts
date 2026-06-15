@@ -60,26 +60,15 @@ export class FormExpoComponent {
       email: ['', [Validators.required, Validators.pattern("[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,}$")]],
       business: ['', Validators.required],
       position: ['', Validators.required],
-      type_industry: ['', Validators.required],
-      is_assist: [null, Validators.required],
+      interested: ['', Validators.required],
+      phone: ['', Validators.required],
     });
   }
 
 
   onSubmit() {
     if (this.registrationForm.valid) {
-      let formValue = { ...this.registrationForm.value };
-
-      if (formValue.type_industry === 'Otro' && !this.otherIndustry) {
-        this.utilsService.onWarn("Por favor, ingrese el nombre de la industria.");
-        return;
-      }
-
-      if (formValue.type_industry === 'Otro') {
-        formValue.type_industry = this.otherIndustry;
-      }
-
-      this.dashboardService.postFormExpo(formValue).subscribe({
+      this.dashboardService.postFormExpo(this.registrationForm.value).subscribe({
         next: (response) => {
           this.utilsService.onSuccess("Formulario enviado exitosamente.");  
           this.registrationForm.reset();

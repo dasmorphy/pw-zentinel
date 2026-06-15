@@ -16,10 +16,6 @@ import { PersonalDataPolicyComponent } from './pages/personal-data-policy/person
 
 export const routes: Routes = [
     {
-        path: "formulario-expo",
-        component: FormExpoComponent,
-    },
-    {
         path: "politica-privacidad",
         component: PersonalDataPolicyComponent,
     },
@@ -40,6 +36,11 @@ export const routes: Routes = [
             {
                 path: "dashboard",
                 loadComponent: () => DashboardComponent,
+                canActivate: [AuthGuard]
+            },
+            {
+                path: "nuevo-lead",
+                component: FormExpoComponent,
                 canActivate: [AuthGuard]
             },
             {
