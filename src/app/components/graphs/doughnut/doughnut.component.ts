@@ -15,6 +15,7 @@ import { LogbookService } from 'src/app/services/logbook.service';
 import { AuthService } from 'src/app/services/auth.service';
 import { UtilsService } from 'src/app/services/utils.service';
 import { UserService } from 'src/app/services/user.service';
+import { ProgressBarModule } from 'primeng/progressbar';
 
 @Component({
   selector: 'app-doughnut',
@@ -28,7 +29,8 @@ import { UserService } from 'src/app/services/user.service';
     OverlayPanelModule,
     MultiSelectModule,
     PolarChartComponent,
-    LogbookDetailsGraphsComponent
+    LogbookDetailsGraphsComponent,
+    ProgressBarModule
   ],
   templateUrl: './doughnut.component.html',
   styleUrls: ['./doughnut.component.sass'],
@@ -48,6 +50,7 @@ export class DoughnutComponent {
 
   dataCategoryQuantity: any = [];
   categoriesData: any[] = [];
+  graphEmployeeData: any[] = [];
   dateRange: Date[] | null = null;
   categoryChart!: Chart;
   logbookChart!: Chart;
@@ -158,6 +161,14 @@ export class DoughnutComponent {
         this.categoriesData = resp.data.categorias;
         this.dataCategoryQuantity = resp.data.categorias_cantidad;
         this.initCategoryChart('all');
+      },
+      error: (err) => console.error(err)
+    });
+
+    this.dashboardService.getResumeChartEmployees(filterss).subscribe({
+      next: (resp: any) => {
+        console.log(resp)
+        this.graphEmployeeData = resp?.data?.movements
       },
       error: (err) => console.error(err)
     });
@@ -313,18 +324,31 @@ export class DoughnutComponent {
     const centerTextPlugin = {
       id: 'centerText',
       beforeDraw(chart: any) {
+
         const { ctx, width, height } = chart;
 
         ctx.save();
 
-        const text = chart.config.options.plugins.centerText.text;
+        // const centerX = width / 2;
+        // const centerY = height / 2;
+        const meta = chart.getDatasetMeta(0);
+        const x = meta.data[0].x;
+        const y = meta.data[0].y;
 
-        ctx.font = 'bold 24px Arial';
-        ctx.fillStyle = '#333';
+        // TEXTO SUPERIOR
+        ctx.font = '500 14px Arial';
+        ctx.fillStyle = '#6b7280';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
-        ctx.fillText(text, width / 2, height / 2);
+        // ctx.fillText('Bitácora entrada', centerX, centerY - 30);
+        
+        // VALOR
+        ctx.font = 'bold 16px Arial';
+        ctx.fillStyle = '#111827';
+        
+        ctx.fillText('Bitácora entrada', x, y - 10);
+        ctx.fillText(`${entrada}`, x, y + 15);
 
         ctx.restore();
       }
@@ -333,23 +357,30 @@ export class DoughnutComponent {
     const config: ChartConfiguration<'doughnut'> = {
       type: 'doughnut',
       data: {
-        labels: ['Bitácoras entrada', 'Bitácoras salida'],
+        labels: ['Bitácora entrada', 'Bitácora salida'],
         datasets: [{
           data: [entrada, salida],
-          backgroundColor: ['#42A5F5', '#66BB6A'],
-          hoverBackgroundColor: ['#1E88E5', '#43A047'],
+          backgroundColor: ['#091426', '#515f74'],
+          hoverBackgroundColor: ['#091426', '#515f74'],
+
+          borderRadius: 10,
+          spacing: 2,
+          borderWidth: 0
         }]
       },
       options: {
+        cutout: '80%',
         responsive: true,
+        maintainAspectRatio: false,
+        radius: '95%',
         plugins: {
-          legend: { position: 'bottom' },
+          legend: { position: 'right' },
           centerText: {
             text: `${this.utilsService.formatNumber(total)}` // 👈 el texto que quieras mostrar
           }
         }
       } as any,
-      // plugins: [centerTextPlugin]
+      plugins: [centerTextPlugin]
     };
 
     const canvas = document.getElementById('myDoughnutChart') as HTMLCanvasElement;
@@ -370,6 +401,24 @@ export class DoughnutComponent {
       default:
         return 'Total';
     }
+  }
+
+  valueProgressBar(process: string) {
+    const transfer = this.graphEmployeeData?.find((item: any) => item.type_movement === 'TRANSFER')?.percentage || 0;
+    const check_in = this.graphEmployeeData?.find((item: any) => item.type_movement === 'CHECK_OUT')?.percentage || 0;
+    const check_out = this.graphEmployeeData?.find((item: any) => item.type_movement === 'CHECK_IN')?.percentage || 0;
+
+    let value = 0;
+
+    if (process === 'transfer') {
+      value = transfer;
+    }else if (process === 'check_in') {
+      value = check_in;
+    }else if (process === 'check_out') {
+      value = check_out;
+    }
+
+    return value
   }
 
 }

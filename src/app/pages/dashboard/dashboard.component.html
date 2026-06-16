@@ -2,7 +2,7 @@
 
 <div [class]="{ 'w-calc': toggle(), 'w-screen-dashboard': !toggle() }"
   class="container xl:justify-content-evenly p-3-responsive border-box bg-white mt-dashboard flex-column">
-  <div class="flex w-full justify-content-between align-items-center mb-3 px-5 column-responsive">
+  <div class="flex w-full justify-content-between align-items-center px-5 column-responsive">
     <h2>¡Hola {{user_session?.attributes?.fullname ?? 'Desconocido'}}!</h2>
     <div class="flex gap-2">
       @if (optionDashboardSelected == 'Biomar') {
@@ -56,7 +56,7 @@
     <app-biomar-dashboard class="w-full"></app-biomar-dashboard>
   } -->
 
-  @if (optionDashboardSelected == 'Biomar') {
+  @if ((user_session?.role == 'admin_tlsg' && optionDashboardSelected == 'Biomar') || user_permissions_signal().includes('VER_DASHBOARD_BIOMAR')) {
     @if (optionGraphBiomarSelected == 'Control de acceso') {      
       <app-access-dashboard class="w-full" [filtersGraph]="filters"></app-access-dashboard>
     }
@@ -74,18 +74,16 @@
 
   @if (user_permissions_signal().includes('VER_DASHBOARD_EXPALSA') || optionDashboardSelected == 'Expalsa') {
     <div class="flex w-full justify-content-center column-responsive">
-      <div class="flex flex-column align-items-center p-3-responsive xl:w-7 w-full h-funnel">
+      <div class="flex flex-column align-items-center w-full h-funnel">
   
-        <app-doughnut class="w-full bg-funnel shadow-1 border-round-2xl"></app-doughnut>
-      </div>
-  
-      <div class="flex flex-column align-items-center p-3-responsive h-funnel">
-        <div class="bg-funnel shadow-1 border-round-2xl w-history">
-          <div class="p-5 flex flex-column">
+        <app-doughnut class="w-full"></app-doughnut>
+        <div class="flex flex-column align-items-center h-funnel w-full">
+          <div class="p-5 flex flex-column w-full">
             <app-logbook-recent></app-logbook-recent>
           </div>
         </div>
       </div>
+  
   
     </div>
   }

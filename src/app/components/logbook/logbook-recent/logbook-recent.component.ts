@@ -15,6 +15,10 @@ import { LogBookDetailsModalComponent } from "../../modals/logbook-details-modal
 import { filter, Subscription } from "rxjs";
 import { AuthService } from "src/app/services/auth.service";
 import { UserService } from "src/app/services/user.service";
+import { TableModule } from "primeng/table";
+import { TooltipModule } from 'primeng/tooltip';
+import { TagModule } from "primeng/tag";
+import { SplitButtonModule } from "primeng/splitbutton";
 
 @Component({
     selector: 'app-logbook-recent',
@@ -30,7 +34,11 @@ import { UserService } from "src/app/services/user.service";
         ReactiveFormsModule,
         ProgressSpinnerModule,
         DialogModule,
-        LogBookDetailsModalComponent
+        LogBookDetailsModalComponent,
+        TableModule,
+        TooltipModule,
+        TagModule,
+        SplitButtonModule
     ],
     templateUrl: './logbook-recent.component.html',
     styleUrls: ['./logbook-recent.component.sass'],
@@ -56,6 +64,14 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
     log_selected: any;
     audio = new Audio('./assets/sound-notification.mp3');
 
+    items: any = [
+        {
+            label: 'Ver detalles',
+            icon: 'pi pi-eye',
+            command: () => this.viewLogbookDetails(this.log_selected)
+        }
+    ];
+
     ngOnInit() {
         this.fetchHistoryLogbook();
 
@@ -67,10 +83,14 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
                 this.utilsService.onSuccess(`Se ha recibido una nueva bitácora de la finca ${data?.logbook?.group_name ?? 'N/A'}`)
                 const dataLogbook = data?.logbook;
                 if (dataLogbook) {
-                    dataLogbook?.id_logbook_out ? data.logbook.record_type = "out" : data.logbook.record_type = "entry"
+                    if (dataLogbook?.id_logbook_out) {
+                        data.logbook.record_type = "out"
+                        data.logbook.status = "Finalizado"
+                    }else{
+                        data.logbook.record_type = "entry"
+                    }
                 }
                 this.dataComplete.unshift(data?.logbook);
-                this.dataHistory = this.mapHistory(this.dataComplete).slice(0, 5);
 
             },
             error: (err: any) => {
@@ -106,6 +126,8 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
         const filters: any = {
             start_date: formatDate(today),
             end_date: formatDate(tomorrow),
+            first: 1,
+            rows: 50
         };
 
         if (this.user_session?.role !== 'admin') {
@@ -120,12 +142,13 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
         if (this.user_permissions_signal().includes('DATA_BY_SECTOR')) {
             filters.sectors = attributes?.sector?.join(',') || '';
         }
+        
 
-        this.logbookService.getHistoryLogbook(filters).subscribe({
+        this.logbookService.getAllLogbooksPaginated(filters).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
-                this.dataComplete = data?.data;
-                this.dataHistory = this.mapHistory(this.dataComplete).slice(0, 5);
+                this.dataComplete = data?.data?.data;
+                // this.dataHistory = this.mapHistory(this.dataComplete).slice(0, 5);
             },
             error: (error: any) => {
                 this.isLoading = false;
@@ -139,27 +162,27 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
     }
 
 
-    onSearch(event: Event) {
-        const value = (event.target as HTMLInputElement).value.toLowerCase().trim();
+    // onSearch(event: Event) {
+    //     const value = (event.target as HTMLInputElement).value.toLowerCase().trim();
 
-        if (!value) {
-            // si no hay búsqueda, vuelve a mostrar los últimos 5
-            this.dataHistory = this.mapHistory(this.dataComplete).slice(0, 5);
-            return;
-        }
+    //     if (!value) {
+    //         // si no hay búsqueda, vuelve a mostrar los últimos 5
+    //         this.dataHistory = this.mapHistory(this.dataComplete).slice(0, 5);
+    //         return;
+    //     }
 
-        const filtered = this.dataComplete.filter((item: any) => {
-            return (
-                item.shipping_guide?.toLowerCase().includes(value) ||
-                item.group_name?.toLowerCase().includes(value) ||
-                item.created_by?.toLowerCase().includes(value) ||
-                item.truck_license?.toLowerCase().includes(value) ||
-                item.name_category?.toLowerCase().includes(value)
-            );
-        });
+    //     const filtered = this.dataComplete.filter((item: any) => {
+    //         return (
+    //             item.shipping_guide?.toLowerCase().includes(value) ||
+    //             item.group_name?.toLowerCase().includes(value) ||
+    //             item.created_by?.toLowerCase().includes(value) ||
+    //             item.truck_license?.toLowerCase().includes(value) ||
+    //             item.name_category?.toLowerCase().includes(value)
+    //         );
+    //     });
 
-        this.dataHistory = this.mapHistory(filtered);
-    }
+    //     this.dataHistory = this.mapHistory(filtered);
+    // }
 
     mapHistory(data: any[]) {
         return data.map((item: any) => {
@@ -179,11 +202,21 @@ export class LogbookRecentComponent implements OnInit, OnDestroy {
 
 
     viewLogbookDetails(log: any) {
-        const log_found = this.dataComplete.find(
-            (item: any) => item.record_id === log.id
-        );
-        
-        this.log_selected = log_found;
-        this.logbookService.openSummary(log_found);
+        this.logbookService.openSummary(this.log_selected);
     }    
+
+    optionsLogbook(loogbook: any) {
+        this.log_selected = loogbook
+    }
+
+    getSeverity(status_logbook: string) {
+        switch (status_logbook) {
+        case "Finalizado":
+            return 'success';
+        case "Pendiente Salida":
+            return 'warning';
+        default:
+            return 'info';
+        }
+    }
 }

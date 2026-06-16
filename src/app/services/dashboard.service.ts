@@ -64,4 +64,34 @@ export class DashboardService {
         );
     }
 
+    getResumeChartEmployees(filter?: any) {
+        let params = new HttpParams();
+        let headers = new HttpHeaders();
+
+        if (filter?.start_date) {
+            params = params.set('start_date', filter.start_date);
+        }
+
+        if (filter?.end_date) {
+            params = params.set('end_date', filter.end_date);
+        }
+
+        if (filter?.groups_business_id) {
+            headers = headers.set('groups-business-id', filter?.groups_business_id)
+        }
+
+        if (filter?.sectors) {
+            headers = headers.set('sectors', filter?.sectors)
+        }
+
+        if (filter?.sectors) {
+            headers = headers.set('sectors', filter?.sectors)
+        }
+
+        return this.http.get(
+            `http://localhost:2120/rest/zent-logbook-api/v1.0/resume_graphs_employees`,
+            { headers, params }
+        );
+    }
+
 }

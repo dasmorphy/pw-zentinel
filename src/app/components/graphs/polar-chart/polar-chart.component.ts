@@ -119,6 +119,7 @@ export class PolarChartComponent implements OnChanges {
                 ]
             },
             options: {
+                maintainAspectRatio: false,
                 responsive: true,
                 onClick: (event, elements, chart) => {
                     if (!elements.length) return;
