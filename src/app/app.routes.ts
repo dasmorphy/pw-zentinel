@@ -14,6 +14,7 @@ import { NewEntryFormComponent } from './pages/forms/biomar/new-entry-form/new-e
 import { FormExpoComponent } from './components/form_expo/form-expo.component';
 import { PersonalDataPolicyComponent } from './pages/personal-data-policy/personal-data-policy.component';
 import { TableLeadComponent } from './pages/tables/leads/lead-table.component';
+import { TableEmployeeInternComponent } from './pages/tables/table-employee-intern/table-employee-intern.component';
 
 export const routes: Routes = [
     {
@@ -42,6 +43,11 @@ export const routes: Routes = [
             {
                 path: "tablero-lead",
                 component: TableLeadComponent,
+                canActivate: [AuthGuard]
+            },
+            {
+                path: "tablero-personal-interno",
+                component: TableEmployeeInternComponent,
                 canActivate: [AuthGuard]
             },
             {

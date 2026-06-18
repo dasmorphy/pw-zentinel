@@ -87,42 +87,42 @@ export class MenuComponent implements OnInit {
           },
         ]
       },
-      // {
-      //   label: 'Personal Interno',
-      //   icon: 'pi pi-list-check',
-      //   visible: this.user_permissions_signal()?.includes('VER_PERSONAL_INTERNO'),
-      //   command: () => { this.clickHiddenToggle(true) },
-      //   items: [
-      //     {
-      //       label: 'Todos',
-      //       icon: 'pi pi-list-check',
-      //       visible: this.user_permissions_signal()?.includes('VER_PERSONAL_INTERNO'),
-      //       routerLink: ['tablero-bitacoras'],
-      //       command: () => { this.clickHiddenToggle() }
-      //     },
-      //     {
-      //       label: 'Nuevo personal interno',
-      //       icon: 'pi pi-file-check',
-      //       visible: this.user_permissions_signal()?.includes('NUEVO_PERSONAL_INTERNO'),
-      //       routerLink: ['reporte-entrada'],
-      //       command: () => { this.clickHiddenToggle() }
-      //     },
-      //     {
-      //       label: 'Movimientos',
-      //       icon: 'pi pi-file-export',
-      //       visible: this.user_permissions_signal()?.includes('VER_MOVIMIENTOS_PERSONAL_INTERNO'),
-      //       routerLink: ['reporte-salida'],
-      //       command: () => { this.clickHiddenToggle() }
-      //     },
-      //     {
-      //       label: 'Nuevo movimiento',
-      //       icon: 'pi pi-file-export',
-      //       visible: this.user_permissions_signal()?.includes('NUEVO_MOVIMIENTO_PERSONAL_INTERNO'),
-      //       routerLink: ['reporte-salida'],
-      //       command: () => { this.clickHiddenToggle() }
-      //     },
-      //   ]
-      // },
+      {
+        label: 'Personal Interno',
+        icon: 'pi pi-list-check',
+        visible: this.user_permissions_signal()?.includes('VER_PERSONAL_INTERNO'),
+        command: () => { this.clickHiddenToggle(true) },
+        items: [
+          {
+            label: 'Todos',
+            icon: 'pi pi-list-check',
+            visible: this.user_permissions_signal()?.includes('VER_PERSONAL_INTERNO'),
+            routerLink: ['tablero-bitacoras'],
+            command: () => { this.clickHiddenToggle() }
+          },
+          {
+            label: 'Nuevo personal interno',
+            icon: 'pi pi-file-check',
+            visible: this.user_permissions_signal()?.includes('NUEVO_PERSONAL_INTERNO'),
+            routerLink: ['reporte-entrada'],
+            command: () => { this.clickHiddenToggle() }
+          },
+          {
+            label: 'Movimientos',
+            icon: 'pi pi-file-export',
+            visible: this.user_permissions_signal()?.includes('VER_MOVIMIENTOS_PERSONAL_INTERNO'),
+            routerLink: ['reporte-salida'],
+            command: () => { this.clickHiddenToggle() }
+          },
+          {
+            label: 'Nuevo movimiento',
+            icon: 'pi pi-file-export',
+            visible: this.user_permissions_signal()?.includes('NUEVO_MOVIMIENTO_PERSONAL_INTERNO'),
+            routerLink: ['reporte-salida'],
+            command: () => { this.clickHiddenToggle() }
+          },
+        ]
+      },
       {
         label: 'Despachos',
         icon: 'pi pi-truck',
