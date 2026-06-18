@@ -13,6 +13,7 @@ import { AllEntryAccessComponent } from './pages/tables/all-entry-access/all-ent
 import { NewEntryFormComponent } from './pages/forms/biomar/new-entry-form/new-entry-form.component';
 import { FormExpoComponent } from './components/form_expo/form-expo.component';
 import { PersonalDataPolicyComponent } from './pages/personal-data-policy/personal-data-policy.component';
+import { TableLeadComponent } from './pages/tables/leads/lead-table.component';
 
 export const routes: Routes = [
     {
@@ -36,6 +37,11 @@ export const routes: Routes = [
             {
                 path: "dashboard",
                 loadComponent: () => DashboardComponent,
+                canActivate: [AuthGuard]
+            },
+            {
+                path: "tablero-lead",
+                component: TableLeadComponent,
                 canActivate: [AuthGuard]
             },
             {

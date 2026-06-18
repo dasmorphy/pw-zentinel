@@ -201,7 +201,22 @@ export class MenuComponent implements OnInit {
         label: 'Registro Leads',
         icon: 'pi pi-list-check',
         visible: this.user_permissions_signal()?.includes('CREAR_LEAD'),
-        routerLink: ['nuevo-lead'],
+        items: [
+          {
+            label: 'Ver registros',
+            icon: 'pi pi-list-check',
+            visible: this.user_permissions_signal()?.includes('CREAR_LEAD'),
+            routerLink: ['tablero-lead'],
+            command: () => { this.clickHiddenToggle() }
+          },
+          {
+            label: 'Nuevo Lead',
+            icon: 'pi pi-pen-to-square',
+            visible: this.user_permissions_signal()?.includes('CREAR_LEAD'),
+            routerLink: ['nuevo-lead'],
+            command: () => { this.clickHiddenToggle() }
+          },
+        ],
         command: () => { this.clickHiddenToggle() }
       },
       {

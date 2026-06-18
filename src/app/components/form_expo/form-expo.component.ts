@@ -67,23 +67,19 @@ export class FormExpoComponent {
 
 
   onSubmit() {
-    if (this.registrationForm.valid) {
-      this.dashboardService.postFormExpo(this.registrationForm.value).subscribe({
-        next: (response) => {
-          this.utilsService.onSuccess("Formulario enviado exitosamente.");  
-          this.registrationForm.reset();
-          this.otherIndustry = null;
-        },
-        error: (error) => {
-          console.log(error);
-          this.utilsService.onError("Error al enviar el formulario. Por favor, inténtelo de nuevo.");
-        }
-      });
+    this.dashboardService.postFormExpo(this.registrationForm.value).subscribe({
+      next: (response) => {
+        this.utilsService.onSuccess("Formulario enviado exitosamente.");  
+        this.registrationForm.reset();
+        this.otherIndustry = null;
+      },
+      error: (error) => {
+        console.log(error);
+        this.utilsService.onError("Error al enviar el formulario. Por favor, inténtelo de nuevo.");
+      }
+    });
 
 
-    } else {
-      this.utilsService.onWarn("Por favor, complete todos los campos requeridos.");
-    }
   }
     
 }

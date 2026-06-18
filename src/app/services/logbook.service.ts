@@ -285,6 +285,10 @@ export class LogbookService {
         )
     }
 
+    getLeads() {
+        return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/register-leads`)
+    }
+
     onError(message: string) {
         this.messageService.add({
             life: 5000,
