@@ -80,7 +80,7 @@
                     </div>
                     <div class="flex flex-column">
                         <label class="font-bold cab-label" htmlFor="shipping_guide">PERSONAL A CARGO: </label>
-                        <label class="det-label" htmlFor="shipping_guide">{{entrySelected()?.staff_charge_name}}</label>
+                        <label class="det-label" htmlFor="shipping_guide">{{entrySelected()?.staff_charge_name ?? entrySelected()?.other_staff}}</label>
                     </div>
                 </div>
 

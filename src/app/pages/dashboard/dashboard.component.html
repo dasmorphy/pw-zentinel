@@ -56,7 +56,7 @@
     <app-biomar-dashboard class="w-full"></app-biomar-dashboard>
   } -->
 
-  @if (optionDashboardSelected == 'Biomar') {
+  @if (user_permissions_signal().includes('VER_DASHBOARD_BIOMAR') || optionDashboardSelected == 'Biomar') {
     @if (optionGraphBiomarSelected == 'Control de acceso') {      
       <app-access-dashboard class="w-full" [filtersGraph]="filters"></app-access-dashboard>
     }

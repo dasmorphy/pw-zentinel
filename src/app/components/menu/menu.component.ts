@@ -124,7 +124,7 @@ export class MenuComponent implements OnInit {
         ]
       },
       {
-        label: 'Despachos',
+        label: 'Materia prima',
         icon: 'pi pi-truck',
         visible: this.user_permissions_signal()?.includes('VER_DESPACHOS'),
         command: () => { this.clickHiddenToggle(true) },

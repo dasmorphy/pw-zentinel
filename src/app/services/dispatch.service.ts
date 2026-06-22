@@ -129,6 +129,12 @@ export class DispatchService {
         this.http.get(`${environment.apiUrl}/rest/zent-dispatch-api/v1.0/materials`)
         .subscribe({
                 next: (data: any) => {
+                    const dataMaterials = data?.data;
+                    dataMaterials.push({
+                        created_at: "2026-06-01T09:56:55.326669Z",
+                        id_material: 1000,
+                        name: "Otros"
+                    })
                     this.materials.set(data?.data || []);
                 },
                 error: ({ error }: any) => this.utilsService.onError(error.message)

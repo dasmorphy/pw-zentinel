@@ -73,11 +73,10 @@
 
 
                         <span class="w-full">
-                            <label htmlFor="person_charge">Personal a cargo <span style="color: red;">*</span></label>
-                            <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2"
-                                formControlName="person_charge" id="person_charge" [options]="staffCharge()"
-                                optionLabel="name" optionValue="id_staff" [emptyMessage]="messageEmpty"></p-dropdown>
-                            <div *ngIf="entryForm.get('person_charge')?.hasError('campoVacio')">
+                            <label htmlFor="other_staff">Personal a cargo <span style="color: red;">*</span></label>
+                            <input class="border-round w-full mt-2" pInputText formControlName="other_staff"
+                                id="descripcion" />
+                            <div *ngIf="entryForm.get('other_staff')?.hasError('campoVacio')">
                                 <span class="validate-data">Este campo es obligatorio</span>
                             </div>
                         </span>
@@ -111,6 +110,17 @@
                                                 <span class="validate-data">El material es obligatorio</span>
                                             </div>
                                         </span>
+                                        
+                                        @if (material.get('id_material')?.value == 1000) {
+                                            <span class="w-full">
+                                                <label>Otro material <span style="color: red;">*</span></label>
+                                                <input class="border-round w-full mt-2" pInputText formControlName="other_material"
+                                                id="other_material" />
+                                               <div *ngIf="material.get('other_material')?.invalid">
+                                                    <span class="validate-data">Este campo es obligatorio</span>
+                                                </div>
+                                            </span>
+                                        }
 
                                         <!-- Cantidad -->
                                         <span class="w-full">
@@ -155,7 +165,7 @@
                             </p-fileUpload>
 
                             <small class="text-gray-500">
-                                Mínimo 5 imágenes / Máximo 10 imágenes
+                                Mínimo 3 imágenes / Máximo 10 imágenes
                             </small>
 
                             <div *ngIf="imagesError" class="validate-data">

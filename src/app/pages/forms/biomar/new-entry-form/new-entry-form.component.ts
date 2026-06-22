@@ -75,7 +75,7 @@ export class NewEntryFormComponent {
             area_visit: ['', Validators.required],
             names_visit: ['', Validators.required],
             dni: ['', Validators.required],
-            person_charge: ['', Validators.required],
+            other_staff: ['', Validators.required],
             reason_visit: ['', Validators.required],
             material_entry: this.fb.array([
                 this.createMaterial()
@@ -95,7 +95,8 @@ export class NewEntryFormComponent {
     createMaterial(): FormGroup {
         return this.fb.group({
             id_material: ['', Validators.required],
-            quantity: [1, Validators.required]
+            quantity: [1, Validators.required],
+            other_material: ['', Validators.required],
         });
     }
 
@@ -124,8 +125,8 @@ export class NewEntryFormComponent {
         // 🔄 acumular imágenes
         this.images = [...this.images, ...selectedFiles];
 
-        if (this.images.length < 5) {
-            this.imagesError = 'Debe subir al menos 5 imágenes';
+        if (this.images.length < 3) {
+            this.imagesError = 'Debe subir al menos 3 imágenes';
             return;
         }
 
@@ -173,10 +174,16 @@ export class NewEntryFormComponent {
     saveEntry() {
         this.isLoading = true;
         this.showConfirmSave = false;
+        const materials = this.entryForm.value.material_entry.map((item: any) => ({
+            ...item,
+            id_material: item.other_material?.trim() ? null : item.id_material,
+            other_material: item.id_material ? null : item.other_material,
+        }));
  
         const data_save = {
             ...this.entryForm.value,
             user: this.user_json?.user,
+            material_entry: materials,
             channel: 'ZENTINEL_WEB',
             external_transaction_id: uuidv4()
         };
@@ -211,46 +218,5 @@ export class NewEntryFormComponent {
             }
         })
     }
-
-    // setUnityByCategory(name_category: string) {
-    //     let id_unity = 1;
-
-    //     switch (name_category) {
-    //         case 'Suministros':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'UNIDAD')?.id_unity;
-    //             break;
-    //         case 'Repuestos':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'UNIDAD')?.id_unity;
-    //             break;
-    //         case 'Balanceado':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'SACOS')?.id_unity;
-    //             break;
-    //         case 'Larvas':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'UNIDAD')?.id_unity;
-    //             break;
-    //         case 'Maquinaria':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'UNIDAD')?.id_unity;
-    //             break;
-    //         case 'Combustibles /lubricantes':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'GALONES')?.id_unity;
-    //             break;
-    //         case 'Otros':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'BINES')?.id_unity;
-    //             break;
-    //         case 'Camarón':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'LIBRAS')?.id_unity;
-    //             break;
-    //         case 'Tilapia':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'LIBRAS')?.id_unity;
-    //             break;
-    //         case 'Insumos':
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'UNIDAD')?.id_unity;
-    //             break;
-    //         default:
-    //             id_unity = this.unitiesWeight()?.find((unity: any) => unity.name === 'LIBRAS')?.id_unity;
-    //             break;
-    //     }
-    //     this.entryForm.get('id_unity')?.setValue(id_unity);
-    // }    
 
 }

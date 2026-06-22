@@ -13,6 +13,7 @@ export interface EntryAccess {
     reason_visit: string;
     staff_charge_id: number;
     staff_charge_name: string;
+    other_staff: string;
     status: string;
     updated_at: Date;
     updated_by: string;
