@@ -93,11 +93,26 @@ export class NewEntryFormComponent {
     }
 
     createMaterial(): FormGroup {
-        return this.fb.group({
+        const group = this.fb.group({
             id_material: ['', Validators.required],
             quantity: [1, Validators.required],
-            other_material: ['', Validators.required],
+            other_material: [''],
         });
+
+        group.get('id_material')?.valueChanges.subscribe(value => {
+            const otherMaterial = group.get('other_material');
+
+            if (value == '1000') {
+                otherMaterial?.setValidators([Validators.required]);
+            } else {
+                otherMaterial?.clearValidators();
+                otherMaterial?.setValue('');
+            }
+
+            otherMaterial?.updateValueAndValidity();
+        });
+
+        return group;
     }
 
     get materialsEntry(): FormArray {

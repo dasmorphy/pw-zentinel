@@ -61,6 +61,23 @@
                 </div>
             </div>
 
+            <div class="flex justify-content-center align-items-center mt-4 mb-2">
+                <p-table [value]="entrySelected()?.materials ?? []" [tableStyle]="{'width': '100%'}" class="w-table">
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th scope="col" style="border-top-left-radius: 20px" class="text-center header-table-modal">Material</th>
+                            <th scope="col" style="border-top-right-radius: 20px" class="text-center header-table-modal">Cantidad</th>
+                        </tr>
+                    </ng-template>
+                    <ng-template pTemplate="body" let-material let-rowIndex="rowIndex">
+                        <tr>
+                            <td class="td-padding text-center">{{ material?.name ?? material?.other_material }}</td>
+                            <td class="td-padding text-center">{{ material?.quantity }}</td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+
             <h4>PERSONAL RESPONSABLE</h4>
             <div class="flex flex-column card-info mt-2 gap-2">
 

@@ -5,6 +5,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputTextModule } from 'primeng/inputtext';
 import { DispatchService } from 'src/app/services/dispatch.service';
+import { TableModule } from 'primeng/table';
 
 @Component({
     selector: 'app-entry-details-modal',
@@ -15,6 +16,7 @@ import { DispatchService } from 'src/app/services/dispatch.service';
         ButtonModule,
         ProgressSpinnerModule,
         InputTextModule,
+        TableModule
     ],
     templateUrl: './entry-details-modal.component.html',
     styleUrls: ['./entry-details-modal.component.sass']
