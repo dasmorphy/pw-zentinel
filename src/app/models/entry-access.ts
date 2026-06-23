@@ -25,7 +25,8 @@ export interface ImageEntry {
 }
 
 export interface Material {
-    id_material: number;
-    name: string;
+    id_material?: number;
+    other_material?: string;
+    name?: string;
     quantity: number;
 }

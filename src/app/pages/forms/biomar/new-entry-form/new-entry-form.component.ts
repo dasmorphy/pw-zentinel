@@ -160,8 +160,14 @@ export class NewEntryFormComponent {
         this.utilsService.validateControlsForms(this.createMaterial(), []);
         this.utilsService.showControlVoiled();
 
-        if (this.images.length < 5) {
-            this.imagesError = 'Debes subir mínimo 5 imágenes';
+        if (this.images.length < 3) {
+            this.imagesError = 'Debes subir mínimo 3 imágenes';
+            this.isLoading = false;
+            return;
+        }
+
+        if (this.entryForm.get('dni')?.value?.length < 10) {
+            this.utilsService.onWarn('Identificación no tiene 10 dígitos')
             this.isLoading = false;
             return;
         }
@@ -176,8 +182,8 @@ export class NewEntryFormComponent {
         this.showConfirmSave = false;
         const materials = this.entryForm.value.material_entry.map((item: any) => ({
             ...item,
-            id_material: item.other_material?.trim() ? null : item.id_material,
-            other_material: item.id_material ? null : item.other_material,
+            id_material: item.id_material != 1000 ? item.id_material : null,
+            other_material: item.id_material == 1000 ? item.other_material : null,
         }));
  
         const data_save = {

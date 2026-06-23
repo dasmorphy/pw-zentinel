@@ -19,15 +19,15 @@
 
         <h4>Materiales de salida</h4>
         <div>
-            <div *ngFor="let material of selectedEntry?.materials">
+            <div *ngFor="let material of selectedEntry?.materials; let i = index">
                 <div class="card-product flex gap-3 align-items-center mb-3 flex-column">
                     <span class="w-full flex flex-column">
                         <div class="flex justify-content-between align-items-center">
                             <div class="flex gap-2 w-full justify-content-between align-items-center px-5">
-                                <label>{{material.name}}</label>
+                                <label>{{material.name ?? material.other_material}}</label>
 
                                 <p-inputSwitch 
-                                    [ngModel]="checkedMaterials.has(material.id_material)"
+                                    [ngModel]="checkedMaterials.has(i)"
                                     (ngModelChange)="onToggle(material, $event)"
                                     [ngModelOptions]="{ standalone: true }">
                                 </p-inputSwitch>
