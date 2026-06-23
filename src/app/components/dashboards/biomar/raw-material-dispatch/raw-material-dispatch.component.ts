@@ -58,6 +58,7 @@ export class RawMaterialDispatchComponent implements OnInit, OnDestroy {
     graphDestiny: any = [];
     graphDispatchStatus: any = [];
     graphLast7Days: any = [];
+    graphSkusStore: any;
     graphDiscrepancy: number = 0;
     selectedDispatch: Dispatch | null = null;
     dateRange: Date[] | null = null;
@@ -119,6 +120,7 @@ export class RawMaterialDispatchComponent implements OnInit, OnDestroy {
                 const dataGraph = data?.data;
                 this.graphDestiny = dataGraph?.destiny_count;
                 this.graphDispatchStatus = dataGraph?.dispatch_by_status;
+                this.graphSkusStore = dataGraph?.skus_store;
                 this.graphDiscrepancy = dataGraph?.discrepancy;
                 this.graphLast7Days = dataGraph?.discrepancy_7_days;
                 

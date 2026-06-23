@@ -63,6 +63,7 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
     graphDiscrepancy: number = 0;
     graphWithoutDiscrepancy: number = 0;
     graphDispatchStatus: any = [];
+    graphSkusStore: any;
     selectedDispatch: any = null;
     dateRange: Date[] | null = null;
 
@@ -122,6 +123,7 @@ export class FinishedProductDispatchComponent implements OnInit, OnDestroy {
                 this.graphProductTerm = dataGraph?.product_term;
                 // this.graphDestiny = dataGraph?.destiny_count;
                 this.graphDispatchStatus = dataGraph?.dispatch_by_status;
+                this.graphSkusStore = dataGraph?.skus_store;
                 this.graphDiscrepancy = dataGraph?.discrepancy;
                 this.graphWithoutDiscrepancy = dataGraph?.without_discrepancy;
                 this.graphLast7Days = dataGraph?.discrepancy_7_days;
