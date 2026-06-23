@@ -149,6 +149,16 @@ export class AccessControlComponent {
         this.fetchAllData(); //TODO
     }
 
+    getGraphEntryStatus(status: string) {
+       return this.graphEntryStatus.find((graph: any) => graph.status_name === status)?.count ?? 0;
+    }
+
+    getGraphCountTypeAccess(type_access: string) {
+       return this.graphCountTypeAccess.find((graph: any) => graph.type_access === type_access)?.count ?? 0;
+    }
+
+    
+
     getStatusStyles(statusName: string) {
         switch (statusName) {
             case 'En tránsito':

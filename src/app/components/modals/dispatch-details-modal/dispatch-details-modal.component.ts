@@ -6,6 +6,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { InputTextModule } from 'primeng/inputtext';
 import { DispatchService } from 'src/app/services/dispatch.service';
 import { UtilsService } from 'src/app/services/utils.service';
+import { TableModule } from 'primeng/table';
 
 @Component({
     selector: 'app-dispatch-details-modal',
@@ -16,6 +17,7 @@ import { UtilsService } from 'src/app/services/utils.service';
         ButtonModule,
         ProgressSpinnerModule,
         InputTextModule,
+        TableModule
     ],
     templateUrl: './dispatch-details-modal.component.html',
     styleUrls: ['./dispatch-details-modal.component.sass']
@@ -46,6 +48,20 @@ export class DispatchDetailsModalComponent {
 
     closeModal() {
         this.dispatchService.closeSummary();
+    }
+
+    getPendingSkus() {
+        const dispatch = this.dispatchSelected();
+
+        if (!dispatch) return [];
+
+        const receivedSkuIds = new Set(
+            dispatch.reception?.reception_detail?.map(x => x.sku_id) ?? []
+        );
+
+        return dispatch.skus.filter(
+            sku => !receivedSkuIds.has(sku.id_sku)
+        );
     }
 
 }

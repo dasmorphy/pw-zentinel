@@ -12,7 +12,7 @@
             <div class="flex justify-content-between gap-5">
                 <div class="flex flex-column gap-1">
                     <span class="text-secondary text-xl">Total</span>
-                    <span class="font-bold text-3xl">{{graphEntryStatus?.[2]?.count ?? 0}}</span>
+                    <span class="font-bold text-3xl">{{getGraphEntryStatus('Total')}}</span>
                 </div>
                 <span
                     class="w-2rem h-2rem border-circle inline-flex justify-content-center align-items-center text-center"
@@ -32,7 +32,7 @@
             <div class="flex justify-content-between gap-5">
                 <div class="flex flex-column gap-1">
                     <span class="text-secondary text-xl">Pendiente de salida</span>
-                    <span class="font-bold text-3xl">{{graphEntryStatus?.[1]?.count ?? 0}}</span>
+                    <span class="font-bold text-3xl">{{getGraphEntryStatus('Pendiente Salida')}}</span>
                 </div>
                 <span
                     class="w-2rem h-2rem border-circle inline-flex justify-content-center align-items-center text-center"
@@ -46,7 +46,7 @@
             <div class="flex justify-content-between gap-5">
                 <div class="flex flex-column gap-1">
                     <span class="text-secondary text-xl">Proveedores</span>
-                    <span class="font-bold text-3xl">{{graphCountTypeAccess?.[0]?.count ?? 0}}</span>
+                    <span class="font-bold text-3xl">{{getGraphCountTypeAccess('Proveedor')}}</span>
                 </div>
                 <span
                     class="w-2rem h-2rem border-circle inline-flex justify-content-center align-items-center text-center"
@@ -60,7 +60,7 @@
             <div class="flex justify-content-between gap-5">
                 <div class="flex flex-column gap-1">
                     <span class="text-secondary text-xl">Visitantes</span>
-                    <span class="font-bold text-3xl">{{graphCountTypeAccess?.[1]?.count ?? 0}}</span>
+                    <span class="font-bold text-3xl">{{getGraphCountTypeAccess('Visitante')}}</span>
                 </div>
                 <span
                     class="w-2rem h-2rem border-circle inline-flex justify-content-center align-items-center text-center"
