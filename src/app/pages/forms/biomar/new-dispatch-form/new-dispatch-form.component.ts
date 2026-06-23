@@ -191,8 +191,8 @@ export class NewDispatchForm {
         // 🔄 acumular imágenes
         this.images = [...this.images, ...selectedFiles];
 
-        if (this.images.length < 5) {
-            this.imagesError = 'Debe subir al menos 5 imágenes';
+        if (this.images.length < 2) {
+            this.imagesError = 'Debe subir al menos 2 imágenes';
             return;
         }
 
@@ -227,8 +227,8 @@ export class NewDispatchForm {
         this.utilsService.validateControlsForms(this.createSku(), []);
         this.utilsService.showControlVoiled();
 
-        if (this.images.length < 5) {
-            this.imagesError = 'Debes subir mínimo 5 imágenes';
+        if (this.images.length < 2) {
+            this.imagesError = 'Debes subir mínimo 2 imágenes';
             this.isLoading = false;
             return;
         }

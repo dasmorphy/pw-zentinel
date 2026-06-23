@@ -255,8 +255,8 @@ export class AllDispatchsComponent {
 
     onUpdateDispatch() {
         this.isLoading = true;
-        if (this.images.length < 5) {
-            this.imagesError = 'Debes subir mínimo 5 imágenes';
+        if (this.images.length < 2) {
+            this.imagesError = 'Debes subir mínimo 2 imágenes';
             this.isLoading = false;
             return;
         }

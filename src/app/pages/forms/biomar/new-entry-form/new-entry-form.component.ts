@@ -140,8 +140,8 @@ export class NewEntryFormComponent {
         // 🔄 acumular imágenes
         this.images = [...this.images, ...selectedFiles];
 
-        if (this.images.length < 3) {
-            this.imagesError = 'Debe subir al menos 3 imágenes';
+        if (this.images.length < 2) {
+            this.imagesError = 'Debe subir al menos 2 imágenes';
             return;
         }
 
@@ -175,8 +175,8 @@ export class NewEntryFormComponent {
         this.utilsService.validateControlsForms(this.createMaterial(), []);
         this.utilsService.showControlVoiled();
 
-        if (this.images.length < 3) {
-            this.imagesError = 'Debes subir mínimo 3 imágenes';
+        if (this.images.length < 2) {
+            this.imagesError = 'Debes subir mínimo 2 imágenes';
             this.isLoading = false;
             return;
         }
