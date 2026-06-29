@@ -289,6 +289,15 @@ export class LogbookService {
         return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/register-leads`)
     }
 
+    getPurchaseOrderReceipts(filter?: any) {
+        let params = new HttpParams();
+        let headers = new HttpHeaders();
+
+        return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/purchase-order-receipts`,
+            { headers, params }
+        )
+    }
+
     onError(message: string) {
         this.messageService.add({
             life: 5000,

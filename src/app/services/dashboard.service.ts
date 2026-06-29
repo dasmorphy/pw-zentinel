@@ -64,4 +64,22 @@ export class DashboardService {
         );
     }
 
+    graphBlacklistBalanced(filter?: any) {
+        let params = new HttpParams();
+        let headers = new HttpHeaders();
+
+        if (filter?.start_date) {
+            params = params.set('start_date', filter.start_date);
+        }
+
+        if (filter?.end_date) {
+            params = params.set('end_date', filter.end_date);
+        }
+
+        return this.http.get(
+            `${environment.apiUrl}/rest/zent-logbook-api/v1.0/graphs-blacklist-balanced`,
+            { headers, params }
+        );
+    }
+
 }
