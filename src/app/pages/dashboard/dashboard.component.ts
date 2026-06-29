@@ -63,8 +63,10 @@ export class DashboardComponent {
     isLoading: boolean = false;
     optionsDashboard = ["Expalsa", "Biomar"];
     optionsGraphBiomar = ["Control de acceso", "Despacho de materia prima", "Despacho de producto terminado"];
+    optionsGraphExpalsa = ["Bitácoras", "Lista negra", "Balanceado y combustible"];
     optionDashboardSelected = "";
     optionGraphBiomarSelected = "Control de acceso";
+    optionGraphExpalsaSelected = "Bitácoras";
     
     filters: any = {};
 
@@ -90,6 +92,9 @@ export class DashboardComponent {
         this.optionGraphBiomarSelected = option
     }
 
+    onChangeGraphExpalsa(option: string) {
+        this.optionGraphExpalsaSelected = option
+    }
 
     onFilterDate(op: any) {
         op.hide()

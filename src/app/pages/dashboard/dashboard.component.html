@@ -39,6 +39,11 @@
       
           </p-overlayPanel>
       }
+      @if (user_permissions_signal().includes('VER_DASHBOARD_EXPALSA') || optionDashboardSelected == 'Expalsa') {
+        <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full" id="cuentaCliente"
+          [options]="optionsGraphExpalsa" (onChange)="onChangeGraphExpalsa($event.value)">
+        </p-dropdown>
+      }
       @if (user_permissions_signal().includes('VER_DASHBOARD_BIOMAR') || optionDashboardSelected == 'Biomar') {
         <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full" id="cuentaCliente"
           [options]="optionsGraphBiomar" (onChange)="onChangeGraphBiomar($event.value)">
@@ -73,21 +78,23 @@
   }
 
   @if (user_permissions_signal().includes('VER_DASHBOARD_EXPALSA') || optionDashboardSelected == 'Expalsa') {
-    <div class="flex w-full justify-content-center column-responsive">
-      <div class="flex flex-column align-items-center p-3-responsive xl:w-7 w-full h-funnel">
-  
-        <app-doughnut class="w-full bg-funnel shadow-1 border-round-2xl"></app-doughnut>
-      </div>
-  
-      <div class="flex flex-column align-items-center p-3-responsive h-funnel">
-        <div class="bg-funnel shadow-1 border-round-2xl w-history">
-          <div class="p-5 flex flex-column">
-            <app-logbook-recent></app-logbook-recent>
+    @if (optionGraphExpalsaSelected == 'Bitácoras') {      
+      <div class="flex w-full justify-content-center column-responsive">
+        <div class="flex flex-column align-items-center p-3-responsive xl:w-7 w-full h-funnel">
+    
+          <app-doughnut class="w-full bg-funnel shadow-1 border-round-2xl"></app-doughnut>
+        </div>
+    
+        <div class="flex flex-column align-items-center p-3-responsive h-funnel">
+          <div class="bg-funnel shadow-1 border-round-2xl w-history">
+            <div class="p-5 flex flex-column">
+              <app-logbook-recent></app-logbook-recent>
+            </div>
           </div>
         </div>
+    
       </div>
-  
-    </div>
+    }
   }
 </div>
 
