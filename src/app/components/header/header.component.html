@@ -27,23 +27,19 @@
     styleClass="border-button text-primary--custom p-button-text p-button-raised bg-transparent">
   </p-button>
   
-  <p-avatar [label]="user?.name_user?.length ? user?.name_user[0] : 'U'" size="large"
+  <p-avatar [label]="user_json?.attributes?.fullname ? user_json?.attributes?.fullname[0] : 'U'" size="large"
     shape="circle">
   </p-avatar>
 
   <div class="div-avatar">
-    @if (user) {
-      <div class="div-name w-10rem">
-        <span style="font-size: 13px;" class="font-bold font-verdana">{{ user?.name_user }}</span>
+    @if (user_json) {
+      <div class="div-name" style="min-width: 8rem;">
+        <span style="font-size: 13px;" class="font-bold font-verdana">{{ user_json?.attributes?.fullname }}</span>
         <span style="font-size: 14px;" class="font-verdana text-color-secondary">
-          @if (user?.role_name != 'Vendedor') {
-            {{ user?.role_name.replace('_',' ').replace('_',' ').replace('_',' ').replace('_',' ') }}
-          }@else{
-            Vendedor {{ user?.seller_code }}
-          }
+          {{ user_json?.role.replace('_',' ')?.replace('_',' ') }}
         </span>
         <span style="font-size: 14px;" class="font-verdana text-color-secondary">
-          Canal {{ user?.channel}}
+          {{ user_json?.user}}
         </span>
       </div>
     }

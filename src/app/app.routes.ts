@@ -15,6 +15,8 @@ import { FormExpoComponent } from './components/form_expo/form-expo.component';
 import { PersonalDataPolicyComponent } from './pages/personal-data-policy/personal-data-policy.component';
 import { TableLeadComponent } from './pages/tables/leads/lead-table.component';
 import { TableEmployeeInternComponent } from './pages/tables/table-employee-intern/table-employee-intern.component';
+import { BlacklistComponent } from './pages/tables/blacklist/blacklist.component';
+import { PurchaseOrderComponent } from './pages/tables/purchase-order/purchase-order.component';
 
 export const routes: Routes = [
     {
@@ -63,6 +65,16 @@ export const routes: Routes = [
             {
                 path: "reporte-entrada",
                 loadComponent: () => LogbookEntryComponent,
+                canActivate: [AuthGuard]
+            },
+            {
+                path: "lista-negra",
+                loadComponent: () => BlacklistComponent,
+                canActivate: [AuthGuard]
+            },
+            {
+                path: "ordenes-compra",
+                loadComponent: () => PurchaseOrderComponent,
                 canActivate: [AuthGuard]
             },
             {

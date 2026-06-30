@@ -12,16 +12,11 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { LogbookService } from 'src/app/services/logbook.service';
 import { UserService } from 'src/app/services/user.service';
 import { DialogModule } from 'primeng/dialog';
-import { DispatchService } from 'src/app/services/dispatch.service';
 import { TableModule } from 'primeng/table';
-import { NgxTippyModule } from 'ngx-tippy-wrapper';
 import { TagModule } from 'primeng/tag';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { Subscription } from 'rxjs';
-import { EventSourceService } from 'src/app/services/event-source.service';
 import { UtilsService } from 'src/app/services/utils.service';
-import { EntryDetailsModalComponent } from 'src/app/components/modals/entry-details-modal/entry-details-modal.component';
-import { ImageGalleryComponent } from 'src/app/components/modals/shared/preview-image/preview-image.component';
 import { Chart, ChartConfiguration } from 'chart.js';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { MeterGroupModule } from 'primeng/metergroup';
@@ -29,7 +24,7 @@ import { CardModule } from 'primeng/card';
 import { CalendarModule } from 'primeng/calendar';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { DashboardService } from 'src/app/services/dashboard.service';
-
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
     selector: 'app-balanced-fuel',
@@ -46,7 +41,6 @@ import { DashboardService } from 'src/app/services/dashboard.service';
     ToastModule,
     ProgressSpinnerModule,
     DialogModule,
-    NgxTippyModule,
     TableModule,
     TagModule,
     SplitButtonModule,
@@ -55,8 +49,7 @@ import { DashboardService } from 'src/app/services/dashboard.service';
     CardModule,
     OverlayPanelModule,
     CalendarModule,
-    EntryDetailsModalComponent,
-    ImageGalleryComponent
+    TooltipModule
 ],
     templateUrl: './balanced-fuel.component.html',
     styleUrls: ['./balanced-fuel.component.sass'],
@@ -66,7 +59,6 @@ export class BalancedFuelComponent {
     
     private readonly menuService = inject(MenuService);
     private readonly logbookService = inject(LogbookService);
-    private readonly dispatchService = inject(DispatchService);
     private readonly userService = inject(UserService);
     readonly utilsService = inject(UtilsService);
     readonly dashboardService = inject(DashboardService);
@@ -75,14 +67,11 @@ export class BalancedFuelComponent {
     private sseSubDispatch?: Subscription;
 
     toggle = computed(() => this.menuService.toggle());
-    graphs = computed(() => this.dispatchService.graphsDispatch());
-    entrySelected = computed(() => this.dispatchService.showModalSummaryEntry());
-    dispatchSelected = computed(() => this.dispatchService.showModalSummary());
-    openModalImages = computed(() => this.utilsService.showModalImage());
 
     user_session: any;
     isLoading: boolean = false;
-    selectedDispatch: any = null;
+    showModal: boolean = false;
+    selectedOrder: any = null;
     dateRange: Date[] | null = null;
 
     doughnutChart!: Chart;
@@ -99,7 +88,7 @@ export class BalancedFuelComponent {
         {
             label: 'Ver detalles',
             icon: 'pi pi-eye',
-            command: () => this.viewDispatchDetails(this.selectedDispatch!)
+            command: () => this.viewDispatchDetails(this.selectedOrder!)
         },
     ];
 
@@ -316,16 +305,13 @@ export class BalancedFuelComponent {
     }
 
     optionsDispatch(loogbook: any) {
-        this.selectedDispatch = loogbook
+        this.selectedOrder = loogbook
     }
 
 
     viewDispatchDetails(data: any) {
-        if (data?.id_access_control) {
-            this.dispatchService.openSummaryEntry(data);
-        }else{
-            this.dispatchService.openSummary(data);
-        }
+        this.selectedOrder = data;
+        this.showModal = true;
     }
 
 
@@ -355,6 +341,19 @@ export class BalancedFuelComponent {
         op.hide()
         this.dateRange = null;
         this.filters = {};
+    }
+
+    getSeverity(status: string) {
+        switch (status) {
+        case "Completado":
+            return 'success';
+        case "Incompleto":
+            return 'warning';
+        case "Con Novedad":
+            return 'danger';
+        default:
+            return 'info';
+        }
     }
 
 }

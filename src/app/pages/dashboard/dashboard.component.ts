@@ -65,7 +65,7 @@ export class DashboardComponent {
     isLoading: boolean = false;
     optionsDashboard = ["Expalsa", "Biomar"];
     optionsGraphBiomar = ["Control de acceso", "Despacho de materia prima", "Despacho de producto terminado"];
-    optionsGraphExpalsa = ["Bitácoras", "Lista negra", "Balanceado y combustible"];
+    optionsGraphExpalsa = ["Bitácoras", "Balanceado y combustible"];
     optionDashboardSelected = "";
     optionGraphBiomarSelected = "Control de acceso";
     optionGraphExpalsaSelected = "Bitácoras";

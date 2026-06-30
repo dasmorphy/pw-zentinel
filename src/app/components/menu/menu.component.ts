@@ -124,6 +124,20 @@ export class MenuComponent implements OnInit {
         ]
       },
       {
+        label: 'Órdenes de compra',
+        icon: 'pi pi-shopping-cart',
+        routerLink: ['ordenes-compra'],
+        visible: this.user_permissions_signal()?.includes('VER_ORDENES_COMPRA'),
+        command: () => { this.clickHiddenToggle(true) },
+      },
+      {
+        label: 'Lista negra',
+        icon: 'pi pi-user-minus',
+        routerLink: ['lista-negra'],
+        visible: this.user_permissions_signal()?.includes('VER_LISTA_NEGRA'),
+        command: () => { this.clickHiddenToggle(true) },
+      },
+      {
         label: 'Materia prima',
         icon: 'pi pi-truck',
         visible: this.user_permissions_signal()?.includes('VER_DESPACHOS'),

@@ -1,0 +1,262 @@
+<p-toast></p-toast>
+
+<p-dialog header="Header" id="delete-logbook" [closable]="false" [(visible)]="showConfirmDelete" [draggable]="false" [modal]="true"
+    [style]="{ 'width': '23vw', 'border-radius': '32px'}">
+    <ng-template pTemplate="header">
+        <div style="display: grid; place-items: center;">
+            <i class="pi pi-exclamation-circle mt-4" style="color: #EB6506; font-size: 40px;"></i>
+            <h1 style="margin: 0; font-size: 22px;" class="text-center mt-3">
+                ¿Está seguro de continuar?
+            </h1>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-center gap-3 mt-3" style="font-size: 15px;">
+            <p-button label="Eliminar" (onClick)="deleteLogbook()"
+                styleClass="bg-btn-primary w-full">
+            </p-button>
+            <p-button label="Cancelar" (onClick)="showConfirmDelete = false"
+                styleClass="bg-btn-cancel w-full">
+            </p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
+
+<div class="blacklist-wrapper px-5 mt-header">
+    <div class="flex w-full gap-4 align-items-start column-responsive">
+
+        <!-- ============ COLUMNA IZQUIERDA ============ -->
+        <div class="left-column flex flex-column gap-4">
+
+            <!-- Tarjetas de Resumen -->
+            <div class="flex gap-4 column-responsive-sm">
+                <!-- Personas Bloqueadas -->
+                <div class="summary-card flex-1">
+                    <div class="flex justify-content-between align-items-start gap-3">
+                        <div class="flex flex-column gap-2">
+                            <span class="summary-label">PERSONAS BLOQUEADAS</span>
+                            <span class="summary-number">{{ dataBlacklist.length | number }}</span>
+                        </div>
+                        <span class="icon-circle icon-circle-danger">
+                            <i class="pi pi-ban"></i>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Alertas Este Mes -->
+                <!-- <div class="summary-card flex-1">
+                    <div class="flex justify-content-between align-items-start gap-3">
+                        <div class="flex flex-column gap-2">
+                            <span class="summary-label">ALERTAS ESTE MES</span>
+                            <span class="summary-number">{{ alertasEsteMes }}</span>
+                            <span class="summary-trend text-info">
+                                <i class="pi pi-check-circle"></i>
+                                Todas procesadas
+                            </span>
+                        </div>
+                        <span class="icon-circle icon-circle-info">
+                            <i class="pi pi-exclamation-triangle"></i>
+                        </span>
+                    </div>
+                </div> -->
+            </div>
+
+            <!-- Tabla de Registros Recientes -->
+            <div class="table-card">
+                <!-- Encabezado de la tarjeta -->
+                <div class="table-card-header flex justify-content-between align-items-center gap-2">
+                    <span class="table-card-title">REGISTROS RECIENTES</span>
+                </div>
+
+                <p-table
+                    #dt_blacklist
+                    [value]="dataBlacklist"
+                    [paginator]="true"
+                    [rows]="5"
+                    [globalFilterFields]="['full_names', 'dni', 'reason_restriction']"
+                    [rowsPerPageOptions]="[5, 10, 25, 50]"
+                    [showCurrentPageReport]="false"
+                    [tableStyle]="{ 'max-width': '100%' }"
+                    rowStyleClass="custom-row-height"
+                    dataKey="id"
+                    class="w-full table-blacklist"
+                >
+                    <ng-template pTemplate="header">
+                        <tr>
+                            <th scope="col" class="th-header">NOMBRE</th>
+                            <th scope="col" class="th-header">IDENTIFICACIÓN</th>
+                            <th scope="col" class="th-header">MOTIVO</th>
+                            <th scope="col" class="th-header">FECHA</th>
+                            <th scope="col" class="th-header" style="width: 3rem"></th>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-record>
+                        <tr class="body-row">
+                            <td data-titulo="Nombre:">
+                                <div class="flex align-items-center gap-2">
+                                    <div class="avatar-circle">
+                                        @if (record?.image_path) {
+                                            <img
+                                                [src]="'http://st.telearseg.net' + record?.image_path"
+                                                alt="perfil"
+                                                loading="lazy"
+                                            >
+                                        }@else {
+                                            <i class="pi pi-user"></i>
+                                        }
+                                    </div>
+                                    <span class="font-semibold">{{ record.full_names }}</span>
+                                </div>
+                            </td>
+                            <td data-titulo="Identificación:" class="text-muted">{{ record.dni }}</td>
+                            <td data-titulo="Motivo:">{{ record.reason_restriction }}</td>
+                            <td  data-titulo="Fecha:" tooltipPosition="top" 
+                                [pTooltip]="'Hora de registro: ' + (record?.created_at | date:'HH:mm':'UTC')"
+                            >
+                                {{ record?.created_at | date:'dd/MM/yyyy':'UTC' }}
+                            </td>
+                            <td data-titulo="Opciones:" class="text-center">
+                                <p-splitButton id="option-table" appendTo="body" (click)="optionsData(record)" [model]="items">
+                                    <ng-template pTemplate="dropdownicon">
+                                        <i class="pi pi-ellipsis-h" style="color: #83378f;"></i>
+                                    </ng-template>
+                                </p-splitButton>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="6" class="text-center" style="font-size: 16px; font-weight: 700;">
+                                No hay registros disponibles
+                            </td>
+                        </tr>
+                    </ng-template>
+                </p-table>
+            </div>
+        </div>
+
+        <!-- ============ COLUMNA DERECHA: FORMULARIO ============ -->
+        <div class="right-column">
+            <div class="form-card">
+                <!-- Encabezado oscuro -->
+                <div class="form-header">
+                    <h2 class="form-title">Registro en Lista Negra</h2>
+                    <p class="form-subtitle">Ingrese los datos para restricción inmediata</p>
+                </div>
+
+                <!-- Cuerpo del formulario -->
+                <div class="form-body flex flex-column gap-4">
+
+                    <!-- Subir Foto -->
+                    <div class="flex flex-column align-items-center gap-2">
+                        @if (!imagePreview) {
+                            <div class="upload-box cursor-pointer" (click)="profile.click()">
+                                <i class="pi pi-camera"></i>
+                                <input type="file" accept="image/png,image/jpeg" #profile (change)="onFileSelected($event)">
+                                <span>SUBIR FOTO</span>
+                            </div>
+                            <span class="upload-caption">Formato JPG o PNG. Máx 2MB</span>
+                        }@else{
+                            <div class="image-preview cursor-pointer" (click)="profile.click()">
+                                <div class="avatar-circle" style="height: 110px; width: 110px;">
+                                    <img [src]="imagePreview" alt="Foto de perfil">
+                                </div>
+
+                                <input
+                                    #profile
+                                    type="file"
+                                    accept="image/png,image/jpeg"
+                                    hidden
+                                    (change)="onFileSelected($event)"
+                                >
+                            </div>
+                        }
+                    </div>
+
+                    <form [formGroup]="blacklistForm" class="flex flex-column gap-3">
+                        <!-- Nombre Completo -->
+                        <div class="flex flex-column">
+                            <label for="nombreCompleto" class="form-label">Nombre completo</label>
+                            <input
+                                pInputText
+                                id="nombreCompleto"
+                                formControlName="full_names"
+                                placeholder="Ej. Juan Pérez"
+                                class="form-input mt-2"
+                            />
+                            <div *ngIf="blacklistForm.get('full_names')?.hasError('campoVacio')">
+                                <span class="validate-data">Este campo es obligatorio</span>
+                            </div>
+                        </div>
+    
+                        <!-- Cédula y Fecha Registro -->
+                        <div class="flex gap-3 flex-column md:flex-row">
+                            <div class="flex flex-column flex-1">
+                                <label for="cedula" class="form-label">Cédula</label>
+                                <input
+                                    maxlength="10"
+                                    pInputText
+                                    oninput="this.value = this.value.replace(/\D/g, '');"
+                                    id="cedula"
+                                    formControlName="dni"
+                                    placeholder="09.XXX.XXX"
+                                    class="form-input mt-2"
+                                />
+                                <div *ngIf="blacklistForm.get('dni')?.hasError('campoVacio')">
+                                    <span class="validate-data">Este campo es obligatorio</span>
+                                </div>
+                            </div>
+                        </div>
+    
+                        <!-- Motivo de Restricción -->
+                        <div class="flex flex-column">
+                            <label for="motivo" class="form-label">Motivo de restricción</label>
+                            <p-dropdown
+                                id="motivo"
+                                [options]="motivosOptions"
+                                styleClass="w-full"
+                                formControlName="reason_restriction"
+                                optionLabel="label"
+                                optionValue="value"
+                                placeholder="Seleccione un motivo"
+                                class="form-dropdown w-full mt-2"
+                            ></p-dropdown>
+                            <div *ngIf="blacklistForm.get('reason_restriction')?.hasError('campoVacio')">
+                                <span class="validate-data">Este campo es obligatorio</span>
+                            </div>
+                        </div>
+    
+                        <!-- Observaciones Adicionales -->
+                        <div class="flex flex-column">
+                            <label for="observaciones" class="form-label">Observaciones adicionales</label>
+                            <textarea
+                                id="observaciones"
+                                formControlName="observations"
+                                placeholder="Detalles del incidente o conducta..."
+                                class="form-textarea mt-2"
+                                rows="4"
+                            ></textarea>
+                        </div>
+                    </form>
+
+
+                    <!-- Botones de Acción -->
+                    <div class="flex flex-column gap-2 mt-2">
+                        <button class="btn-submit" (click)="saveBlacklist()">
+                            <i class="pi pi-id-card"></i>
+                            <span>Registrar en Sistema</span>
+                        </button>
+                        <button class="btn-clear" (click)="clearForm()">
+                            Limpiar Formulario
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

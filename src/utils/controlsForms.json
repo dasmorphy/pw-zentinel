@@ -23,5 +23,11 @@
     "person_charge": "personal a cargo",
     "reason_visit": "razón de visita",
     "material_entry": "materiales",
-    "received_quantity": "cantidad recibida"
+    "received_quantity": "cantidad recibida",
+
+
+    "full_names": "nombres completos",
+    "observations": "observaciones",
+    "reason_restriction": "restricción"
+
 }

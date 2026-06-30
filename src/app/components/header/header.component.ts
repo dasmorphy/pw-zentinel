@@ -4,6 +4,7 @@ import { ButtonModule } from 'primeng/button';
 import { AvatarModule } from 'primeng/avatar';
 import { InputTextModule } from 'primeng/inputtext';
 import { MenuService } from 'src/app/services/menu.service';
+import { UserService } from 'src/app/services/user.service';
 
 @Component({
   selector: 'app-header',
@@ -19,8 +20,9 @@ import { MenuService } from 'src/app/services/menu.service';
 })
 export class HeaderComponent implements OnInit{
   private readonly menuService = inject(MenuService);
+  private readonly userService = inject(UserService);
 
-  user:any;
+  user_json:any;
   theme_selection: boolean = false;
   iconTheme: string = 'pi pi-sun'
   screenWidth: any = window.innerWidth;
@@ -29,8 +31,7 @@ export class HeaderComponent implements OnInit{
 
 
   ngOnInit(){
-
-
+    this.user_json = this.userService.getDataSession();
   }
 
   // changeThemeColor() {

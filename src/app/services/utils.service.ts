@@ -21,7 +21,7 @@ export class UtilsService {
         this.showModalImage.set(null);
     }
 
-    validateControlsForms(form: FormGroup, controlsIgnore: any) {
+    validateControlsForms(form: FormGroup, controlsIgnore: string[]) {
         Object.keys(form.controls).forEach((key) => {
             const control = form.get(key);
             if (control && !controlsIgnore.includes(key)) {
