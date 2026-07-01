@@ -83,6 +83,23 @@
                     dataKey="id"
                     class="w-full table-blacklist"
                 >
+
+                    <ng-template pTemplate="caption">
+                    
+                        <div class="w-full flex justify-content-between align-items-center">
+                            <div
+                                class="p-inputgroup flex h-3rem p-input-icon-left border-round-2xl w-search-table"
+                            >
+                                <i style="z-index: 2;" class="pi pi-search text-primary--custom"></i>
+                                <input 
+                                    class="border-none shadow-none--custom border-round-left-2xl border-round-right-2xl" 
+                                    type="text"
+                                    pInputText 
+                                    (input)="dt_blacklist.filterGlobal($any($event.target).value, 'contains')" 
+                                />       
+                            </div>
+                        </div>
+                    </ng-template>  
                     <ng-template pTemplate="header">
                         <tr>
                             <th scope="col" class="th-header">NOMBRE</th>

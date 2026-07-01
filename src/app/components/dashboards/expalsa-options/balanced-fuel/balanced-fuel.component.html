@@ -258,7 +258,7 @@
                     <td  data-titulo="Tipo carga:">{{ purchaseOrder?.purchase_order?.type_order ?? 'N/A' }}</td>
                     <td  data-titulo="Estado:">
                         <p-tag [value]="purchaseOrder?.purchase_order?.status_name" 
-                            [severity]="getSeverity(
+                            [severity]="utilsService.getSeverityPurchaseOrder(
                                 purchaseOrder?.purchase_order?.status_name
                             )">
                         </p-tag>

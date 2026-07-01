@@ -43,4 +43,19 @@ export class PurchaseOrderService {
         const headers = new HttpHeaders().set('Token', localStorage.getItem('sb_token') || '');
         return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/blacklist-driver`, formData, { headers });
     }
+
+
+    getAllPurchaseOrders(filter?: any) {
+        let params = new HttpParams();
+        let headers = new HttpHeaders();
+
+        return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/purchase-order`,
+            { headers, params }
+        )
+    }
+
+    savePurchaseOrder(order: any) {
+        const headers = new HttpHeaders().set('Token', localStorage.getItem('sb_token') || '');
+        return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/purchase-order`, {order}, { headers });
+    }
 }

@@ -133,6 +133,19 @@ export class UtilsService {
         }
     }
 
+    getSeverityPurchaseOrder(status: string) {
+        switch (status) {
+        case "Completado":
+            return 'success';
+        case "Incompleto":
+            return 'warning';
+        case "Con Novedad":
+            return 'danger';
+        default:
+            return 'info';
+        }
+    }
+
     onSuccess(message: string, time: number = 5000) {
         this.messageService.add({
             life: time,
