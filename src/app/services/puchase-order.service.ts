@@ -21,16 +21,24 @@ export class PurchaseOrderService {
         let params = new HttpParams();
         let headers = new HttpHeaders();
 
+        if (filter?.dni) {
+            params = params.set('dni', filter.dni);
+        }
+
         return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/blacklist-driver`,
             { headers, params }
         )
+    }
+
+    getReasonRestriction() {
+        return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/reason_restriction`);
     }
 
     deleteBlacklist(id: number) {
         let params = new HttpParams();
 
         if (id) {
-            params = params.set('id', id);
+            params = params.set('id-blacklist', id);
         }
 
 
@@ -44,6 +52,10 @@ export class PurchaseOrderService {
         return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/blacklist-driver`, formData, { headers });
     }
 
+    updateStatus(data: any, id_order: number) {
+        const headers = new HttpHeaders().set('Token', localStorage.getItem('sb_token') || '');
+        return this.http.patch(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/update-purchase-order/${id_order}`, data, { headers });
+    }
 
     getAllPurchaseOrders(filter?: any) {
         let params = new HttpParams();

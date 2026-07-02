@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
-import { Component, computed, inject, ViewChild } from "@angular/core";
-import { AbstractControl, FormArray, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
+import { Component, inject, ViewChild } from "@angular/core";
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { NgxTippyModule } from "ngx-tippy-wrapper";
 import { ButtonModule } from "primeng/button";
@@ -13,7 +13,6 @@ import { InputSwitchModule } from "primeng/inputswitch";
 import { InputTextModule } from "primeng/inputtext";
 import { MultiSelectModule } from "primeng/multiselect";
 import { OverlayPanelModule } from "primeng/overlaypanel";
-import { PanelMenuModule } from "primeng/panelmenu";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SplitButtonModule } from "primeng/splitbutton";
 import { TableModule } from "primeng/table";
@@ -21,16 +20,12 @@ import { TagModule } from "primeng/tag";
 import { TieredMenuModule } from "primeng/tieredmenu";
 import { TimelineModule } from "primeng/timeline";
 import { ToastModule } from "primeng/toast";
-import { DispatchDetailsModalComponent } from "src/app/components/modals/dispatch-details-modal/dispatch-details-modal.component";
-import { ImageGalleryComponent } from "src/app/components/modals/shared/preview-image/preview-image.component";
 import { Dispatch } from "src/app/models/dispatch";
 import { DashboardService } from "src/app/services/dashboard.service";
 import { DispatchService } from "src/app/services/dispatch.service";
-import { LogbookService } from "src/app/services/logbook.service";
 import { PurchaseOrderService } from "src/app/services/puchase-order.service";
 import { UserService } from "src/app/services/user.service";
 import { UtilsService } from "src/app/services/utils.service";
-import { v4 as uuidv4 } from 'uuid';
 
 @Component({
     selector: 'app-purchase-order',
@@ -54,13 +49,10 @@ import { v4 as uuidv4 } from 'uuid';
         NgxTippyModule,
         TieredMenuModule,
         OverlayPanelModule,
-        DispatchDetailsModalComponent,
         FileUploadModule,
         InputSwitchModule,
         InputNumberModule,
-        ImageGalleryComponent
     ],
-    // providers: [MessageService],
     templateUrl: './purchase-order.component.html',
     styleUrls: ['./purchase-order.component.sass']
 })
@@ -77,6 +69,7 @@ export class PurchaseOrderComponent {
 
     showModal: boolean = false;
     showNewOrder: boolean = false;
+    showUpdate: boolean = false;
     orderForm: FormGroup;
 
     expandedRows = {};
@@ -107,8 +100,8 @@ export class PurchaseOrderComponent {
         {
             label: 'Habilitar orden',
             icon: 'pi pi-play-circle',
-            visible: () => this.selectedOrder?.status === 'Listo para despacho',
-            // command: () => this.showUpdate = true
+            visible: () => this.selectedOrder?.status_name === 'Con Novedad' && this.utilsService.formatLocalDate(new Date()) > this.selectedOrder?.end_date,
+            command: () => this.showUpdate = true
         },
     ];
 
@@ -270,6 +263,32 @@ export class PurchaseOrderComponent {
 
     clearFilter() {
 
+    }
+
+    updateStatus() {
+        this.isLoading = true;
+        const data_save = {
+            order: {
+                user: this.user_json?.user,
+                status_update: "Incompleto",
+            }
+        };
+
+        this.purchaseOrderService.updateStatus(data_save, this.selectedOrder?.id_order).subscribe({
+            next: (data: any) => {
+                this.isLoading = false;
+                const message = data?.message ?? 'Estado de orden actualizado correctamente'
+                this.utilsService.onSuccess(message)
+                this.showUpdate = false;
+                this.fetchOrderPurchase();
+            },
+            error: (error: any) => {
+                console.log(error);
+                this.isLoading = false;
+                const error_message = error?.error?.message ?? 'Error al actualizar estado de orden, por favor intente nuevamente'
+                this.utilsService.onError(error_message)
+            }
+        })
     }
 
 }

@@ -58,6 +58,7 @@ export class BlacklistComponent {
     selectedFile: File | null = null;
 
     dataBlacklist = [];
+    dataReasonRestriction = [];
     selectedData: any = {};
 
     isLoading: boolean = true;
@@ -103,12 +104,25 @@ export class BlacklistComponent {
     ngOnInit() {
         this.user_json = this.userService.getDataSession();
         this.fetchBlacklist();
+        this.fetchReasonRestriction();
     }
 
     fetchBlacklist() {
         this.purcharOrderService.getBlacklist().subscribe({
             next: (data: any) => {
                 this.dataBlacklist = data?.data;
+            },
+            error: (error: any) => {
+                console.log(error)
+                this.utilsService.onError(error?.error?.message ?? 'Error al obtener la lista negra de conductores');
+            }
+        })
+    }
+
+    fetchReasonRestriction() {
+        this.purcharOrderService.getReasonRestriction().subscribe({
+            next: (data: any) => {
+                this.dataReasonRestriction = data?.data;
             },
             error: (error: any) => {
                 console.log(error)
@@ -130,22 +144,22 @@ export class BlacklistComponent {
     }
 
 
-    deleteLogbook() {
+    deleteBlacklist() {
         this.isLoading = true;
         this.showConfirmDelete = false;
 
-        // this.purcharOrderService.deleteBlacklist(this.selectedData?.id_blacklist).subscribe({
-        //     next: (data: any) => {
-        //         this.isLoading = false;
-        //         this.utilsService.onSuccess(data?.data?.message ?? 'Bitácora eliminada correctamente');
-        //         this.fetchBlacklist();
-        //     },
-        //     error: (error: any) => {
-        //         this.isLoading = false;
-        //         console.log(error)
-        //         this.utilsService.onError(error?.error?.message ?? 'No se pudo eliminar la bitácora');
-        //     }
-        // })
+        this.purcharOrderService.deleteBlacklist(this.selectedData?.id_blacklist).subscribe({
+            next: (data: any) => {
+                this.isLoading = false;
+                this.utilsService.onSuccess(data?.data?.message ?? 'Registro eliminado correctamente');
+                this.fetchBlacklist();
+            },
+            error: (error: any) => {
+                this.isLoading = false;
+                console.log(error)
+                this.utilsService.onError(error?.error?.message ?? 'No se pudo eliminar el registro');
+            }
+        })
     }
 
     onFileSelected(event: Event): void {

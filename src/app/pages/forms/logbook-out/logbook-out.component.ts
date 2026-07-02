@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, ViewChild } from '@angular/core';
+import { Component, computed, inject, ViewChild } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
@@ -16,6 +16,7 @@ import { FileUpload, FileUploadModule } from 'primeng/fileupload';
 import { v4 as uuidv4} from 'uuid';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { UserService } from 'src/app/services/user.service';
+import { PurchaseOrderService } from 'src/app/services/puchase-order.service';
 
 @Component({
     selector: 'app-logbook-out',
@@ -44,6 +45,7 @@ export class LogbookOutComponent {
     private utilsService = new UtilsService();
     private dashboardService = new DashboardService();
     private userService = new UserService();
+    public readonly purchaseOrderService = inject(PurchaseOrderService);
     
 
     categories = computed(() => this.logbookService.categories());
@@ -58,6 +60,7 @@ export class LogbookOutComponent {
 
     isLoading: boolean = false;
     showConfirmSave: boolean = false;
+    showBlacklistAlert: any = false;
     messageEmpty: string = "No hay opciones disponibles";
     optionGroupBusiness= []
     user_json: any;
@@ -68,6 +71,7 @@ export class LogbookOutComponent {
         this.logbookForm = this.fb.group({
             id_group_business: ['', Validators.required],
             id_category: ['', Validators.required],
+            dni_driver: ['', Validators.required],
             id_unity: [''],
             shipping_guide: [''],
             quantity: [''],
@@ -111,8 +115,41 @@ export class LogbookOutComponent {
         });
     }
 
+    validateDni() {
+        const dni = this.logbookForm.get('dni_driver');
+        this.utilsService.deleteErrorControl(dni, 'dniInvalid');
+        console.log("validacion dni", dni?.value)
+        if (dni?.value && dni?.value.length === 10) {
+            this.purchaseOrderService.getBlacklist({ dni: dni?.value }).subscribe({
+                next: (data: any) => {
+                    const isBlacklisted = data?.data?.length > 0;
+                    if (isBlacklisted) {
+                        this.showBlacklistAlert = data?.data[0];
+                        this.utilsService.onError('Conductor en la lista negra');
+                        dni?.setErrors({'dniInvalid': true})
+                    }
+                },
+                error: (error: any) => {
+                    console.error('Error al validar el DNI:', error);
+                    this.utilsService.onError('Error al validar la cédula.');
+                }
+            })
+        }
+    }
+
     onSubmit() {
         const controls_ignore = ['weight', 'observations', 'id_logbook_entry'];
+        const dniControl = this.logbookForm.get('dni_driver');
+
+        if (dniControl?.getError('dniInvalid')) {
+            this.utilsService.onError('Conductor en la lista negra');
+            return;
+        }
+
+        if (dniControl?.value && dniControl?.value.length < 10) {
+            this.utilsService.onError('Cédula inválida, debe tener 10 dígitos');
+            return;
+        }
 
         if (this.hideGuide()) {
             controls_ignore.push('shipping_guide');

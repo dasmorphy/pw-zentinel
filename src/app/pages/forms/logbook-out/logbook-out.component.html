@@ -23,6 +23,59 @@
     </ng-template>
 </p-dialog>
 
+<p-dialog [(visible)]="showBlacklistAlert" [closable]="true" [draggable]="false" [modal]="true"
+    styleClass="blacklist-alert-dialog" [style]="{ 'width': '30vw' }" [breakpoints]="{ '960px': '75vw', '640px': '95vw' }">
+
+    <ng-template pTemplate="header">
+        <div class="blacklist-alert-header w-full">
+            <div class="blacklist-alert-icon">
+                <i class="pi pi-exclamation-triangle"></i>
+            </div>
+            <h1 class="blacklist-alert-title">ALERTA DE SEGURIDAD</h1>
+            <p class="blacklist-alert-subtitle">Persona registrada en Lista Negra</p>
+        </div>
+    </ng-template>
+
+    <div class="blacklist-alert-card">
+        <div class="avatar-circle">
+            @if (showBlacklistAlert?.image_path) {
+                <img
+                    [src]="'http://st.telearseg.net' + showBlacklistAlert.image_path"
+                    alt="perfil"
+                    loading="lazy"
+                >
+            }@else {
+                <i class="pi pi-user"></i>
+            }
+        </div>
+
+        <div class="blacklist-alert-info">
+            <div class="blacklist-alert-row">
+                <div class="blacklist-alert-field">
+                    <span class="blacklist-alert-label">NOMBRE COMPLETO</span>
+                    <span class="blacklist-alert-value">{{showBlacklistAlert.full_names}}</span>
+                </div>
+                <div class="blacklist-alert-field">
+                    <span class="blacklist-alert-label">IDENTIFICACIÓN</span>
+                    <span class="blacklist-alert-value">{{showBlacklistAlert.dni}}</span>
+                </div>
+            </div>
+
+            <div class="blacklist-alert-field">
+                <span class="blacklist-alert-label">MOTIVO DE RESTRICCIÓN</span>
+                <div class="blacklist-alert-reason">
+                    {{showBlacklistAlert.reason_restriction}}
+                </div>
+            </div>
+
+            <div class="blacklist-alert-field">
+                <span class="blacklist-alert-label">FECHA DE REGISTRO</span>
+                <span class="blacklist-alert-value blacklist-alert-value--normal">{{showBlacklistAlert.created_at | date:'dd/MM/yyyy HH:mm':'UTC' }}</span>
+            </div>
+        </div>
+    </div>
+</p-dialog>
+
 <div class="bg-bluegray-50 border-round-2xl flex justify-content-center mt-header">
     <div class="bg-white w-12 flex flex-column border-round-md flex-wrap">
         <div class="flex justify-content-start w-full">
@@ -47,6 +100,18 @@
                                 </div>
                             </span>
                         }
+
+                        <span class="w-full">
+                            <label htmlFor="dni_driver">Cédula <span style="color: red;">*</span></label>
+                            <input class="border-round w-full mt-2" pInputText id="dni_driver" maxlength="10"
+                                formControlName="dni_driver" (input)="validateDni()" />
+                            <div *ngIf="logbookForm.get('dni_driver')?.hasError('campoVacio')">
+                                <span class="validate-data">Este campo es obligatorio</span>
+                            </div>
+                            <div *ngIf="logbookForm.get('dni_driver')?.hasError('dniInvalid')">
+                                <span class="validate-data">Conductor en lista negra</span>
+                            </div>
+                        </span>
 
                         <span class="w-full">
                             <label htmlFor="username">Categoría <span style="color: red;">*</span></label>
