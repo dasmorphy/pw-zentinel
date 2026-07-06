@@ -68,7 +68,19 @@
                 </span>
 
                 <span class="w-full">
-                    <label htmlFor="weight">Cantidad <span style="color: red;">*</span></label>
+                    <label htmlFor="weight">
+                        Cantidad
+                        {{
+                            orderForm.get('type_order')?.value
+                                ? (
+                                    orderForm.get('type_order')?.value === 'BALANCEADO'
+                                        ? '(toneladas)'
+                                        : '(galones)'
+                                )
+                                : ''
+                        }}
+                        <span style="color: red;">*</span>
+                    </label>
                     <!-- <p-inputNumber class="border-round w-full mt-2" formControlName="quantity" [useGrouping]="false" styleClass="w-full"></p-inputNumber> -->
                     <input
                         class="border-round w-full mt-2"
@@ -109,6 +121,48 @@
             <p-button label="Guardar" (onClick)="saveOrder()" styleClass="bg-btn-primary w-full">
             </p-button>
             <p-button label="Cerrar" (onClick)="showNewOrder = false" styleClass="bg-btn-cancel w-full">
+            </p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
+
+<p-dialog header="Header" [closable]="false" [(visible)]="showAddDestiny" [draggable]="false" [modal]="true"
+    [style]="{ 'width': '30vw', 'border-radius': '32px'}">
+    <ng-template pTemplate="header">
+        <div style="display: grid; place-items: center;">
+            <h1 style="margin: 0; font-size: 22px;" class="text-center mt-2">
+                Nuevo destino
+            </h1>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="content">
+            <div class="flex flex-column mt-2 gap-2">
+                <span class="w-full">
+                    <div class="flex align-items-center gap-2">
+                        <label htmlFor="shipping_guide">Orden: </label>
+                        <label class="font-bold" htmlFor="shipping_guide">
+                            {{ selectedOrder?.number_order || "N/A" }}
+                        </label>
+                    </div>
+                </span>
+
+                <span class="w-full mt-3">
+                    <label htmlFor="type_order">Destinos <span style="color: red;">*</span></label>
+                    <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" [autoDisplayFirst]="false"
+                        id="type_order" [options]="destinyBySector" optionLabel="name" optionValue="id_group_business" appendTo="body"
+                        [emptyMessage]="messageEmpty" [(ngModel)]="selectedDestiny"></p-dropdown>
+                </span>
+    
+            </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-center gap-3 mt-2" style="font-size: 15px;">
+            <p-button label="Guardar" (onClick)="updateStatus({destiny_id: selectedDestiny})" styleClass="bg-btn-primary w-full">
+            </p-button>
+            <p-button label="Cerrar" (onClick)="showAddDestiny = false" styleClass="bg-btn-cancel w-full">
             </p-button>
         </div>
     </ng-template>
@@ -177,7 +231,7 @@
             <div class="flex flex-column w-full card-info">
                 <i class="pi pi-compass mb-3" style="color: #0056b3;"></i>
                 <label class="font-bold cab-label" htmlFor="shipping_guide">DESTINO: </label>
-                <label class="det-label" htmlFor="shipping_guide">{{selectedOrder?.destiny_name ?? 'N/A'}}</label>
+                <label class="det-label" htmlFor="shipping_guide">{{getNameDestinies()}}</label>
             </div>
 
             <div class="flex flex-column w-full card-info">
@@ -224,7 +278,7 @@
 
     <ng-template pTemplate="footer">
         <div class="flex justify-content-center gap-3 mt-3" style="font-size: 15px;">
-            <p-button label="Actualizar" (onClick)="updateStatus()"
+            <p-button label="Actualizar" (onClick)="updateStatus({status_update: 'Incompleto'})"
                 styleClass="bg-btn-primary w-full">
             </p-button>
             <p-button label="Cancelar" (onClick)="showUpdate = false"

@@ -23,6 +23,7 @@ import { ToastModule } from "primeng/toast";
 import { Dispatch } from "src/app/models/dispatch";
 import { DashboardService } from "src/app/services/dashboard.service";
 import { DispatchService } from "src/app/services/dispatch.service";
+import { LogbookService } from "src/app/services/logbook.service";
 import { PurchaseOrderService } from "src/app/services/puchase-order.service";
 import { UserService } from "src/app/services/user.service";
 import { UtilsService } from "src/app/services/utils.service";
@@ -65,11 +66,13 @@ export class PurchaseOrderComponent {
     public readonly utilsService = inject(UtilsService);
     public readonly userService = inject(UserService);
     private readonly dashboardService = inject(DashboardService);
+    private readonly logbookService = inject(LogbookService);
 
 
     showModal: boolean = false;
     showNewOrder: boolean = false;
     showUpdate: boolean = false;
+    showAddDestiny: boolean = false;
     orderForm: FormGroup;
 
     expandedRows = {};
@@ -79,6 +82,8 @@ export class PurchaseOrderComponent {
 
     selectedOrder: any;
     optionGroupBusiness = []
+    destinyBySector = []
+    selectedDestiny: number | null = null;
     typeOrders = ["BALANCEADO", "COMBUSTIBLE"]
     rangeDates: Date[] | undefined;
 
@@ -103,6 +108,11 @@ export class PurchaseOrderComponent {
             visible: () => this.selectedOrder?.status_name === 'Con Novedad' && this.utilsService.formatLocalDate(new Date()) > this.selectedOrder?.end_date,
             command: () => this.showUpdate = true
         },
+        {
+            label: 'Agregar destino',
+            icon: 'pi pi-map-marker',
+            command: () => this.showAddDestiny = true
+        },
     ];
 
 
@@ -122,8 +132,21 @@ export class PurchaseOrderComponent {
         const filters = { ...this.filters };
         this.fetchOrderPurchase();
         this.fetchGroupBusinessByBusiness();
+        this.fetchGroupBusinessBySector();
 
     }
+
+    fetchGroupBusinessBySector() {
+        const id_sector = this.user_json?.attributes?.sector?.[0] || 0;
+
+        this.logbookService.getGroupBusinessBySector(id_sector).subscribe({
+            next: (resp: any) => {
+                this.destinyBySector = resp?.data
+            },
+            error: (err) => console.error(err)
+        });
+    }
+
 
 
     fetchOrderPurchase() {
@@ -265,12 +288,12 @@ export class PurchaseOrderComponent {
 
     }
 
-    updateStatus() {
+    updateStatus(data: any) {
         this.isLoading = true;
         const data_save = {
             order: {
+                ...data,
                 user: this.user_json?.user,
-                status_update: "Incompleto",
             }
         };
 
@@ -280,6 +303,7 @@ export class PurchaseOrderComponent {
                 const message = data?.message ?? 'Estado de orden actualizado correctamente'
                 this.utilsService.onSuccess(message)
                 this.showUpdate = false;
+                this.showAddDestiny = false;
                 this.fetchOrderPurchase();
             },
             error: (error: any) => {
@@ -289,6 +313,10 @@ export class PurchaseOrderComponent {
                 this.utilsService.onError(error_message)
             }
         })
+    }
+
+    getNameDestinies(): string {
+        return this.selectedOrder?.destinations?.map((destiny: any) => destiny.name).join(', ') ?? 'N/A';
     }
 
 }
