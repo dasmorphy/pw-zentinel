@@ -5,6 +5,7 @@ import { ActivatedRoute } from "@angular/router";
 import { NgxTippyModule } from "ngx-tippy-wrapper";
 import { ButtonModule } from "primeng/button";
 import { CalendarModule } from "primeng/calendar";
+import { CheckboxModule } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
 import { DropdownModule } from "primeng/dropdown";
 import { FileUpload, FileUploadModule } from "primeng/fileupload";
@@ -20,6 +21,7 @@ import { TagModule } from "primeng/tag";
 import { TieredMenuModule } from "primeng/tieredmenu";
 import { TimelineModule } from "primeng/timeline";
 import { ToastModule } from "primeng/toast";
+import { TooltipModule } from "primeng/tooltip";
 import { Dispatch } from "src/app/models/dispatch";
 import { DashboardService } from "src/app/services/dashboard.service";
 import { DispatchService } from "src/app/services/dispatch.service";
@@ -53,6 +55,8 @@ import { UtilsService } from "src/app/services/utils.service";
         FileUploadModule,
         InputSwitchModule,
         InputNumberModule,
+        CheckboxModule,
+        TooltipModule
     ],
     templateUrl: './purchase-order.component.html',
     styleUrls: ['./purchase-order.component.sass']
@@ -86,7 +90,7 @@ export class PurchaseOrderComponent {
     selectedDestiny: number | null = null;
     typeOrders = ["BALANCEADO", "COMBUSTIBLE"]
     rangeDates: Date[] | undefined;
-
+    checkAllDestinies: boolean = false;
 
     dateRangeFilter: Date[] | null = null;
     messageEmpty: string = "No hay opciones disponibles";
@@ -111,7 +115,7 @@ export class PurchaseOrderComponent {
         {
             label: 'Agregar destino',
             icon: 'pi pi-map-marker',
-            command: () => this.showAddDestiny = true
+            command: () => {this.showAddDestiny = true; this.checkAllDestinies = false;}
         },
     ];
 
@@ -288,22 +292,29 @@ export class PurchaseOrderComponent {
 
     }
 
+    closeModalUpdateOrder() {
+        this.showAddDestiny = false;
+        this.selectedDestiny = null;
+        this.checkAllDestinies = false;
+    }
+
     updateStatus(data: any) {
+        this.showAddDestiny = false;
         this.isLoading = true;
         const data_save = {
             order: {
                 ...data,
+                flag_all_destinies: this.checkAllDestinies,
                 user: this.user_json?.user,
             }
         };
 
-        this.purchaseOrderService.updateStatus(data_save, this.selectedOrder?.id_order).subscribe({
+        this.purchaseOrderService.updatePurchaseOrder(data_save, this.selectedOrder?.id_order).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
                 const message = data?.message ?? 'Estado de orden actualizado correctamente'
                 this.utilsService.onSuccess(message)
-                this.showUpdate = false;
-                this.showAddDestiny = false;
+                this.closeModalUpdateOrder();
                 this.fetchOrderPurchase();
             },
             error: (error: any) => {

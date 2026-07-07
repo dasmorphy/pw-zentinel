@@ -138,19 +138,31 @@
     </ng-template>
 
     <ng-template pTemplate="content">
-            <div class="flex flex-column mt-2 gap-2">
+            <div class="flex flex-column mt-2 gap-3">
                 <span class="w-full">
                     <div class="flex align-items-center gap-2">
-                        <label htmlFor="shipping_guide">Orden: </label>
+                        <label class="text-color-secondary" htmlFor="shipping_guide">Orden: </label>
                         <label class="font-bold" htmlFor="shipping_guide">
                             {{ selectedOrder?.number_order || "N/A" }}
                         </label>
                     </div>
                 </span>
 
-                <span class="w-full mt-3">
-                    <label htmlFor="type_order">Destinos <span style="color: red;">*</span></label>
-                    <p-dropdown [style]="{ boxShadow: 'none' }" styleClass="border-round w-full mt-2" [autoDisplayFirst]="false"
+                <span class="w-full flex align-items-center gap-2">
+                    <i  pTooltip="Marcar esta opción mostrará la orden de compra para los guardias de los destinos agregados" 
+                        tooltipPosition="top" class="pi pi-question-circle">
+                    </i>
+                    <label htmlFor="checkAllDestinies" class="text-color-secondary">¿Mostrar en todos los destinos?</label>
+                    <p-checkbox 
+                        name="checkAllDestinies" 
+                        [binary]="true" 
+                        [(ngModel)]="checkAllDestinies"                    
+                    ></p-checkbox>
+                </span>
+
+                <span class="w-full">
+                    <label class="text-color-secondary" htmlFor="type_order">Destinos</label>
+                    <p-dropdown [style]="{ boxShadow: 'none' }" class="w-full" styleClass="border-round w-full mt-2" [autoDisplayFirst]="false"
                         id="type_order" [options]="destinyBySector" optionLabel="name" optionValue="id_group_business" appendTo="body"
                         [emptyMessage]="messageEmpty" [(ngModel)]="selectedDestiny"></p-dropdown>
                 </span>
@@ -162,7 +174,7 @@
         <div class="flex justify-content-center gap-3 mt-2" style="font-size: 15px;">
             <p-button label="Guardar" (onClick)="updateStatus({destiny_id: selectedDestiny})" styleClass="bg-btn-primary w-full">
             </p-button>
-            <p-button label="Cerrar" (onClick)="showAddDestiny = false" styleClass="bg-btn-cancel w-full">
+            <p-button label="Cerrar" (onClick)="closeModalUpdateOrder()" styleClass="bg-btn-cancel w-full">
             </p-button>
         </div>
     </ng-template>
@@ -308,6 +320,7 @@
                 [tableStyle]="{ 'max-width': '100%' }"
                 rowStyleClass="custom-row-height"
                 [expandedRowKeys]="expandedRows"
+                rowExpandMode="single"
                 dataKey="id_order"
             >
                 <ng-template pTemplate="caption">

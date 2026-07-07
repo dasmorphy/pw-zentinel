@@ -52,7 +52,7 @@ export class PurchaseOrderService {
         return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/blacklist-driver`, formData, { headers });
     }
 
-    updateStatus(data: any, id_order: number) {
+    updatePurchaseOrder(data: any, id_order: number) {
         const headers = new HttpHeaders().set('Token', localStorage.getItem('sb_token') || '');
         return this.http.patch(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/update-purchase-order/${id_order}`, data, { headers });
     }
