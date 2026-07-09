@@ -300,6 +300,109 @@
     </ng-template>
 </p-dialog>
 
+<p-dialog header="Header" id="modalOrderReceipts" [closable]="false" [(visible)]="showModalReceipts" [draggable]="false" [modal]="true"
+    [style]="{ 'width': '30vw', 'border-radius': '32px'}">
+    <ng-template pTemplate="header">
+        <div style="display: grid; place-items: center;">
+            <h1 style="margin: 0; font-size: 22px;" class="text-center mt-5">
+                Detalle
+            </h1>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="content">
+        <div class="flex justify-content-between card-info gap-2">
+            <div class="flex flex-column">
+                <div class="flex flex-column">
+                    <label class="font-bold cab-label" htmlFor="shipping_guide">IDENTIFICACIÓN CONDUCTOR: </label>
+                    <label style="font-size: 23px;" class="font-bold mt-1" htmlFor="shipping_guide">
+                        {{ selectedOrderReceipts?.dni_driver || "N/A" }}
+                    </label>
+                </div>
+            
+                <div class="flex align-items-center mt-4">
+                    <i style="font-size: 0.8rem;" class="pi pi-calendar mr-2"></i>
+            
+                    <label htmlFor="shipping_guide">
+                        {{ selectedOrderReceipts?.created_at | date:'dd/MM/yyyy':'UTC'}}
+                    </label>
+            
+                    <i class="pi pi-clock mr-2 ml-2" style="font-size: 0.8rem;"></i>
+            
+                    <label htmlFor="shipping_guide">
+                        {{ selectedOrderReceipts?.created_at | date:'HH:mm':'UTC'}}
+                    </label>
+                </div>
+            </div>
+
+            <div class="i-log">
+                <i class="pi pi-file-check" style="color: #0056b3; font-size: 30px;"></i>
+            </div>
+        </div>
+
+        <div class="div-responsive mt-2 gap-2">
+            <div class="flex flex-column w-full card-info">
+                <i class="pi pi-user mb-3" style="color: #0056b3;"></i>
+                <label class="font-bold cab-label" htmlFor="shipping_guide">CONDUCTOR: </label>
+                <label class="det-label" htmlFor="shipping_guide">{{selectedOrderReceipts?.driver ?? 'N/A'}}</label>
+            </div>
+
+            <div class="flex flex-column w-full card-info">
+                <i class="pi pi-truck mb-3" style="color: #0056b3;"></i>
+                <label class="font-bold cab-label" htmlFor="shipping_guide">PLACA: </label>
+                <label class="det-label" htmlFor="shipping_guide">{{selectedOrderReceipts?.truck_license ?? 'N/A'}}</label>
+            </div>
+
+            <div class="flex flex-column w-full card-info">
+                <i class="pi pi-hammer mb-3" style="color: #0056b3;"></i>
+                <label class="font-bold cab-label" htmlFor="shipping_guide">CANTIDAD: </label>
+                <label class="det-label" htmlFor="shipping_guide">{{selectedOrderReceipts?.quantity ?? 'N/A'}}</label>
+            </div>
+        </div>
+
+        <div class="flex flex-column card-info mt-2 gap-2">
+
+            <div class="flex gap-2 w-full">
+                <div class="det-avatar">
+                    <i class="pi pi-user-edit" style="color: #0056b3;"></i>
+                </div>
+                <div class="flex flex-column">
+                    <label class="font-bold cab-label" htmlFor="shipping_guide">CREADO POR: </label>
+                    <label class="det-label" htmlFor="shipping_guide">{{selectedOrderReceipts?.created_by}}</label>
+                </div>
+            </div>
+
+            <div class="flex gap-2 w-full">
+                <div class="det-avatar">
+                    <i class="pi pi-user" style="color: #0056b3;"></i>
+                </div>
+                <div class="flex flex-column">
+                    <label class="font-bold cab-label" htmlFor="shipping_guide">GUARDIA: </label>
+                    <label class="det-label"  htmlFor="shipping_guide">{{selectedOrderReceipts?.name_user}}</label>
+                </div>
+            </div>
+
+        </div>
+
+        @if (selectedOrderReceipts?.images?.length > 0) {
+            <h4 class="mt-4">IMÁGENES</h4>
+            <div class="div-responsive mt-3">
+                <div class="flex justify-content-center" *ngFor="let image of selectedOrderReceipts?.images">
+                    <img style="object-fit: contain;" [src]="'http://st.telearseg.net' + image" alt="imagenes"
+                        loading="lazy" height="190" width="180">
+                </div>
+            </div>
+        }
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-center gap-3 mt-3" style="font-size: 15px;">
+            <p-button label="Cerrar" (onClick)="closeModalOrderReceipts()" styleClass="bg-btn-cancel w-full">
+            </p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
 <div
     class="bg-bluegray-50 mt-header border-round-2xl flex flex-column flex-no-wrap justify-content-center align-items-end">
     
@@ -415,6 +518,7 @@
                                 <p-table [value]="order.receipts" dataKey="id_receipts" class="w-full" styleClass="w-full">
                                     <ng-template pTemplate="header">
                                         <tr>
+                                            <th>Acciones</th>
                                             <th>Placa</th>
                                             <th>Conductor</th>
                                             <th>Cantidad</th>
@@ -422,6 +526,7 @@
                                     </ng-template>
                                     <ng-template pTemplate="body" let-order>
                                         <tr>
+                                            <td><i class="pi pi-eye cursor-pointer" (click)="viewDetailsReceipts(order)"></i></td>
                                             <td>{{ order.truck_license ?? 'N/A' }}</td>
                                             <td>{{ order.driver ?? 'N/A'}}</td>
                                             <td>{{ order.quantity ?? 'N/A'}}</td>

@@ -74,6 +74,7 @@ export class PurchaseOrderComponent {
 
 
     showModal: boolean = false;
+    showModalReceipts: boolean = false;
     showNewOrder: boolean = false;
     showUpdate: boolean = false;
     showAddDestiny: boolean = false;
@@ -85,6 +86,7 @@ export class PurchaseOrderComponent {
     isLoading: boolean = false;
 
     selectedOrder: any;
+    selectedOrderReceipts: any;
     optionGroupBusiness = []
     destinyBySector = []
     selectedDestiny: number | null = null;
@@ -328,6 +330,17 @@ export class PurchaseOrderComponent {
 
     getNameDestinies(): string {
         return this.selectedOrder?.destinations?.map((destiny: any) => destiny.name).join(', ') ?? 'N/A';
+    }
+
+
+    viewDetailsReceipts(order_receipts: any) {
+        this.showModalReceipts = true;
+        this.selectedOrderReceipts = order_receipts;
+    }
+
+    closeModalOrderReceipts() {
+        this.showModalReceipts = false;
+        this.selectedOrderReceipts = null;
     }
 
 }
