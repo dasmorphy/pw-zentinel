@@ -17,6 +17,7 @@ import { OverlayPanelModule } from "primeng/overlaypanel";
 import { ProgressSpinnerModule } from "primeng/progressspinner";
 import { SplitButtonModule } from "primeng/splitbutton";
 import { TableModule } from "primeng/table";
+import { TabViewModule } from "primeng/tabview";
 import { TagModule } from "primeng/tag";
 import { TieredMenuModule } from "primeng/tieredmenu";
 import { TimelineModule } from "primeng/timeline";
@@ -56,7 +57,8 @@ import { UtilsService } from "src/app/services/utils.service";
         InputSwitchModule,
         InputNumberModule,
         CheckboxModule,
-        TooltipModule
+        TooltipModule,
+        TabViewModule
     ],
     templateUrl: './purchase-order.component.html',
     styleUrls: ['./purchase-order.component.sass']
@@ -82,7 +84,8 @@ export class PurchaseOrderComponent {
 
     expandedRows = {};
 
-    dataPurchaseOrder: Dispatch[] = [];
+    dataPurchaseOrder: any[] = [];
+    dataWithoutOrder: any[] = [];
     isLoading: boolean = false;
 
     selectedOrder: any;
@@ -111,13 +114,26 @@ export class PurchaseOrderComponent {
         {
             label: 'Habilitar orden',
             icon: 'pi pi-play-circle',
-            visible: () => this.selectedOrder?.status_name === 'Con Novedad' && this.utilsService.formatLocalDate(new Date()) > this.selectedOrder?.end_date,
+            visible: () => this.selectedOrder?.status_name === 'Con Novedad' && this.comparisonDates(),
             command: () => this.showUpdate = true
         },
         {
             label: 'Agregar destino',
             icon: 'pi pi-map-marker',
             command: () => {this.showAddDestiny = true; this.checkAllDestinies = false;}
+        },
+    ];
+
+    itemsWithoutOrder: any = [
+        {
+            label: 'Ver detalles',
+            icon: 'pi pi-eye',
+            command: () => this.showModalReceipts = true
+        },
+        {
+            label: 'Asignar orden',
+            icon: 'pi pi-play-circle',
+            command: () => this.showUpdate = true
         },
     ];
 
@@ -137,6 +153,7 @@ export class PurchaseOrderComponent {
         this.user_json = this.userService.getDataSession();
         const filters = { ...this.filters };
         this.fetchOrderPurchase();
+        this.fetchWithoutOrder();
         this.fetchGroupBusinessByBusiness();
         this.fetchGroupBusinessBySector();
 
@@ -171,6 +188,25 @@ export class PurchaseOrderComponent {
         })
     }
 
+    fetchWithoutOrder() {
+        this.isLoading = true;
+        const filters = {
+            withoutOrder: true
+            // ...this.filters 
+        };
+
+        this.purchaseOrderService.getPurchaseOrderReceipts(filters).subscribe({
+            next: (data: any) => {
+                this.isLoading = false;
+                this.dataWithoutOrder = data?.data;
+            },
+            error: (error: any) => {
+                this.isLoading = false;
+                console.log(error)
+            }
+        })
+    }
+
     fetchGroupBusinessByBusiness() {
         // const id_business = this.user_json?.attributes?.id_business
         this.dashboardService.getGroupBusinessByBusiness(1).subscribe({
@@ -187,6 +223,24 @@ export class PurchaseOrderComponent {
 
     optionsDispatch(loogbook: any) {
         this.selectedOrder = loogbook
+    }
+
+
+    optionsOrderReceipts(order_receipts: any) {
+        const data_receipt = {
+            ...order_receipts?.logbook_entry,
+            id_receipts: order_receipts.id_receipts,
+            images: order_receipts?.images,
+            created_at: order_receipts?.created_at
+        }
+        this.selectedOrderReceipts = data_receipt;
+    }
+
+    comparisonDates() {
+        const endDate = this.selectedOrder!.end_date.substring(0, 10);
+        const today = this.utilsService.formatLocalDate(new Date());
+
+        return today > endDate;
     }
 
     // expandAll() {
@@ -303,10 +357,10 @@ export class PurchaseOrderComponent {
     updateStatus(data: any) {
         this.showAddDestiny = false;
         this.isLoading = true;
+        this.showUpdate = false;
         const data_save = {
             order: {
                 ...data,
-                flag_all_destinies: this.checkAllDestinies,
                 user: this.user_json?.user,
             }
         };
@@ -334,8 +388,14 @@ export class PurchaseOrderComponent {
 
 
     viewDetailsReceipts(order_receipts: any) {
+        const data_receipt = {
+            ...order_receipts?.logbook_entry,
+            id_receipts: order_receipts.id_receipts,
+            images: order_receipts?.images,
+            created_at: order_receipts?.created_at
+        }
+        this.selectedOrderReceipts = data_receipt;
         this.showModalReceipts = true;
-        this.selectedOrderReceipts = order_receipts;
     }
 
     closeModalOrderReceipts() {

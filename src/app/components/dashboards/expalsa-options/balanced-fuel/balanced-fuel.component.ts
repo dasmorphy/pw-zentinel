@@ -25,6 +25,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
 import { DashboardService } from 'src/app/services/dashboard.service';
 import { TooltipModule } from 'primeng/tooltip';
+import { PurchaseOrderService } from 'src/app/services/puchase-order.service';
 
 @Component({
     selector: 'app-balanced-fuel',
@@ -59,6 +60,7 @@ export class BalancedFuelComponent {
     
     private readonly menuService = inject(MenuService);
     private readonly logbookService = inject(LogbookService);
+    private readonly purchaseOrderService = inject(PurchaseOrderService);
     private readonly userService = inject(UserService);
     readonly utilsService = inject(UtilsService);
     readonly dashboardService = inject(DashboardService);
@@ -173,7 +175,7 @@ export class BalancedFuelComponent {
     }
 
     fetchAllData() {
-        this.logbookService.getPurchaseOrderReceipts().subscribe({
+        this.purchaseOrderService.getPurchaseOrderReceipts().subscribe({
             next: (data: any) => {
                 this.dataPurchaseOrder = data?.data || [];
             },

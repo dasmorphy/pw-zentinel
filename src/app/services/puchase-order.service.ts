@@ -8,11 +8,15 @@ import { environment } from "src/environments/environment.development";
 export class PurchaseOrderService {
     private readonly http = inject(HttpClient);
     
-    getPurchaseOrderReceipts(filter?: any) {
+    getPurchaseOrderReceipts(filters?: any) {
         let params = new HttpParams();
         let headers = new HttpHeaders();
 
-        return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/purchase-order-receipts`,
+        if (filters?.withoutOrder) {
+            params = params.set('without-order', filters?.withoutOrder);
+        }
+
+        return this.http.get(`http://localhost:2120/rest/zent-logbook-api/v1.0/purchase-order-receipts`,
             { headers, params }
         )
     }
@@ -61,7 +65,7 @@ export class PurchaseOrderService {
         let params = new HttpParams();
         let headers = new HttpHeaders();
 
-        return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/purchase-order`,
+        return this.http.get(`http://localhost:2120/rest/zent-logbook-api/v1.0/purchase-order`,
             { headers, params }
         )
     }

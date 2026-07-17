@@ -127,14 +127,14 @@ export class MenuComponent implements OnInit {
         label: 'Órdenes de compra',
         icon: 'pi pi-shopping-cart',
         routerLink: ['ordenes-compra'],
-        visible: this.user_permissions_signal()?.includes('VER_ORDENES_COMPRA'),
-        command: () => { this.clickHiddenToggle(true) },
+        visible: this.user_session?.user == 'dmales',
+        command: () => { this.clickHiddenToggle(true); console.log (this.user_session)},
       },
       {
         label: 'Lista negra',
         icon: 'pi pi-user-minus',
         routerLink: ['lista-negra'],
-        visible: this.user_permissions_signal()?.includes('VER_LISTA_NEGRA'),
+        visible: this.user_session?.user == 'dmales',
         command: () => { this.clickHiddenToggle(true) },
       },
       {
