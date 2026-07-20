@@ -80,6 +80,7 @@ export class PurchaseOrderComponent {
     showNewOrder: boolean = false;
     showUpdate: boolean = false;
     showAddDestiny: boolean = false;
+    showAssignOrder: boolean = false;
     orderForm: FormGroup;
 
     expandedRows = {};
@@ -93,6 +94,7 @@ export class PurchaseOrderComponent {
     optionGroupBusiness = []
     destinyBySector = []
     selectedDestiny: number | null = null;
+    selectedAssignOrder: number | null = null;
     typeOrders = ["BALANCEADO", "COMBUSTIBLE"]
     rangeDates: Date[] | undefined;
     checkAllDestinies: boolean = false;
@@ -133,7 +135,7 @@ export class PurchaseOrderComponent {
         {
             label: 'Asignar orden',
             icon: 'pi pi-play-circle',
-            command: () => this.showUpdate = true
+            command: () => this.showAssignOrder = true
         },
     ];
 
@@ -179,7 +181,10 @@ export class PurchaseOrderComponent {
         this.purchaseOrderService.getAllPurchaseOrders(filters).subscribe({
             next: (data: any) => {
                 this.isLoading = false;
-                this.dataPurchaseOrder = data?.data;
+                this.dataPurchaseOrder = data?.data?.map((order: any) => ({
+                    ...order,
+                    label: `${order.number_order} - ${order.type_order}`
+                }));
             },
             error: (error: any) => {
                 this.isLoading = false;
@@ -215,6 +220,30 @@ export class PurchaseOrderComponent {
             },
             error: (err) => console.error(err)
         });
+    }
+
+    assignOrder() {
+        this.isLoading = true;
+        const data = {
+            id_purchase_order: this.selectedAssignOrder,
+            id_receipt: this.selectedOrderReceipts?.id_receipts,
+            user: this.user_json?.user
+        }
+
+        this.purchaseOrderService.assignReceiptsToOrder(data).subscribe({
+            next: (data: any) => {
+                this.isLoading = false;
+                this.showAssignOrder = false;
+                this.selectedAssignOrder = null;
+                this.fetchOrderPurchase();
+                this.fetchWithoutOrder();
+                this.utilsService.onSuccess("Registro asignado correctamente")
+            },
+            error: (error: any) => {
+                this.isLoading = false;
+                this.utilsService.onError(error?.error?.message ?? "No se pudo asignar el registro, intente nuevamente");
+            }
+        })
     }
 
     reloadDataDispatch() {
@@ -354,6 +383,11 @@ export class PurchaseOrderComponent {
         this.checkAllDestinies = false;
     }
 
+    closeModalAssignOrder() {
+        this.showAssignOrder = false;
+        this.selectedAssignOrder = null;
+    }
+
     updateStatus(data: any) {
         this.showAddDestiny = false;
         this.isLoading = true;
@@ -381,6 +415,10 @@ export class PurchaseOrderComponent {
             }
         })
     }
+
+    // assignOrder() {
+    //     this.fetchOrderPurchaseWithoutReceipts();
+    // }
 
     getNameDestinies(): string {
         return this.selectedOrder?.destinations?.map((destiny: any) => destiny.name).join(', ') ?? 'N/A';

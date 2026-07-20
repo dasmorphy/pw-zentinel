@@ -180,6 +180,39 @@
     </ng-template>
 </p-dialog>
 
+<p-dialog header="Header" [closable]="false" [(visible)]="showAssignOrder" [draggable]="false" [modal]="true"
+    [style]="{ 'width': '30vw', 'border-radius': '32px'}">
+    <ng-template pTemplate="header">
+        <div style="display: grid; place-items: center;">
+            <h1 style="margin: 0; font-size: 22px;" class="text-center mt-2">
+                Asignar orden
+            </h1>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="content">
+            <div class="flex flex-column mt-2 gap-3">
+                <span class="w-full">
+                    <label class="text-color-secondary" htmlFor="type_order">Orden</label>
+                    <p-dropdown [style]="{ boxShadow: 'none' }" class="w-full" styleClass="border-round w-full mt-2" [autoDisplayFirst]="false"
+                        id="type_order" [options]="dataPurchaseOrder" optionLabel="label" optionValue="id_order" appendTo="body" 
+                        [filter]="true" filterBy="number_order"
+                        [emptyMessage]="messageEmpty" [(ngModel)]="selectedAssignOrder"></p-dropdown>
+                </span>
+    
+            </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-center gap-3 mt-2" style="font-size: 15px;">
+            <p-button label="Guardar" (onClick)="assignOrder()" styleClass="bg-btn-primary w-full">
+            </p-button>
+            <p-button label="Cerrar" (onClick)="closeModalAssignOrder()" styleClass="bg-btn-cancel w-full">
+            </p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
 
 <p-dialog header="Header" [closable]="false" [(visible)]="showModal" [draggable]="false" [modal]="true"
     [style]="{ 'width': '30vw', 'border-radius': '32px'}">

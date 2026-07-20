@@ -65,6 +65,10 @@ export class PurchaseOrderService {
         let params = new HttpParams();
         let headers = new HttpHeaders();
 
+        if (filter?.withoutReceipts) {
+            params = params.set('without-receipts', filter.withoutReceipts);
+        }
+
         return this.http.get(`http://localhost:2120/rest/zent-logbook-api/v1.0/purchase-order`,
             { headers, params }
         )
@@ -73,5 +77,9 @@ export class PurchaseOrderService {
     savePurchaseOrder(order: any) {
         const headers = new HttpHeaders().set('Token', localStorage.getItem('sb_token') || '');
         return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/purchase-order`, {order}, { headers });
+    }
+
+    assignReceiptsToOrder(data: any) {
+        return this.http.patch(`http://localhost:2120/rest/zent-logbook-api/v1.0/assign-order-to-receipt`, {data});
     }
 }
