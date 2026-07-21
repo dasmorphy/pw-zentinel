@@ -16,6 +16,14 @@ export class PurchaseOrderService {
             params = params.set('without-order', filters?.withoutOrder);
         }
 
+        if (filters?.start_date) {
+            params = params.set('start_date', filters.start_date);
+        }
+
+        if (filters?.end_date) {
+            params = params.set('end_date', filters.end_date);
+        }
+
         return this.http.get(`http://localhost:2120/rest/zent-logbook-api/v1.0/purchase-order-receipts`,
             { headers, params }
         )
@@ -69,6 +77,18 @@ export class PurchaseOrderService {
             params = params.set('without-receipts', filter.withoutReceipts);
         }
 
+        if (filter?.start_date) {
+            params = params.set('start_date', filter.start_date);
+        }
+
+        if (filter?.end_date) {
+            params = params.set('end_date', filter.end_date);
+        }
+
+        if (filter?.destiny_id) {
+            params = params.set('destiny_id', filter?.destiny_id)
+        }
+
         return this.http.get(`http://localhost:2120/rest/zent-logbook-api/v1.0/purchase-order`,
             { headers, params }
         )
@@ -81,5 +101,30 @@ export class PurchaseOrderService {
 
     assignReceiptsToOrder(data: any) {
         return this.http.patch(`http://localhost:2120/rest/zent-logbook-api/v1.0/assign-order-to-receipt`, {data});
+    }
+
+    excelOrders(filter?: any) {
+        let params = new HttpParams();
+        let headers = new HttpHeaders();
+
+        if (filter?.start_date) {
+            params = params.set('start_date', filter.start_date);
+        }
+
+        if (filter?.end_date) {
+            params = params.set('end_date', filter.end_date);
+        }
+
+        if (filter?.destiny_id) {
+            params = params.set('destiny_id', filter?.destiny_id)
+        }
+
+        return this.http.get(`http://localhost:2120/rest/zent-logbook-api/v1.0/report_orders`,
+            {
+                headers, params,
+                responseType: 'blob',
+                observe: 'response'
+            }
+        )
     }
 }

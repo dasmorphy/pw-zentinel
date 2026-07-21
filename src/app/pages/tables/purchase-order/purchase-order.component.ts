@@ -88,6 +88,7 @@ export class PurchaseOrderComponent {
     dataPurchaseOrder: any[] = [];
     dataWithoutOrder: any[] = [];
     isLoading: boolean = false;
+    selectedGroupBusiness: number[] = [];
 
     selectedOrder: any;
     selectedOrderReceipts: any;
@@ -100,6 +101,7 @@ export class PurchaseOrderComponent {
     checkAllDestinies: boolean = false;
 
     dateRangeFilter: Date[] | null = null;
+    dateRangeFilterReceipts: Date[] | null = null;
     messageEmpty: string = "No hay opciones disponibles";
 
     filters: any = {
@@ -196,8 +198,8 @@ export class PurchaseOrderComponent {
     fetchWithoutOrder() {
         this.isLoading = true;
         const filters = {
+            ...this.filters, 
             withoutOrder: true
-            // ...this.filters 
         };
 
         this.purchaseOrderService.getPurchaseOrderReceipts(filters).subscribe({
@@ -220,6 +222,31 @@ export class PurchaseOrderComponent {
             },
             error: (err) => console.error(err)
         });
+    }
+
+    generateReportHistory() {
+        this.fetchReportHistory();
+    }
+
+    fetchReportHistory() {
+        this.isLoading = true;
+        const filters = { ...this.filters };
+
+
+        if (this.user_json?.role !== 'admin') {
+            filters.user = this.user_json?.user
+        }
+
+        this.purchaseOrderService.excelOrders(filters).subscribe({
+            next: (data: any) => {
+                this.isLoading = false;
+                this.utilsService.downloadFile(data, 'reporte_excel');
+            },
+            error: (error: any) => {
+                this.isLoading = false;
+                console.log(error)
+            }
+        })
     }
 
     assignOrder() {
@@ -246,8 +273,12 @@ export class PurchaseOrderComponent {
         })
     }
 
-    reloadDataDispatch() {
+    reloadDataPurchaseOrder() {
         this.fetchOrderPurchase();
+    }
+
+    reloadWithoutOrder() {
+        this.fetchWithoutOrder();
     }
 
     optionsDispatch(loogbook: any) {
@@ -304,16 +335,12 @@ export class PurchaseOrderComponent {
 
 
     saveOrder() {
-        console.log(this.rangeDates)
-
         if (!this.rangeDates || this.rangeDates.length < 2) {
             this.utilsService.onWarn('Por favor, seleccione un rango de fechas válido.');
             return;
         }
 
         const [startDate, endDate] = this.rangeDates;
-
-        console.log(startDate, endDate)
 
         this.utilsService.validateControlsForms(this.orderForm, ["observations"]);
         this.utilsService.showControlVoiled();
@@ -326,7 +353,6 @@ export class PurchaseOrderComponent {
                 start_date: this.utilsService.formatLocalDate(startDate),
                 end_date: this.utilsService.formatLocalDate(endDate),
             };
-            console.log(data_save)
 
             this.purchaseOrderService.savePurchaseOrder(data_save).subscribe({
                 next: (data: any) => {
@@ -349,13 +375,14 @@ export class PurchaseOrderComponent {
 
     }
 
-    applyFilter(imagePanel: any) {
+    applyFilter(imagePanel: any, isReceipts: boolean = false) {
         imagePanel.hide()
         let filter_date: any = {}
+        const dateFilter = isReceipts ? this.dateRangeFilterReceipts : this.dateRangeFilter;
 
-        if (Array.isArray(this.dateRangeFilter)) {
-            if (this.dateRangeFilter.length === 2) {
-                const [startDate, endDate] = this.dateRangeFilter;
+        if (Array.isArray(dateFilter)) {
+            if (dateFilter.length === 2) {
+                const [startDate, endDate] = dateFilter;
 
                 const start = new Date(startDate);
                 start.setHours(0, 0, 0, 0);
@@ -368,13 +395,20 @@ export class PurchaseOrderComponent {
             };
         };
 
+        if (this.selectedGroupBusiness.length > 0) {
+            filter_date.destiny_id = this.selectedGroupBusiness.join(',');
+        }
+
         this.filters = filter_date;
-        console.log(this.filters)
-        this.fetchOrderPurchase();
+        isReceipts ? this.fetchWithoutOrder() : this.fetchOrderPurchase();
     }
 
-    clearFilter() {
+    clearFilter(isReceipts: boolean = false) {
+        isReceipts ? this.dateRangeFilterReceipts = null : this.dateRangeFilter = null;
+        this.selectedGroupBusiness = [];
+        this.filters = { first: 1, rows: 5 };
 
+        isReceipts ? this.fetchWithoutOrder() : this.fetchOrderPurchase();
     }
 
     closeModalUpdateOrder() {
