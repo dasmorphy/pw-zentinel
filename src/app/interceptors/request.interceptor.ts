@@ -8,6 +8,7 @@ export const httpInterceptorRequest: HttpInterceptorFn = (req: HttpRequest<unkno
   if (req.url.includes('/rest/zent-logbook-api/v1.0/post/logbook-out')) return next(req)
   if (req.url.includes('/rest/zent-logbook-api/v1.0/blacklist-driver') && req.method == 'POST') return next(req)
   if (req.url.includes('/rest/zent-logbook-api/v1.0/post/logbook-entry')) return next(req)
+  if (req.url.includes('/rest/zent-logbook-api/v1.0/import-orders')) return next(req)
   if (req.url.includes('/rest/zent-dispatch-api/v1.0/entry-access') && (req.method == 'POST' || req.method == 'PATCH')) return next(req)
   if (req.url.includes('/rest/zent-dispatch-api/v1.0/dispatch') && (req.method == 'POST' || req.method == 'PATCH')) return next(req)
   if (req.url.includes('/rest/zent-dispatch-api/v1.0/reception') && (req.method == 'POST')) return next(req)

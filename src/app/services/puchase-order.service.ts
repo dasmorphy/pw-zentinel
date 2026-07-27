@@ -1,6 +1,7 @@
 import { HttpClient, HttpParams, HttpHeaders } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { environment } from "src/environments/environment.development";
+import { v4 as uuidv4} from 'uuid';
 
 @Injectable({
   providedIn: 'root'
@@ -101,6 +102,13 @@ export class PurchaseOrderService {
 
     assignReceiptsToOrder(data: any) {
         return this.http.patch(`http://localhost:2120/rest/zent-logbook-api/v1.0/assign-order-to-receipt`, {data});
+    }
+
+    uploadExcelOrders(formData: FormData) {
+        let headers = new HttpHeaders().set('Token', localStorage.getItem('sb_token') || '');
+        headers = headers.set('channel', 'ZENTINEL_WEB');
+        headers = headers.set('externalTransactionId', uuidv4());
+        return this.http.post(`http://localhost:2120/rest/zent-logbook-api/v1.0/import-orders`, formData, { headers });
     }
 
     excelOrders(filter?: any) {

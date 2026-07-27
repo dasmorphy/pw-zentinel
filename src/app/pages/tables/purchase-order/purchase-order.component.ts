@@ -1,14 +1,14 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject, ViewChild } from "@angular/core";
+import { Component, inject } from "@angular/core";
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from "@angular/forms";
 import { ActivatedRoute } from "@angular/router";
 import { NgxTippyModule } from "ngx-tippy-wrapper";
+import { PrimeNGConfig } from "primeng/api";
 import { ButtonModule } from "primeng/button";
 import { CalendarModule } from "primeng/calendar";
 import { CheckboxModule } from "primeng/checkbox";
 import { DialogModule } from "primeng/dialog";
 import { DropdownModule } from "primeng/dropdown";
-import { FileUpload, FileUploadModule } from "primeng/fileupload";
 import { InputNumberModule } from "primeng/inputnumber";
 import { InputSwitchModule } from "primeng/inputswitch";
 import { InputTextModule } from "primeng/inputtext";
@@ -30,6 +30,9 @@ import { LogbookService } from "src/app/services/logbook.service";
 import { PurchaseOrderService } from "src/app/services/puchase-order.service";
 import { UserService } from "src/app/services/user.service";
 import { UtilsService } from "src/app/services/utils.service";
+import { BadgeModule } from 'primeng/badge';
+import { ProgressBarModule } from 'primeng/progressbar';
+
 
 @Component({
     selector: 'app-purchase-order',
@@ -53,20 +56,18 @@ import { UtilsService } from "src/app/services/utils.service";
         NgxTippyModule,
         TieredMenuModule,
         OverlayPanelModule,
-        FileUploadModule,
         InputSwitchModule,
         InputNumberModule,
         CheckboxModule,
         TooltipModule,
-        TabViewModule
+        TabViewModule,
+        BadgeModule,
+        ProgressBarModule
     ],
     templateUrl: './purchase-order.component.html',
     styleUrls: ['./purchase-order.component.sass']
 })
 export class PurchaseOrderComponent {
-    @ViewChild('fileUpload') fileUpload!: FileUpload;
-
-
     public readonly dispatchService = inject(DispatchService);
     public readonly purchaseOrderService = inject(PurchaseOrderService);
     public readonly utilsService = inject(UtilsService);
@@ -77,6 +78,7 @@ export class PurchaseOrderComponent {
 
     showModal: boolean = false;
     showModalReceipts: boolean = false;
+    showUploadExcel: boolean = false;
     showNewOrder: boolean = false;
     showUpdate: boolean = false;
     showAddDestiny: boolean = false;
@@ -142,7 +144,11 @@ export class PurchaseOrderComponent {
     ];
 
 
-    constructor(private fb: FormBuilder, private route: ActivatedRoute) {
+    selectedExcelFile: File | null = null;
+    isDraggingExcel: boolean = false;
+    private readonly acceptedExcelType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+    constructor(private fb: FormBuilder, private route: ActivatedRoute, private config: PrimeNGConfig,) {
         this.orderForm = this.fb.group({
             number_order: ['', Validators.required],
             type_order: ['', Validators.required],
@@ -473,6 +479,109 @@ export class PurchaseOrderComponent {
     closeModalOrderReceipts() {
         this.showModalReceipts = false;
         this.selectedOrderReceipts = null;
+    }
+
+    onDragOverExcel(event: DragEvent) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.isDraggingExcel = true;
+    }
+
+    onDragLeaveExcel(event: DragEvent) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.isDraggingExcel = false;
+    }
+
+    onDropExcel(event: DragEvent) {
+        event.preventDefault();
+        event.stopPropagation();
+        this.isDraggingExcel = false;
+
+        const files = event.dataTransfer?.files;
+        if (!files || files.length === 0) {
+            return;
+        }
+
+        if (files.length > 1) {
+            this.utilsService.onWarn('Solo se permite subir un archivo a la vez.');
+            return;
+        }
+
+        this.setExcelFile(files[0]);
+    }
+
+    onExcelInputChange(event: Event) {
+        const input = event.target as HTMLInputElement;
+        const file = input.files?.[0];
+        if (file) {
+            this.setExcelFile(file);
+        }
+        // Permite volver a seleccionar el mismo archivo
+        input.value = '';
+    }
+
+    private setExcelFile(file: File) {
+        if (!this.isValidExcel(file)) {
+            this.utilsService.onWarn('Solo se permiten archivos con formato .xlsx');
+            return;
+        }
+        this.selectedExcelFile = file;
+    }
+
+    private isValidExcel(file: File): boolean {
+        const isXlsxExtension = file.name.toLowerCase().endsWith('.xlsx');
+        const isXlsxType = !file.type || file.type === this.acceptedExcelType;
+        return isXlsxExtension && isXlsxType;
+    }
+
+    removeExcelFile() {
+        this.selectedExcelFile = null;
+    }
+
+    closeUploadExcelModal() {
+        this.showUploadExcel = false;
+        this.selectedExcelFile = null;
+        this.isDraggingExcel = false;
+    }
+
+    uploadExcel() {
+        if (!this.selectedExcelFile) {
+            this.utilsService.onWarn('Por favor, seleccione un archivo .xlsx');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', this.selectedExcelFile, this.selectedExcelFile.name);
+        formData.append('user', this.user_json?.user);
+
+        this.isLoading = true;
+        this.purchaseOrderService.uploadExcelOrders(formData).subscribe({
+            next: (data: any) => {
+                this.isLoading = false;
+                const message = data?.message ?? 'Archivo subido correctamente';
+                this.utilsService.onSuccess(message);
+                this.closeUploadExcelModal();
+                this.fetchOrderPurchase();
+            },
+            error: (error: any) => {
+                this.isLoading = false;
+                const error_message = error?.error?.message ?? 'Error al subir el archivo, por favor intente nuevamente';
+                this.utilsService.onError(error_message);
+            }
+        });
+    }
+
+    formatSize(bytes: number) {
+        if (!bytes || bytes === 0) {
+            return '0 B';
+        }
+        const k = 1024;
+        const dm = 2;
+        const sizes = ['B', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        const formattedSize = parseFloat((bytes / Math.pow(k, i)).toFixed(dm));
+        return `${formattedSize} ${sizes[i]}`;
     }
 
 }

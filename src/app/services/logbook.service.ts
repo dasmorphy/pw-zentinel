@@ -280,7 +280,7 @@ export class LogbookService {
             params = params.set('type-logbook', type_logbook);
         }
 
-        return this.http.delete(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/delete/logbook`,
+        return this.http.delete(`http://localhost:2120/rest/zent-logbook-api/v1.0/delete/logbook`,
             { params }
         )
     }

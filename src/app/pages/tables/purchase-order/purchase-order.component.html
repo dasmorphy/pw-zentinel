@@ -436,14 +436,83 @@
     </ng-template>
 </p-dialog>
 
+
+<p-dialog header="Header" id="upload-excel" [closable]="false" [(visible)]="showUploadExcel" [draggable]="false" [modal]="true"
+    [style]="{ 'width': '30vw', 'border-radius': '32px'}">
+    <ng-template pTemplate="header">
+        <div style="display: grid; place-items: center;">
+            <h1 style="margin: 0; font-size: 22px;" class="text-center mt-4">
+                Subir archivo Excel
+            </h1>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="content">
+        <input
+            #excelInput
+            type="file"
+            accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            class="hidden"
+            (change)="onExcelInputChange($event)"
+        />
+
+        <!-- Zona de arrastrar y soltar -->
+        <div
+            *ngIf="!selectedExcelFile"
+            class="dropzone"
+            [class.dropzone--active]="isDraggingExcel"
+            (click)="excelInput.click()"
+            (dragover)="onDragOverExcel($event)"
+            (dragleave)="onDragLeaveExcel($event)"
+            (drop)="onDropExcel($event)"
+        >
+            <i class="pi pi-file-excel dropzone__icon"></i>
+            <p class="dropzone__title">Arrastra y suelta tu archivo aquí</p>
+            <p class="dropzone__subtitle">o haz clic para seleccionarlo</p>
+            <span class="dropzone__hint">Solo se permite un archivo con formato <strong>.xlsx</strong></span>
+        </div>
+
+        <!-- Archivo seleccionado -->
+        <div *ngIf="selectedExcelFile" class="file-preview">
+            <div class="file-preview__icon">
+                <i class="pi pi-file-excel"></i>
+            </div>
+            <div class="file-preview__info">
+                <span class="file-preview__name" [pTooltip]="selectedExcelFile.name" tooltipPosition="top">
+                    {{ selectedExcelFile.name }}
+                </span>
+                <span class="file-preview__size">{{ formatSize(selectedExcelFile.size) }}</span>
+            </div>
+            <button type="button" class="file-preview__remove" (click)="removeExcelFile()" pTooltip="Quitar archivo" tooltipPosition="top">
+                <i class="pi pi-times"></i>
+            </button>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-center gap-3 mt-3" style="font-size: 15px;">
+            <p-button label="Subir" (onClick)="uploadExcel()" [disabled]="!selectedExcelFile"
+                styleClass="bg-btn-primary w-full">
+            </p-button>
+            <p-button label="Cancelar" (onClick)="closeUploadExcelModal()"
+                styleClass="bg-btn-cancel w-full">
+            </p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
 <div
     class="bg-bluegray-50 mt-header border-round-2xl flex flex-column flex-no-wrap justify-content-center align-items-end">
     
     <div class="bg-white w-12 flex flex-column p-responsive py-5 border-round-md flex-wrap" style="overflow: auto">
         <div class="flex align-items-center justify-content-between mb-5">
             <h1 class="font-verdana text-primary--custom pl-responsive">Ordenes de compra</h1>
-            <p-button label="Nueva orden" icon="pi pi-plus" (onClick)="showNewOrder = true" styleClass="bg-btn-primary w-full">
-            </p-button>
+            <div class="flex align-items-center justify-content-between gap-3">
+                <p-button label="Nueva orden" icon="pi pi-plus" (onClick)="showNewOrder = true" styleClass="btn-submit w-full">
+                </p-button>
+                <p-button label="Subir excel" icon="pi pi-upload" (onClick)="showUploadExcel = true" styleClass="btn-submit w-full">
+                </p-button>
+            </div>
         </div>
         <div class="card w-full pd-table" id="table-logbooks">
             <p-tabView>
