@@ -131,6 +131,13 @@ export class MenuComponent implements OnInit {
         command: () => { this.clickHiddenToggle(true); console.log (this.user_session)},
       },
       {
+        label: 'Proyectos técnicos',
+        icon: 'pi pi-folder-open',
+        routerLink: ['proyectos-tecnicos'],
+        visible: this.user_session?.user == 'dmales',
+        command: () => { this.clickHiddenToggle(true) },
+      },
+      {
         label: 'Lista negra',
         icon: 'pi pi-user-minus',
         routerLink: ['lista-negra'],

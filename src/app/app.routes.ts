@@ -17,6 +17,7 @@ import { TableLeadComponent } from './pages/tables/leads/lead-table.component';
 import { TableEmployeeInternComponent } from './pages/tables/table-employee-intern/table-employee-intern.component';
 import { BlacklistComponent } from './pages/tables/blacklist/blacklist.component';
 import { PurchaseOrderComponent } from './pages/tables/purchase-order/purchase-order.component';
+import { ProjectTechnicalComponent } from './pages/tables/project-technical/project-technical.component';
 
 export const routes: Routes = [
     {
@@ -75,6 +76,11 @@ export const routes: Routes = [
             {
                 path: "ordenes-compra",
                 loadComponent: () => PurchaseOrderComponent,
+                canActivate: [AuthGuard]
+            },
+            {
+                path: "proyectos-tecnicos",
+                loadComponent: () => ProjectTechnicalComponent,
                 canActivate: [AuthGuard]
             },
             {

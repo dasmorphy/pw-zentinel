@@ -146,6 +146,21 @@ export class UtilsService {
         }
     }
 
+    getSeverityProjectTechnical(status: string) {
+        switch (status) {
+        case "Aprobado":
+            return 'success';
+        case "Pendiente aprobación":
+            return 'warning';
+        case "Finalizado":
+            return 'danger';
+        case "En ejecución":
+            return 'info';
+        default:
+            return 'info';
+        }
+    }
+
     onSuccess(message: string, time: number = 5000) {
         this.messageService.add({
             life: time,

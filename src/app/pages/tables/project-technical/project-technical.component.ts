@@ -1,0 +1,220 @@
+import { CommonModule } from "@angular/common";
+import { Component, inject } from "@angular/core";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { NgxTippyModule } from "ngx-tippy-wrapper";
+import { ButtonModule } from "primeng/button";
+import { CalendarModule } from "primeng/calendar";
+import { CheckboxModule } from "primeng/checkbox";
+import { DialogModule } from "primeng/dialog";
+import { DropdownModule } from "primeng/dropdown";
+import { InputNumberModule } from "primeng/inputnumber";
+import { InputSwitchModule } from "primeng/inputswitch";
+import { InputTextModule } from "primeng/inputtext";
+import { MultiSelectModule } from "primeng/multiselect";
+import { OverlayPanelModule } from "primeng/overlaypanel";
+import { ProgressSpinnerModule } from "primeng/progressspinner";
+import { SplitButtonModule } from "primeng/splitbutton";
+import { TableModule } from "primeng/table";
+import { TabViewModule } from "primeng/tabview";
+import { TagModule } from "primeng/tag";
+import { TieredMenuModule } from "primeng/tieredmenu";
+import { TimelineModule } from "primeng/timeline";
+import { ToastModule } from "primeng/toast";
+import { TooltipModule } from "primeng/tooltip";
+import { ProjectTechnicalService } from "src/app/services/project-technical.service";
+import { UserService } from "src/app/services/user.service";
+import { UtilsService } from "src/app/services/utils.service";
+import { BadgeModule } from 'primeng/badge';
+import { ProgressBarModule } from 'primeng/progressbar';
+
+
+@Component({
+    selector: 'app-project-technical',
+    standalone: true,
+    imports: [
+        CommonModule,
+        DialogModule,
+        FormsModule,
+        ButtonModule,
+        ProgressSpinnerModule,
+        ToastModule,
+        DropdownModule,
+        TableModule,
+        InputTextModule,
+        ReactiveFormsModule,
+        TagModule,
+        CalendarModule,
+        MultiSelectModule,
+        TimelineModule,
+        SplitButtonModule,
+        NgxTippyModule,
+        TieredMenuModule,
+        OverlayPanelModule,
+        InputSwitchModule,
+        InputNumberModule,
+        CheckboxModule,
+        TooltipModule,
+        TabViewModule,
+        BadgeModule,
+        ProgressBarModule
+    ],
+    templateUrl: './project-technical.component.html',
+    styleUrls: ['./project-technical.component.sass']
+})
+export class ProjectTechnicalComponent {
+    public readonly utilsService = inject(UtilsService);
+    public readonly userService = inject(UserService);
+    private readonly projectTechnicalService = inject(ProjectTechnicalService);
+
+    showModal: boolean = false;
+    showModalRecord: boolean = false;
+
+    expandedRows = {};
+
+    dataProjects: any[] = [];
+    isLoading: boolean = false;
+    showUpdate: boolean = false;
+
+    selectedProject: any;
+    selectedRecord: any;
+
+    statusOptions: string[] = [];
+    selectedStatus: string[] = [];
+    dateRangeFilter: Date[] | null = null;
+    messageEmpty: string = "No hay opciones disponibles";
+
+    filters: any = {};
+
+    user_json: any;
+
+    items: any = [
+        {
+            label: 'Ver detalles',
+            icon: 'pi pi-eye',
+            command: () => this.showModal = true
+        },
+        {
+            label: 'Aprobar finalización',
+            icon: 'pi pi-check',
+            visible: () => this.selectedProject?.status === 'Pendiente aprobación',
+            command: () => this.showUpdate = true
+        },
+    ];
+
+    ngOnInit() {
+        this.user_json = this.userService.getDataSession();
+        console.log('user_json', this.user_json)
+        this.fetchProjectsTechnical();
+    }
+
+    fetchProjectsTechnical() {
+        this.isLoading = true;
+        const filters = { ...this.filters };
+
+        this.projectTechnicalService.getProjectsTechnical(filters).subscribe({
+            next: (data: any) => {
+                this.isLoading = false;
+                this.dataProjects = data?.data ?? [];
+                this.statusOptions = [...new Set(
+                    this.dataProjects.map((project: any) => project?.status).filter((status: any) => !!status)
+                )];
+            },
+            error: (error: any) => {
+                this.isLoading = false;
+                console.log(error)
+            }
+        })
+    }
+
+    reloadDataProjects() {
+        this.fetchProjectsTechnical();
+    }
+
+    optionsProject(project: any) {
+        this.selectedProject = project;
+    }
+
+    countRecords(project: any): number {
+        return project?.record_technical?.length ?? 0;
+    }
+
+    viewDetailsRecord(record: any, project: any) {
+        this.selectedRecord = {
+            ...record,
+            client: project?.client,
+            location: project?.location,
+            project_code: project?.code
+        };
+        this.showModalRecord = true;
+    }
+
+    closeModalProject() {
+        this.showModal = false;
+        this.selectedProject = null;
+    }
+
+    closeModalRecord() {
+        this.showModalRecord = false;
+        this.selectedRecord = null;
+    }
+
+    applyFilter(projectPanel: any) {
+        projectPanel.hide();
+        let filter_date: any = {};
+
+        if (Array.isArray(this.dateRangeFilter) && this.dateRangeFilter.length === 2) {
+            const [startDate, endDate] = this.dateRangeFilter;
+
+            const start = new Date(startDate);
+            start.setHours(0, 0, 0, 0);
+
+            const end = new Date(endDate);
+            end.setHours(23, 59, 59, 999);
+
+            filter_date.start_date = this.utilsService.formatLocalDate(start);
+            filter_date.end_date = this.utilsService.formatLocalDate(end);
+        }
+
+        if (this.selectedStatus.length > 0) {
+            filter_date.status = this.selectedStatus.join(',');
+        }
+
+        this.filters = filter_date;
+        this.fetchProjectsTechnical();
+    }
+
+    clearFilter(projectPanel?: any) {
+        projectPanel?.hide();
+        this.dateRangeFilter = null;
+        this.selectedStatus = [];
+        this.filters = {};
+
+        this.fetchProjectsTechnical();
+    }
+
+    updateStatus(status_update: string) {
+        if (this.selectedProject) {
+            this.isLoading = true;
+
+            const updateData = {
+                id_project : this.selectedProject?.id_task,
+                new_status: status_update,
+                user: this.user_json?.user ?? 'Desconocido'
+            };
+
+            this.projectTechnicalService.updateStatusProject(updateData).subscribe({
+                next: (data: any) => {
+                    this.isLoading = false;
+                    this.utilsService.onSuccess('Estado actualizado correctamente');
+                    this.showUpdate = false;
+                    this.fetchProjectsTechnical();
+                },
+                error: (error: any) => {
+                    this.isLoading = false;
+                    console.log(error)
+                }
+            })
+        }
+    }
+
+}
