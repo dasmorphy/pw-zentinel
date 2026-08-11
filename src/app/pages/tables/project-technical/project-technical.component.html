@@ -1,22 +1,38 @@
 <p-toast></p-toast>
 
-<p-dialog header="Header" id="update-logbook" [closable]="false" [(visible)]="showUpdate" [draggable]="false" [modal]="true"
+<p-dialog header="Header" id="aprobar" [closable]="false" [(visible)]="showUpdate" [draggable]="false" [modal]="true"
     [style]="{ 'width': '23vw', 'border-radius': '32px'}">
     <ng-template pTemplate="header">
         <div style="display: grid; place-items: center;">
             <i class="pi pi-exclamation-circle mt-4" style="color: #EB6506; font-size: 40px;"></i>
             <h1 style="margin: 0; font-size: 22px;" class="text-center mt-3">
-                ¿Está seguro de continuar?
+                {{typeRequest}}
             </h1>
         </div>
     </ng-template>
 
+    <div class="flex flex-column">
+        <span class="w-full flex-column flex">
+            <label htmlFor="observations" class="font-semibold">Comentarios</label>
+            <textarea
+                id="commentary"
+                pInputTextarea
+                placeholder="Opcional"
+                [(ngModel)]="commentaryUpdateStatus"
+                class="form-textarea mt-2"
+                rows="4"
+            ></textarea>
+        </span>
+    </div>
+
     <ng-template pTemplate="footer">
         <div class="flex justify-content-center gap-3 mt-3" style="font-size: 15px;">
-            <p-button label="Actualizar" (onClick)="updateStatus('Finalizado')"
+            <p-button label="Actualizar" (onClick)="updateStatus(
+                typeRequest == 'Aprobar solicitud' ? 'Finalizado' : 'Rechazado'
+            )"
                 styleClass="bg-btn-primary w-full">
             </p-button>
-            <p-button label="Cancelar" (onClick)="showUpdate = false"
+            <p-button label="Cancelar" (onClick)="closeModalUpdate()"
                 styleClass="bg-btn-cancel w-full">
             </p-button>
         </div>
@@ -81,13 +97,6 @@
                 <i class="pi pi-map-marker mb-3" style="color: #0056b3;"></i>
                 <label class="font-bold cab-label" htmlFor="location">UBICACIÓN: </label>
                 <label class="det-label" htmlFor="location">{{ selectedProject?.location ?? 'N/A' }}</label>
-            </div>
-
-            <div class="flex flex-column w-full card-info">
-                <i class="pi pi-info-circle mb-3" style="color: #0056b3;"></i>
-                <label class="font-bold cab-label" htmlFor="status">ESTADO: </label>
-                <p-tag class="mt-1 w-fit" [value]="selectedProject?.status ?? 'N/A'"
-                    [severity]="utilsService.getSeverityProjectTechnical(selectedProject?.status)"></p-tag>
             </div>
 
             <div class="flex flex-column w-full card-info">
@@ -325,6 +334,7 @@
                         <th scope="col">Fecha</th>
                         <th scope="col">Código</th>
                         <th scope="col">Proyecto</th>
+                        <th scope="col">N. registros</th>
                         <th scope="col">Cliente</th>
                         <th scope="col">Ubicación</th>
                         <th scope="col">Estado</th>
@@ -349,6 +359,7 @@
                         </td>
                         <td data-titulo="Código:">{{ project?.code ?? 'N/A' }}</td>
                         <td data-titulo="Proyecto:">{{ project?.name ?? 'N/A' }}</td>
+                        <td data-titulo="N. registros:">{{ project?.record_technical?.length ?? 0 }}</td>
                         <td data-titulo="Cliente:">{{ project?.client ?? 'N/A' }}</td>
                         <td data-titulo="Ubicación:">{{ project?.location ?? 'N/A' }}</td>
                         <td data-titulo="Estado:">
@@ -364,7 +375,6 @@
                                     <ng-template pTemplate="header">
                                         <tr>
                                             <th>Acciones</th>
-                                            <th>N. registro</th>
                                             <th>Fecha</th>
                                             <th>Resumen</th>
                                             <th>Registrado por</th>
@@ -376,7 +386,6 @@
                                                 <i class="pi pi-eye cursor-pointer" pTooltip="Ver detalles" tooltipPosition="top"
                                                     (click)="viewDetailsRecord(record, project)"></i>
                                             </td>
-                                            <td>{{ record?.id_record ?? 'N/A' }}</td>
                                             <td [ngxTippy]="'Hora de registro: ' + (record?.created_at | date:'HH:mm':'UTC')">
                                                 {{ record?.created_at | date:'dd/MM/yyyy':'UTC' }}
                                             </td>

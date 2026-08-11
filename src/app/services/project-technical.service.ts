@@ -28,12 +28,12 @@ export class ProjectTechnicalService {
             params = params.set('client_id', filter.client_id);
         }
 
-        return this.http.get(`http://192.168.11.53:2124/rest/technical-control-api/v1.0/project`,
+        return this.http.get(`http://192.168.100.88:2124/rest/technical-control-api/v1.0/project`,
             { headers, params }
         )
     }
 
     updateStatusProject(data: any) {
-        return this.http.patch(`http://192.168.11.53:2124/rest/technical-control-api/v1.0/update-status-project/${data.id_project}`, {data});
+        return this.http.patch(`http://192.168.100.88:2124/rest/technical-control-api/v1.0/update-status-project/${data.id_project}`, {data});
     }
 }

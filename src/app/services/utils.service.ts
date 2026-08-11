@@ -154,6 +154,8 @@ export class UtilsService {
             return 'warning';
         case "Finalizado":
             return 'danger';
+        case "Rechazado":
+            return 'danger';
         case "En ejecución":
             return 'info';
         default:

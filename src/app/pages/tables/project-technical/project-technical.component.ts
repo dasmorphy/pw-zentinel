@@ -26,7 +26,7 @@ import { UserService } from "src/app/services/user.service";
 import { UtilsService } from "src/app/services/utils.service";
 import { BadgeModule } from 'primeng/badge';
 import { ProgressBarModule } from 'primeng/progressbar';
-
+import { InputTextareaModule } from 'primeng/inputtextarea';
 
 @Component({
     selector: 'app-project-technical',
@@ -56,7 +56,8 @@ import { ProgressBarModule } from 'primeng/progressbar';
         TooltipModule,
         TabViewModule,
         BadgeModule,
-        ProgressBarModule
+        ProgressBarModule,
+        InputTextareaModule
     ],
     templateUrl: './project-technical.component.html',
     styleUrls: ['./project-technical.component.sass']
@@ -74,6 +75,8 @@ export class ProjectTechnicalComponent {
     dataProjects: any[] = [];
     isLoading: boolean = false;
     showUpdate: boolean = false;
+    typeRequest: string = '';
+    commentaryUpdateStatus: string | null = null;
 
     selectedProject: any;
     selectedRecord: any;
@@ -97,7 +100,19 @@ export class ProjectTechnicalComponent {
             label: 'Aprobar finalización',
             icon: 'pi pi-check',
             visible: () => this.selectedProject?.status === 'Pendiente aprobación',
-            command: () => this.showUpdate = true
+            command: () => {
+                this.showUpdate = true
+                this.typeRequest = 'Aprobar solicitud'
+            }
+        },
+        {
+            label: 'Rechazar solicitud',
+            icon: 'pi pi-times',
+            visible: () => this.selectedProject?.status === 'Pendiente aprobación',
+            command: () => {
+                this.showUpdate = true
+                this.typeRequest = 'Rechazar solicitud'
+            }
         },
     ];
 
@@ -199,7 +214,11 @@ export class ProjectTechnicalComponent {
             const updateData = {
                 id_project : this.selectedProject?.id_task,
                 new_status: status_update,
-                user: this.user_json?.user ?? 'Desconocido'
+                user: this.user_json?.user ?? 'Desconocido',
+                commentary: this.commentaryUpdateStatus,
+                notification_type: this.typeRequest == 'Aprobar solicitud'
+                    ? 'TECHNICAL_APPROVAL_REQUEST_APPROVED' 
+                    : 'TECHNICAL_APPROVAL_REQUEST_REJECTED'
             };
 
             this.projectTechnicalService.updateStatusProject(updateData).subscribe({
@@ -215,6 +234,11 @@ export class ProjectTechnicalComponent {
                 }
             })
         }
+    }
+
+    closeModalUpdate() {
+        this.showUpdate = false
+        this.commentaryUpdateStatus = null;
     }
 
 }
