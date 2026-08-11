@@ -131,11 +131,25 @@ export class MenuComponent implements OnInit {
         command: () => { this.clickHiddenToggle(true); console.log (this.user_session)},
       },
       {
-        label: 'Proyectos técnicos',
+        label: 'Técnicos',
         icon: 'pi pi-folder-open',
-        routerLink: ['proyectos-tecnicos'],
-        visible: this.user_session?.user == 'dmales',
-        command: () => { this.clickHiddenToggle(true) },
+        visible: this.user_permissions_signal()?.includes('VER_PROYECTOS'),
+        items: [
+          {
+            label: 'Proyectos técnicos',
+            icon: 'pi pi-list-check',
+            visible: this.user_permissions_signal()?.includes('VER_PROYECTOS'),
+            routerLink: ['proyectos-tecnicos'],
+            command: () => { this.clickHiddenToggle() }
+          },
+          {
+            label: 'Fiscalización',
+            icon: 'pi pi-list-check',
+            visible: this.user_permissions_signal()?.includes('VER_FISCALIZACION'),
+            routerLink: ['fiscalizaciones'],
+            command: () => { this.clickHiddenToggle() }
+          },
+        ]
       },
       {
         label: 'Lista negra',

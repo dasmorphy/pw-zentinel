@@ -81,7 +81,9 @@ export class ProjectTechnicalComponent {
     selectedProject: any;
     selectedRecord: any;
 
-    statusOptions: string[] = [];
+    statusOptions: string[] = [
+        "Pendiente aprobación", "Finalizado", "Aprobado", "Rechazado"
+    ];
     selectedStatus: string[] = [];
     dateRangeFilter: Date[] | null = null;
     messageEmpty: string = "No hay opciones disponibles";
@@ -130,9 +132,6 @@ export class ProjectTechnicalComponent {
             next: (data: any) => {
                 this.isLoading = false;
                 this.dataProjects = data?.data ?? [];
-                this.statusOptions = [...new Set(
-                    this.dataProjects.map((project: any) => project?.status).filter((status: any) => !!status)
-                )];
             },
             error: (error: any) => {
                 this.isLoading = false;
