@@ -22,6 +22,7 @@ import { CalendarModule } from 'primeng/calendar';
 import { LogbookService } from 'src/app/services/logbook.service';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { BalancedFuelComponent } from 'src/app/components/dashboards/expalsa-options/balanced-fuel/balanced-fuel.component';
+import { TechnicalDashboardComponent } from 'src/app/components/dashboards/technical/technical-dashboard.component';
 
 @Component({
     selector: 'app-dashboard',
@@ -46,7 +47,8 @@ import { BalancedFuelComponent } from 'src/app/components/dashboards/expalsa-opt
         OverlayPanelModule,
         CalendarModule,
         MultiSelectModule,
-        BalancedFuelComponent
+        BalancedFuelComponent,
+        TechnicalDashboardComponent
     ],
     templateUrl: './dashboard.component.html',
     styleUrls: ['./dashboard.component.sass'],
