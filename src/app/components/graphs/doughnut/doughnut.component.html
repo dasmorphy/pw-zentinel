@@ -5,7 +5,7 @@
 
 <div class="p-5 flex flex-column">
   <div class="flex justify-content-between">
-    <h2 style="color: #181618;" class="mt-0">Resumen</h2>
+    <h2 class="mt-0">Resumen</h2>
 
 
     <p-overlayPanel #imagePanel [dismissable]="true" [style]="{ width: '320px' }">
@@ -67,8 +67,8 @@
     </p-overlayPanel>
 
     <div class="flex gap-2">
-      <p-button label="" icon="pi pi-filter" class="w-full mt-2"
-        (click)="imagePanel.toggle($event)">
+      <p-button label="" icon="pi pi-filter" class="w-full mt-2 border-none filter-button" [style]="{ boxShadow: 'none' }"
+        (click)="imagePanel.toggle($event)" styleClass="filter-button border-none">
       </p-button>
     </div>
 

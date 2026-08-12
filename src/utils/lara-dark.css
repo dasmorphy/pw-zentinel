@@ -47,6 +47,9 @@
     --highlight-bg: rgba(147, 197, 253, 0.16);
     --highlight-text-color: rgba(255, 255, 255, 0.87);
     --maskbg: rgba(0, 0, 0, 0.4);
+    --bg-menu: #040a14;
+    --bg-app: #0f172a;
+    --icon-color: #ffffff;
     color-scheme: dark;
 }
 

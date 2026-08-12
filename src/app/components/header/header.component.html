@@ -19,7 +19,8 @@
   </span>
 
   <p-button [icon]="iconTheme"
-    styleClass="border-button text-primary--custom bg-transparent p-button-raised" 
+    (onClick)="changeThemeColor()"
+    styleClass="border-button border-none text-primary--custom bg-transparent p-button-raised" 
     >
   </p-button>
 

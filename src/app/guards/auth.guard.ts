@@ -11,6 +11,11 @@ export class AuthGuard {
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
 
     const token = localStorage.getItem('sb_token');
+    const theme = localStorage.getItem('theme');
+
+    if (!theme) {
+      localStorage.setItem('theme', 'light')
+    }
 
     if (!token) {
       this.router.navigate(['/login']);

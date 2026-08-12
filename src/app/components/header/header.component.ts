@@ -32,27 +32,34 @@ export class HeaderComponent implements OnInit{
 
   ngOnInit(){
     this.user_json = this.userService.getDataSession();
+    const theme:any = localStorage.getItem('theme');
+    
+    if (this.user_json) {
+      this.iconTheme = theme === 'dark' ? 'pi pi-moon' : 'pi pi-sun';
+      this.changeThemeLara(theme);
+    }
+
   }
 
-  // changeThemeColor() {
-  //   const theme_local_storage = localStorage.getItem('theme');
-  //   let theme: string = '';
+  changeThemeColor() {
+    const theme_local_storage = localStorage.getItem('theme');
+    let theme: string = '';
 
-  //   if (theme_local_storage) {
-  //     this.theme_selection =  theme_local_storage === 'dark' ? false : true;
-  //     theme = this.theme_selection ? 'dark' : 'light';
-  //   }
+    if (theme_local_storage) {
+      this.theme_selection =  theme_local_storage === 'dark' ? false : true;
+      theme = this.theme_selection ? 'dark' : 'light';
+    }
     
-  //   this.iconTheme = this.theme_selection ? 'pi pi-moon' : 'pi pi-sun';
-  //   localStorage.setItem('theme', theme);
-  //   this.changeThemeLara(theme);
+    this.iconTheme = this.theme_selection ? 'pi pi-moon' : 'pi pi-sun';
+    localStorage.setItem('theme', theme);
+    this.changeThemeLara(theme);
 
-  // }
+  }
 
-  // changeThemeLara(theme: string) {
-  //   let themeLink = this.document.getElementById('app-theme') as HTMLLinkElement;
-  //   themeLink.href = 'lara-' + theme + '-blue' + '.css';
-  // }
+  changeThemeLara(theme: string) {
+    let themeLink = this.document.getElementById('app-theme') as HTMLLinkElement;
+    themeLink.href = 'lara-' + theme + '-blue' + '.css';
+  }
 
   toggleMenu() {
     this.menuService.changeToggle();

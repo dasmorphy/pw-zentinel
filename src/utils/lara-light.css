@@ -55,6 +55,9 @@
     --text-canvas-style: #6a7180;
     --bg-funnel: #F5F5F5;
     --color-detail-content: rgba(38, 38, 38, 1);
+    --bg-menu: rgb(19, 16, 16);
+    --bg-app: #ffffff;
+    --icon-color: #000000;
     color-scheme: light;
 }
 
