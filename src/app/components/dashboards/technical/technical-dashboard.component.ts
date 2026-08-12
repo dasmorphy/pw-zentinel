@@ -1,33 +1,28 @@
 import { CommonModule } from '@angular/common';
-import { Component, computed, inject, Input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
-import { MenuService } from 'src/app/services/menu.service';
 import { DropdownModule } from 'primeng/dropdown';
 import { ToastModule } from 'primeng/toast';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { LogbookService } from 'src/app/services/logbook.service';
 import { UserService } from 'src/app/services/user.service';
 import { DialogModule } from 'primeng/dialog';
-import { DispatchService } from 'src/app/services/dispatch.service';
 import { TableModule } from 'primeng/table';
 import { NgxTippyModule } from 'ngx-tippy-wrapper';
 import { TagModule } from 'primeng/tag';
 import { SplitButtonModule } from 'primeng/splitbutton';
-import { Subscription } from 'rxjs';
-import { EventSourceService } from 'src/app/services/event-source.service';
 import { UtilsService } from 'src/app/services/utils.service';
-import { EntryDetailsModalComponent } from 'src/app/components/modals/entry-details-modal/entry-details-modal.component';
-import { ImageGalleryComponent } from 'src/app/components/modals/shared/preview-image/preview-image.component';
 import { Chart, ChartConfiguration } from 'chart.js';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { MeterGroupModule } from 'primeng/metergroup';
 import { CardModule } from 'primeng/card';
 import { CalendarModule } from 'primeng/calendar';
 import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { ProjectTechnicalService } from 'src/app/services/project-technical.service';
+import { InputTextareaModule } from 'primeng/inputtextarea';
 
 
 @Component({
@@ -54,8 +49,7 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
     CardModule,
     OverlayPanelModule,
     CalendarModule,
-    EntryDetailsModalComponent,
-    ImageGalleryComponent
+    InputTextareaModule
 ],
     templateUrl: './technical-dashboard.component.html',
     styleUrls: ['./technical-dashboard.component.sass'],
@@ -63,44 +57,26 @@ import { OverlayPanelModule } from 'primeng/overlaypanel';
 export class TechnicalDashboardComponent {
     @Input() filtersGraph: any;
     
-    private readonly menuService = inject(MenuService);
-    private readonly logbookService = inject(LogbookService);
-    private readonly dispatchService = inject(DispatchService);
     private readonly userService = inject(UserService);
-    private readonly eventSourceService = inject(EventSourceService);
+    private readonly technicalService = inject(ProjectTechnicalService);
     readonly utilsService = inject(UtilsService);
-
-    private sseSub?: Subscription;
-    private sseSubDispatch?: Subscription;
-
-    toggle = computed(() => this.menuService.toggle());
-    graphs = computed(() => this.dispatchService.graphsDispatch());
-    entrySelected = computed(() => this.dispatchService.showModalSummaryEntry());
-    dispatchSelected = computed(() => this.dispatchService.showModalSummary());
-    openModalImages = computed(() => this.utilsService.showModalImage());
 
     user_session: any;
     isLoading: boolean = false;
     selectedDispatch: any = null;
-    dateRange: Date[] | null = null;
-
+    dateRange: Date[] | null = null;    
     doughnutChart!: Chart;
     
-
-    graphEntryStatus: any = [];
-    graphCountTypeAccess: any = [];
-    graphTopMaterials: any = [];
-
+    graphCountStatus: any = [];
+    graphAuditing: any = [];
+    pending_tasks: any[] = [];
     filters: any = {};
-    dataBiomar: any [] = [];
+    showModal: boolean = false;
 
-    items: any = [
-        {
-            label: 'Ver detalles',
-            icon: 'pi pi-eye',
-            command: () => this.viewDispatchDetails(this.selectedDispatch!)
-        },
-    ];
+    showUpdate: boolean = false;
+    typeRequest: string = '';
+    commentaryUpdateStatus: string | null = null;
+    selectedProject: any;
 
     ngOnInit() {
         this.user_session = this.userService.getDataSession();
@@ -108,7 +84,6 @@ export class TechnicalDashboardComponent {
         filters.type_process = 'dispatch';
         this.filters = filters;
         this.initializeGraph();
-        
     }
 
     ngOnChanges(changes: any) {
@@ -126,73 +101,59 @@ export class TechnicalDashboardComponent {
         }
     }
 
-    ngOnDestroy() {
-        this.sseSub?.unsubscribe();
-        this.sseSubDispatch?.unsubscribe();
-    }
-
     initializeGraph() {
-        this.dispatchService.getGraphs(this.filters).subscribe({
+        this.fetchAllData();
+        this.technicalService.getResumeGraphsTechnical(this.filters).subscribe({
             next: (data: any) => {
-                const dataGraph = data?.data;
-                this.graphEntryStatus = dataGraph?.entry_biomar?.entry_by_status
-                this.graphCountTypeAccess = dataGraph?.entry_biomar?.count_type_access
-                this.graphTopMaterials = dataGraph?.entry_biomar?.top_materials
+                this.graphAuditing = data?.data?.auditing_percentaje;
+                this.graphCountStatus = data?.data?.count_status;
 
                 this.createDoughnutChart(
-                    this.graphCountTypeAccess?.[0]?.percentage,
-                    this.graphCountTypeAccess?.[1]?.percentage,
+                    this.graphAuditing?.audited ?? 0,
+                    this.graphAuditing?.not_audited ?? 0,
                 );
             },
-            error: ({ error }: any) => this.utilsService.onError(error.message)
+            error: (error: any) => {
+                console.log(error)
+            }
         })
-        this.fetchAllData(); //TODO
+
     }
 
-    getGraphEntryStatus(status: string) {
-       return this.graphEntryStatus.find((graph: any) => graph.status_name === status)?.count ?? 0;
+    getGraphAuditing(type_access: string) {
+       return this.graphAuditing.find((graph: any) => graph.type_access === type_access)?.count ?? 0;
     }
 
-    getGraphCountTypeAccess(type_access: string) {
-       return this.graphCountTypeAccess.find((graph: any) => graph.type_access === type_access)?.count ?? 0;
+    getGraphCountStatus(status: string) {
+       return this.graphCountStatus.find((graph: any) => graph.status === status)?.count ?? 0;
     }
 
-    
-
-    getStatusStyles(statusName: string) {
-        switch (statusName) {
-            case 'En tránsito':
-                return {
-                    background: '#f3e178',
-                    color: '#8a9019'
-                };
-            case 'Ingresado en bodega':
-                return {
-                    background: '#9df18a',
-                    color: '#158308'
-                };
-            case 'Listo para despacho':
-                return {
-                    background: '#bfdaec',
-                    color: '#3b6d89'
-                };
-            default:
-                return {
-                    background: '#F3F4F6',
-                    color: '#374151'
-                };
-        }
-    }
 
     fetchAllData() {
-        this.dispatchService.getAllEntryAccess().subscribe({
+        this.technicalService.getProjectsTechnical(
+            {
+                "status": ["Pendiente aprobación"]
+            }
+        ).subscribe({
             next: (data: any) => {
-                this.dataBiomar = data?.data || [];
+                this.pending_tasks = data?.data || [];
             },
             error: (error: any) => {
                 console.log(error);
             }
         });
+    }
+
+    approveRequest(item: any) {
+        this.selectedProject = item;
+        this.showUpdate = true
+        this.typeRequest = 'Aprobar solicitud'
+    }
+
+    rejectRequest(item: any) {
+        this.selectedProject = item;
+        this.showUpdate = true
+        this.typeRequest = 'Rechazar solicitud'
     }
 
 
@@ -215,7 +176,7 @@ export class TechnicalDashboardComponent {
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
 
-                ctx.fillText('Proveedores', centerX, centerY - 30);
+                ctx.fillText('Auditados', centerX, centerY - 30);
 
                 // VALOR
                 ctx.font = 'bold 24px Arial';
@@ -234,7 +195,7 @@ export class TechnicalDashboardComponent {
         const config: ChartConfiguration<'doughnut'> = {
           type: 'doughnut',
           data: {
-            labels: ['Proveedor', 'Visitante'],
+            labels: ['Auditados', 'Sin auditar'],
             datasets: [{
                 data: [entrada, salida],
                 backgroundColor: ['#091426', '#515f74'],
@@ -268,42 +229,6 @@ export class TechnicalDashboardComponent {
     }
 
 
-    optionsDispatch(loogbook: any) {
-        this.selectedDispatch = loogbook
-    }
-
-
-    viewDispatchDetails(data: any) {
-        if (data?.id_access_control) {
-            this.dispatchService.openSummaryEntry(data);
-        }else{
-            this.dispatchService.openSummary(data);
-        }
-    }
-
-    valueProgressBar(process: string) {
-        const pending = this.graphEntryStatus?.find((item: any) => item.status_name === 'Pendiente Salida')?.count || 0;
-        const total = this.graphEntryStatus?.find((item: any) => item.status_name === 'Total')?.count || 0;
-        const finalized = this.graphEntryStatus?.find((item: any) => item.status_name === 'Finalizado')?.count || 0;
-
-        let value = 0;
-
-        if (process === 'pending') {
-            value = pending;
-        } else if (process === 'finalized') {
-            value = finalized;
-        }
-
-        const valueCalc = (value) / total * 100
-
-        if (isNaN(valueCalc)) {
-            return 0;
-        }
-
-        return valueCalc.toFixed(0) ?? 0
-    }
-
-
     onFilterDate(op: any) {
         op.hide()
         let filter_date: any = {}
@@ -330,6 +255,51 @@ export class TechnicalDashboardComponent {
         op.hide()
         this.dateRange = null;
         this.filters = {};
+    }
+
+    updateStatus(status_update: string) {
+        if (this.selectedProject) {
+            this.isLoading = true;
+
+            const updateData = {
+                id_project : this.selectedProject?.id_task,
+                new_status: status_update,
+                user: this.user_session?.user ?? 'Desconocido',
+                commentary: this.commentaryUpdateStatus,
+                notification_type: this.typeRequest == 'Aprobar solicitud'
+                    ? 'TECHNICAL_APPROVAL_REQUEST_APPROVED' 
+                    : 'TECHNICAL_APPROVAL_REQUEST_REJECTED'
+            };
+
+            this.technicalService.updateStatusProject(updateData).subscribe({
+                next: (data: any) => {
+                    this.isLoading = false;
+                    this.utilsService.onSuccess('Estado actualizado correctamente');
+                    this.showUpdate = false;
+                    this.fetchAllData();
+                },
+                error: (error: any) => {
+                    this.isLoading = false;
+                    console.log(error)
+                }
+            })
+        }
+    }
+
+    closeModalUpdate() {
+        this.selectedProject = null;
+        this.showUpdate = false
+        this.commentaryUpdateStatus = null;
+    }
+
+    closeModalProject() {
+        this.showModal = false;
+        this.selectedProject = null;
+    }
+
+    openModalDetails(item: any) {
+        this.selectedProject = item;
+        this.showModal = true;
     }
 
 }

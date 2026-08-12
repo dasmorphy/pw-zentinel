@@ -28,6 +28,10 @@ export class ProjectTechnicalService {
             params = params.set('client_id', filter.client_id);
         }
 
+        if (filter?.status) {
+            params = params.set('status', filter.status);
+        }
+
         return this.http.get(`${environment.apiTechnical}/rest/technical-control-api/v1.0/project`,
             { headers, params }
         )
@@ -62,6 +66,23 @@ export class ProjectTechnicalService {
         }
 
         return this.http.get(`${environment.apiTechnical}/rest/technical-control-api/v1.0/auditing`,
+            { headers, params }
+        )
+    }
+
+    getResumeGraphsTechnical(filter?: any) {
+        let params = new HttpParams();
+        let headers = new HttpHeaders();
+
+        if (filter?.start_date) {
+            params = params.set('start_date', filter.start_date);
+        }
+
+        if (filter?.end_date) {
+            params = params.set('end_date', filter.end_date);
+        }
+
+        return this.http.get(`${environment.apiTechnical}/rest/technical-control-api/v1.0/resume-graphs`,
             { headers, params }
         )
     }

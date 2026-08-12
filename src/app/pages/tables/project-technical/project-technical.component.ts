@@ -120,7 +120,6 @@ export class ProjectTechnicalComponent {
 
     ngOnInit() {
         this.user_json = this.userService.getDataSession();
-        console.log('user_json', this.user_json)
         this.fetchProjectsTechnical();
     }
 
