@@ -67,7 +67,7 @@
           </div>
         } @else {
           @for (notification of notificationsPreview(); track notification.id_notification) {
-            <div class="notification-item flex gap-2" [class.is-unread]="!notification.is_read"
+            <div class="notification-item flex gap-3 align-items-center" [class.is-unread]="!notification.is_read"
               (click)="openNotification(notification, panelNotifications)">
               <div class="notification-icon" [ngClass]="'severity-' + notificationService.getSeverityNotification(notification.notification_type)">
                 <i [class]="notificationService.getIconNotification(notification.notification_type)"></i>
@@ -96,7 +96,7 @@
 
       <div class="notifications-footer">
         <p-button label="Ver todas las notificaciones" icon="pi pi-arrow-right" iconPos="right" [text]="true"
-          styleClass="w-full justify-content-center text-primary--custom"
+          styleClass="w-full justify-content-center text-primary--custom text-sm"
           (onClick)="goToAllNotifications(panelNotifications)">
         </p-button>
       </div>

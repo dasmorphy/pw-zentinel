@@ -5,6 +5,7 @@ import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
 import { NotificationCache, NotificationItem } from '../models/notification';
 import { UserService } from './user.service';
+import { UtilsService } from './utils.service';
 
 const STORAGE_KEY_NOTIFICATIONS = 'notifications_zentinel';
 /** Tiempo que se considera vigente la caché local antes de volver a consultar (10 min) */
@@ -15,10 +16,12 @@ export class NotificationService {
   private messaging = inject(Messaging);
   private readonly http = inject(HttpClient);
   private readonly userService = inject(UserService);
+  private readonly utilsService = inject(UtilsService);
 
   notifications: WritableSignal<NotificationItem[]> = signal<NotificationItem[]>([]);
   isLoading: WritableSignal<boolean> = signal<boolean>(false);
 
+  user_session: any;
   unreadCount = computed(() => this.notifications().filter((item) => !item.is_read).length);
 
   /** Etiqueta del badge de la campana. Cadena vacía = no se pinta el badge */
@@ -60,11 +63,11 @@ export class NotificationService {
       return;
     }
 
-    const user_session: any = this.userService.getDataSession();
+    this.user_session = this.userService.getDataSession();
 
     this.isLoading.set(true);
 
-    this.getNotifications({"user_id": user_session?.id_user}).subscribe({
+    this.getNotifications({"user_id": this.user_session?.id_user}).subscribe({
       next: (response: any) => {
         this.isLoading.set(false);
         const data: NotificationItem[] = response?.data ?? response ?? [];
@@ -82,7 +85,6 @@ export class NotificationService {
   // ---------------------------------------------------------------------------
 
   /**
-   * TODO: reemplazar por el endpoint real de notificaciones.
    * Debe responder un arreglo de NotificationItem (directo o dentro de { data: [] }).
    */
   getNotifications(filter?: any): Observable<any> {
@@ -94,6 +96,11 @@ export class NotificationService {
     }
 
     return this.http.get(`${environment.apiUrl}/rest/notifications-api/v1.0/notifications`, { headers, params });
+  }
+
+
+  saveFcmToken(data: any): Observable<any> {
+    return this.http.post(`${environment.apiUrl}/rest/notifications-api/v1.0/fcm-token-user`, {data});
   }
 
   /** TODO: reemplazar por el endpoint real para marcar una notificación como leída */
@@ -252,8 +259,7 @@ export class NotificationService {
       return value;
     }
 
-    const hasZone = /(Z|[+-]\d{2}:?\d{2})$/.test(value);
-    return new Date(hasZone ? value : `${value}Z`);
+    return new Date(value);
   }
 
   timeAgo(value: string | Date | null | undefined): string {
@@ -346,18 +352,53 @@ export class NotificationService {
   // ---------------------------------------------------------------------------
 
   async requestPermissionAndListen() {
+    console.log('🔥 Inicializando FCM');
+    console.log('Permiso:', Notification.permission);
+
     try {
       const token = await getToken(this.messaging, {
-        vapidKey: environment.vapidKeyFcm // Firebase Console → Cloud Messaging → Web Push certificates
+        vapidKey: environment.vapidKeyFcm
       });
-      // Guarda el token para asociarlo al usuario en tu backend
-      console.log('FCM token:', token);
+
+      console.log('🔥 TOKEN ACTUAL:', token);
+
+      this.user_session = this.userService.getDataSession();
+
+      console.log('Usuario:', this.user_session?.id_user);
+
+      const data = {
+        fcm_token: token,
+        platform: 'web',
+        project_id: 1,
+        user_id: this.user_session?.id_user
+      };
+
+      this.saveFcmToken(data).subscribe({
+        next: (response) => {
+          console.log('✅ TOKEN GUARDADO:', response);
+        },
+        error: (error) => {
+          console.error('❌ ERROR GUARDANDO TOKEN:', error);
+        }
+      });
+
     } catch (err) {
-      console.error('Error obteniendo token FCM', err);
+      console.error('❌ ERROR OBTENIENDO TOKEN FCM:', err);
     }
 
+    console.log('🔥 Registrando onMessage');
+
     onMessage(this.messaging, (payload) => {
-      console.log('Notificación recibida:', payload);
+      console.log('🔥🔥🔥 FCM RECIBIDO:', payload);
+
+      const title = payload.notification?.title;
+
+      this.utilsService.onSuccess(
+        title ?? 'N/A',
+        4000,
+        'Notificación recibida'
+      );
+
       this.add(payload);
     });
   }
