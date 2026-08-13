@@ -4,6 +4,7 @@ import { Messaging, getToken, onMessage } from '@angular/fire/messaging';
 import { Observable, of } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
 import { NotificationCache, NotificationItem } from '../models/notification';
+import { UserService } from './user.service';
 
 const STORAGE_KEY_NOTIFICATIONS = 'notifications_zentinel';
 /** Tiempo que se considera vigente la caché local antes de volver a consultar (10 min) */
@@ -13,6 +14,7 @@ const CACHE_TTL_MS = 10 * 60 * 1000;
 export class NotificationService {
   private messaging = inject(Messaging);
   private readonly http = inject(HttpClient);
+  private readonly userService = inject(UserService);
 
   notifications: WritableSignal<NotificationItem[]> = signal<NotificationItem[]>([]);
   isLoading: WritableSignal<boolean> = signal<boolean>(false);
@@ -58,9 +60,11 @@ export class NotificationService {
       return;
     }
 
+    const user_session: any = this.userService.getDataSession();
+
     this.isLoading.set(true);
 
-    this.getNotifications().subscribe({
+    this.getNotifications({"user_id": user_session?.id_user}).subscribe({
       next: (response: any) => {
         this.isLoading.set(false);
         const data: NotificationItem[] = response?.data ?? response ?? [];
@@ -86,11 +90,10 @@ export class NotificationService {
     let headers = new HttpHeaders();
 
     if (filter?.user_id) {
-      params = params.set('user_id', filter.user_id);
+      params = params.set('id_user', filter.user_id);
     }
 
-    // return this.http.get(`${environment.apiUrl}/rest/zent-notification-api/v1.0/notifications`, { headers, params });
-    return of({ data: [] });
+    return this.http.get(`${environment.apiUrl}/rest/notifications-api/v1.0/notifications`, { headers, params });
   }
 
   /** TODO: reemplazar por el endpoint real para marcar una notificación como leída */
