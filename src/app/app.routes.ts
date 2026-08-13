@@ -19,6 +19,7 @@ import { BlacklistComponent } from './pages/tables/blacklist/blacklist.component
 import { PurchaseOrderComponent } from './pages/tables/purchase-order/purchase-order.component';
 import { ProjectTechnicalComponent } from './pages/tables/project-technical/project-technical.component';
 import { AuditingTechnicalComponent } from './pages/tables/auditing-technical/auditing-technical.component';
+import { NotificationsComponent } from './pages/notifications/notifications.component';
 
 export const routes: Routes = [
     {
@@ -112,6 +113,11 @@ export const routes: Routes = [
             {
                 path: "fiscalizaciones",
                 loadComponent: () => AuditingTechnicalComponent,
+                canActivate: [AuthGuard]
+            },
+            {
+                path: "notificaciones",
+                loadComponent: () => NotificationsComponent,
                 canActivate: [AuthGuard]
             }
             
