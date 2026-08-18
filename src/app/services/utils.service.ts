@@ -163,11 +163,11 @@ export class UtilsService {
         }
     }
 
-    onSuccess(message: string, time: number = 5000) {
+    onSuccess(message: string, time: number = 5000, title: string = 'Éxito') {
         this.messageService.add({
             life: time,
             severity: 'success',
-            summary: 'Éxito',
+            summary: title,
             detail: message
         });
     }

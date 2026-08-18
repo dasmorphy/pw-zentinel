@@ -26,6 +26,7 @@ export class AuthGuard {
     try {
       JSON.parse(token);
       localStorage.removeItem('sb_token');
+      localStorage.removeItem('notifications_zentinel')
       this.router.navigate(['/login']);
       return false;
     } catch {
