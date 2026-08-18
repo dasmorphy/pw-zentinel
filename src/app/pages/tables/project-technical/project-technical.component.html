@@ -235,7 +235,7 @@
             <h4 class="mt-4">IMÁGENES</h4>
             <div class="div-responsive mt-3">
                 <div class="flex justify-content-center" *ngFor="let image of selectedRecord?.images">
-                    <img style="object-fit: contain;" [src]="'http://st.telearseg.net' + image" alt="imagenes"
+                    <img style="object-fit: contain;" [src]="'http://n8n.telearseg.net' + image" alt="imagenes"
                         loading="lazy" height="190" width="180">
                 </div>
             </div>
@@ -386,7 +386,7 @@
                                                 <i class="pi pi-eye cursor-pointer" pTooltip="Ver detalles" tooltipPosition="top"
                                                     (click)="viewDetailsRecord(record, project)"></i>
                                             </td>
-                                            <td [ngxTippy]="'Hora de registro: ' + (record?.created_at | date:'HH:mm':'UTC')">
+                                            <td data-titulo="Fecha:" [ngxTippy]="'Hora de registro: ' + (record?.created_at | date:'HH:mm')">
                                                 {{ record?.created_at | date:'dd/MM/yyyy':'UTC' }}
                                             </td>
                                             <td>{{ record?.resume || 'N/A' }}</td>

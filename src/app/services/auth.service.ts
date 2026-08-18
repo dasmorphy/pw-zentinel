@@ -18,9 +18,9 @@ export class AuthService {
     user_permissions_signal: WritableSignal<string[]>= signal([]);
 
     
-    signIn(user: string, password: string) {
+    signIn(data: any) {
         return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/post/login`, {
-            login: { password, user }
+            login: data
         });
     }
 

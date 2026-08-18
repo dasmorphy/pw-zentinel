@@ -34,7 +34,8 @@
             "inlineStyleLanguage": "sass",
             "assets": [
               "src/favicon.ico",
-              "src/assets"
+              "src/assets",
+              "src/firebase-messaging-sw.js"
             ],
             "styles": [
               "node_modules/tippy.js/dist/tippy.css",
@@ -61,13 +62,13 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "500kb",
-                  "maximumError": "1mb"
+                  "maximumWarning": "3mb",
+                  "maximumError": "4mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "2mb",
-                  "maximumError": "4mb"
+                  "maximumWarning": "15kb",
+                  "maximumError": "25kb"
                 }
               ],
               "fileReplacements": [

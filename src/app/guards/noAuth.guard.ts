@@ -14,6 +14,7 @@ export class NoAuthGuard {
     let themeLink = this.document.getElementById('app-theme') as HTMLLinkElement;
     themeLink.href = 'lara-' + 'light' + '-blue' + '.css';
     localStorage.setItem('theme', 'light')
+    localStorage.removeItem('notifications_zentinel')
 
     if (user_storage) {
       this.router.navigate(['/dashboard']);
