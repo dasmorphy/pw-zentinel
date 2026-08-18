@@ -397,17 +397,58 @@ export class NotificationService {
   // ---------------------------------------------------------------------------
 
   async getFcmToken() {
-    let token = '';
     try {
-      token = await getToken(this.messaging, {
-        vapidKey: environment.vapidKeyFcm
+      if (!('serviceWorker' in navigator)) {
+        console.error('Service Worker no soportado');
+        return '';
+      }
+
+      // const registration = await navigator.serviceWorker.ready;
+
+      // console.log('SW activo:', registration.active);
+
+      const token = await getToken(this.messaging, {
+        vapidKey: environment.vapidKeyFcm,
+        // serviceWorkerRegistration: registration
+      });
+
+      return token;
+
+    } catch (error) {
+      console.error('Error al obtener el token fcm', error);
+      return '';
+    }
+  }
+
+  async listenNotificationPermission(): Promise<void> {
+    if (!('permissions' in navigator)) {
+      return;
+    }
+
+    try {
+      const permissionStatus = await navigator.permissions.query({
+        name: 'notifications' as PermissionName
+      });
+
+      console.log('Permiso inicial:', permissionStatus.state);
+
+      permissionStatus.addEventListener('change', async () => {
+        console.log('Permiso cambió:', permissionStatus.state);
+
+        if (permissionStatus.state === 'granted') {
+          console.log('🔔 Usuario habilitó las notificaciones');
+
+          await this.requestPermissionAndListen();
+        }
+
+        if (permissionStatus.state === 'denied') {
+          console.log('🔕 Usuario bloqueó las notificaciones');
+        }
       });
 
     } catch (error) {
-      console.error('Error al obtener el token fcm')
+      console.error('Error escuchando permisos:', error);
     }
-
-    return token
   }
 
   async requestPermissionAndListen() {
@@ -421,13 +462,16 @@ export class NotificationService {
 
       this.user_session = this.userService.getDataSession();
 
+      if (Object.keys(this.user_session).length === 0) return;
+
       console.log('Usuario:', this.user_session?.id_user);
 
       const data = {
         fcm_token: token,
         platform: 'web',
         project_id: 1,
-        user_id: this.user_session?.id_user
+        user_id: this.user_session?.id_user,
+        session_id: this.user_session?.id_session
       };
 
       this.saveFcmToken(data).subscribe({
