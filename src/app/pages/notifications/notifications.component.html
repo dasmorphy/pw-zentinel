@@ -10,7 +10,8 @@
 
         <div class="flex align-items-center gap-2">
             <p-button label="Marcar todas como leídas" icon="pi pi-check-circle" [outlined]="true"
-                [disabled]="notificationService.unreadCount() === 0" (onClick)="markAllAsRead()">
+                [disabled]="notificationService.unreadCount() === 0 || notificationService.isMarkingAllAsRead()"
+                [loading]="notificationService.isMarkingAllAsRead()" (onClick)="markAllAsRead()">
             </p-button>
 
             <p-button icon="pi pi-refresh" pTooltip="Actualizar" tooltipPosition="bottom" [outlined]="true"
@@ -56,7 +57,7 @@
                     <div class="flex flex-column flex-1 gap-2">
                         <div class="flex flex-wrap align-items-center gap-2">
                             <span class="notification-title font-verdana">{{ notification.title }}</span>
-#
+
                             @if (!notification.is_read) {
                                 <span class="unread-dot"></span>
                             }

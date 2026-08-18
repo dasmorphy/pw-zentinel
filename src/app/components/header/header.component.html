@@ -49,7 +49,8 @@
 
           @if (notificationService.unreadCount() > 0) {
             <p-button icon="pi pi-check-circle" [text]="true" [rounded]="true" pTooltip="Marcar todas como leídas"
-              tooltipPosition="bottom" styleClass="text-color-secondary" (onClick)="markAllAsRead()">
+              tooltipPosition="bottom" styleClass="text-color-secondary"
+              [loading]="notificationService.isMarkingAllAsRead()" (onClick)="markAllAsRead()">
             </p-button>
           }
         </div>

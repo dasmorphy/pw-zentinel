@@ -59,30 +59,43 @@ export class SigninComponent implements OnInit {
     this.password = $event.target.value;
   }
 
-  onSubmit() {
-    if (!this.email || !this.password) {
-      this.utilsService.onWarn('Campos vacíos');
-      return;
-    }
-    
-    this.isLoading = true;
-
-
-    this.authService.signIn(this.email, this.password).subscribe({
-      next: (data: any) => {
-        this.isLoading = false;
-        localStorage.setItem('sb_token', data?.access_token)
-        this.router.navigate(['/dashboard']);
-        this.notificationService.loadNotifications(true)
-        this.notificationService.requestPermissionAndListen()
-      },
-      error: (error: any) => {
-        this.isLoading = false;
-        console.log(error);
-        const message = error?.error?.message ?? 'Error al iniciar sesión'
-        this.utilsService.onError(message)
+  async onSubmit() {
+    try {
+      if (!this.email || !this.password) {
+        this.utilsService.onWarn('Campos vacíos');
+        return;
       }
-    })
+      
+      this.isLoading = true;
+      const fcm_token = await this.notificationService.getFcmToken();
+  
+      const data = {
+        user: this.email,
+        password: this.password,
+        fcm_token: fcm_token,
+        platform: 'web',
+        project_id: 1,
+      }
+  
+      this.authService.signIn(data).subscribe({
+        next: (data: any) => {
+          this.isLoading = false;
+          localStorage.setItem('sb_token', data?.access_token)
+          this.router.navigate(['/dashboard']);
+          this.notificationService.loadNotifications(true)
+          // this.notificationService.requestPermissionAndListen()
+        },
+        error: (error: any) => {
+          this.isLoading = false;
+          console.log(error);
+          const message = error?.error?.message ?? 'Error al iniciar sesión'
+          this.utilsService.onError(message)
+        }
+      })
+    } catch (error) {
+      console.error('Error al ininiciar sesión')
+      this.utilsService.onError('No se pudo inciciar sesioó, favpr intente nuevamente')
+    }
 
     
     // setTimeout(() => {

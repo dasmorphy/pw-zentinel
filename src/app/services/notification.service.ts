@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { computed, inject, Injectable, signal, WritableSignal } from '@angular/core';
 import { Messaging, getToken, onMessage } from '@angular/fire/messaging';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment.development';
 import { NotificationCache, NotificationItem } from '../models/notification';
 import { UserService } from './user.service';
@@ -20,6 +20,7 @@ export class NotificationService {
 
   notifications: WritableSignal<NotificationItem[]> = signal<NotificationItem[]>([]);
   isLoading: WritableSignal<boolean> = signal<boolean>(false);
+  isMarkingAllAsRead: WritableSignal<boolean> = signal<boolean>(false);
 
   user_session: any;
   unreadCount = computed(() => this.notifications().filter((item) => !item.is_read).length);
@@ -81,7 +82,7 @@ export class NotificationService {
   }
 
   // ---------------------------------------------------------------------------
-  // Peticiones HTTP (implementación pendiente)
+  // Peticiones HTTP
   // ---------------------------------------------------------------------------
 
   /**
@@ -103,22 +104,25 @@ export class NotificationService {
     return this.http.post(`${environment.apiUrl}/rest/notifications-api/v1.0/fcm-token-user`, {data});
   }
 
-  /** TODO: reemplazar por el endpoint real para marcar una notificación como leída */
-  markAsReadRequest(id_notification: string): Observable<any> {
-    // return this.http.patch(`${environment.apiUrl}/rest/zent-notification-api/v1.0/notifications/${id_notification}/read`, {});
-    return of(null);
+  markAsReadRequest(id_notification: string, is_read: boolean = true): Observable<any> {
+    return this.http.patch(
+      `${environment.apiUrl}/rest/notifications-api/v1.0/notifications/${id_notification}/read`,
+      { is_read }
+    );
   }
 
-  /** TODO: reemplazar por el endpoint real para marcar todas las notificaciones como leídas */
-  markAllAsReadRequest(): Observable<any> {
-    // return this.http.patch(`${environment.apiUrl}/rest/zent-notification-api/v1.0/notifications/read-all`, {});
-    return of(null);
+  markAllAsReadRequest(user_id: string): Observable<any> {
+    return this.http.patch(
+      `${environment.apiUrl}rest/notifications-api/v1.0/notifications/read-all`,
+      { user_id }
+    );
   }
 
-  /** TODO: reemplazar por el endpoint real para eliminar una notificación */
   deleteNotificationRequest(id_notification: string): Observable<any> {
-    // return this.http.delete(`${environment.apiUrl}/rest/zent-notification-api/v1.0/notifications/${id_notification}`);
-    return of(null);
+    return this.http.patch(
+      `${environment.apiUrl}/rest/notifications-api/v1.0/notifications/${id_notification}/delete`,
+      {}
+    );
   }
 
   // ---------------------------------------------------------------------------
@@ -156,38 +160,79 @@ export class NotificationService {
       return;
     }
 
+    const previousReadAt = notification.read_at;
     this.updateNotification(notification.id_notification, {
       is_read: true,
       read_at: new Date().toISOString()
     });
 
-    this.markAsReadRequest(notification.id_notification).subscribe({
-      error: (error: any) => console.log(error)
+    this.markAsReadRequest(notification.id_notification, true).subscribe({
+      error: (error: any) => {
+        this.updateNotification(notification.id_notification, {
+          is_read: false,
+          read_at: previousReadAt
+        });
+        console.error('No se pudo marcar la notificación como leída', error);
+      }
     });
   }
 
   markAllAsRead() {
-    if (this.unreadCount() === 0) {
+    if (this.unreadCount() === 0 || this.isMarkingAllAsRead()) {
       return;
     }
 
+    const user_session: any = this.userService.getDataSession();
+    const user_id = user_session?.id_user;
+
+    if (!user_id) {
+      console.error('No se pudo marcar las notificaciones como leídas: usuario no identificado');
+      return;
+    }
+
+    const previousNotifications = this.notifications();
+    const previousUnread = new Map(
+      previousNotifications
+        .filter((item) => !item.is_read)
+        .map((item) => [item.id_notification, item.read_at])
+    );
     const read_at = new Date().toISOString();
+    this.isMarkingAllAsRead.set(true);
     this.setNotifications(
-      this.notifications().map((item) => (item.is_read ? item : { ...item, is_read: true, read_at }))
+      previousNotifications.map((item) => (item.is_read ? item : { ...item, is_read: true, read_at }))
     );
 
-    this.markAllAsReadRequest().subscribe({
-      error: (error: any) => console.log(error)
+    this.markAllAsReadRequest(user_id).subscribe({
+      next: () => this.isMarkingAllAsRead.set(false),
+      error: (error: any) => {
+        this.isMarkingAllAsRead.set(false);
+        this.setNotifications(
+          this.notifications().map((item) =>
+            previousUnread.has(item.id_notification)
+              ? { ...item, is_read: false, read_at: previousUnread.get(item.id_notification) ?? null }
+              : item
+          )
+        );
+        console.error('No se pudieron marcar todas las notificaciones como leídas', error);
+      }
     });
   }
 
   deleteNotification(notification: NotificationItem) {
+    if (!notification) {
+      return;
+    }
+
+    const previousNotifications = this.notifications();
     this.setNotifications(
-      this.notifications().filter((item) => item.id_notification !== notification.id_notification)
+      previousNotifications.filter((item) => item.id_notification !== notification.id_notification)
     );
 
     this.deleteNotificationRequest(notification.id_notification).subscribe({
-      error: (error: any) => console.log(error)
+      error: (error: any) => {
+        this.setNotifications(previousNotifications);
+        console.error('No se pudo eliminar la notificación', error);
+      }
     });
   }
 
@@ -351,14 +396,26 @@ export class NotificationService {
   // Firebase Cloud Messaging
   // ---------------------------------------------------------------------------
 
+  async getFcmToken() {
+    let token = '';
+    try {
+      token = await getToken(this.messaging, {
+        vapidKey: environment.vapidKeyFcm
+      });
+
+    } catch (error) {
+      console.error('Error al obtener el token fcm')
+    }
+
+    return token
+  }
+
   async requestPermissionAndListen() {
     console.log('🔥 Inicializando FCM');
     console.log('Permiso:', Notification.permission);
 
     try {
-      const token = await getToken(this.messaging, {
-        vapidKey: environment.vapidKeyFcm
-      });
+      const token = await this.getFcmToken()
 
       console.log('🔥 TOKEN ACTUAL:', token);
 
