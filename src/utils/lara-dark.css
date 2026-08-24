@@ -50,6 +50,9 @@
     --bg-menu: #040a14;
     --bg-app: #0f172a;
     --icon-color: #ffffff;
+    --card-info-bckg: #0f172a;
+    --det-label: #ffffff;
+    --cab-label: #ffffff;
     color-scheme: dark;
 }
 

@@ -27,6 +27,7 @@ import { UtilsService } from "src/app/services/utils.service";
 import { BadgeModule } from 'primeng/badge';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { InputTextareaModule } from 'primeng/inputtextarea';
+import { ImageModule } from "primeng/image";
 
 @Component({
     selector: 'app-project-technical',
@@ -57,7 +58,8 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
         TabViewModule,
         BadgeModule,
         ProgressBarModule,
-        InputTextareaModule
+        InputTextareaModule,
+        ImageModule
     ],
     templateUrl: './project-technical.component.html',
     styleUrls: ['./project-technical.component.sass']

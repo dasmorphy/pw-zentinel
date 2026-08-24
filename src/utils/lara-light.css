@@ -58,6 +58,9 @@
     --bg-menu: rgb(19, 16, 16);
     --bg-app: #ffffff;
     --icon-color: #000000;
+    --card-info-bckg: #ffffff;
+    --det-label: #1b1b1b;
+    --cab-label: #728196;
     color-scheme: light;
 }
 
@@ -5707,7 +5710,7 @@
 
     .p-dialog .p-dialog-header {
         border-bottom: 0 none;
-        background: #ffffff;
+        background: #f8f6f6;
         color: #343a40;
         padding: 1.5rem;
         border-top-right-radius: 6px;
@@ -5747,7 +5750,7 @@
     }
 
     .p-dialog .p-dialog-content {
-        background: #ffffff;
+        background: #f8f6f6;
         color: #495057;
         padding: 0 1.5rem 2rem 1.5rem;
     }
@@ -5759,7 +5762,7 @@
 
     .p-dialog .p-dialog-footer {
         border-top: 0 none;
-        background: #ffffff;
+        background: #f8f6f6;
         color: #495057;
         padding: 0 1.5rem 1.5rem 1.5rem;
         text-align: right;

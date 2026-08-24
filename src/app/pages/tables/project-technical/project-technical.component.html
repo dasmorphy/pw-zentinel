@@ -235,8 +235,11 @@
             <h4 class="mt-4">IMÁGENES</h4>
             <div class="div-responsive mt-3">
                 <div class="flex justify-content-center" *ngFor="let image of selectedRecord?.images">
-                    <img style="object-fit: contain;" [src]="'http://n8n.telearseg.net' + image" alt="imagenes"
-                        loading="lazy" height="190" width="180">
+                    <p-image
+                        [src]="'https://n8n.telearseg.net' + image"
+                        alt="registros" width="140" height="190" loading="lazy"
+                        [preview]="true" appendTo="body" imageClass="finding-image">
+                    </p-image>
                 </div>
             </div>
         }

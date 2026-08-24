@@ -1,109 +1,248 @@
 <p-toast></p-toast>
 
-<!-- Detalle del proyecto (registro padre) -->
-<p-dialog header="Header" id="modalProject" [closable]="false" [(visible)]="showModal" [draggable]="false" [modal]="true"
-    [style]="{ 'width': '30vw', 'border-radius': '32px'}">
+<!-- Detalle de la fiscalización -->
+<p-dialog
+    id="modalProject"
+    [(visible)]="showModal"
+    [closable]="false"
+    [draggable]="false"
+    [modal]="true"
+    [resizable]="false"
+    [style]="{ width: '76vw', maxWidth: '1120px', borderRadius: '20px' }"
+    styleClass="auditing-detail-dialog"
+>
     <ng-template pTemplate="header">
-        <div style="display: grid; place-items: center;">
-            <h1 style="margin: 0; font-size: 22px;" class="text-center mt-5">
-                Detalle
-            </h1>
+        <div class="auditing-modal-header">
+            <span class="auditing-modal-header__spacer" aria-hidden="true"></span>
+            <h2>Detalle de Fiscalización</h2>
         </div>
     </ng-template>
 
     <ng-template pTemplate="content">
-        <div class="flex justify-content-between card-info gap-2">
-            <div class="flex flex-column">
-                <div class="flex flex-column">
-                    <label class="font-bold cab-label" htmlFor="code">CÓDIGO: </label>
-                    <label style="font-size: 23px;" class="font-bold mt-1" htmlFor="code">
-                        {{ selectedProject?.code || "N/A" }}
-                    </label>
+        <div class="auditing-detail">
+            <section class="auditing-summary-grid" aria-label="Resumen de la fiscalización">
+                <div class="auditing-info-card">
+                    <div class="auditing-info-card__icon"><i class="pi pi-chart-line"></i></div>
+                    <div>
+                        <span class="auditing-label">PORCENTAJE DE CUMPLIMIENTO</span>
+                        <strong class="auditing-percentage">{{ selectedProject?.percentage_compliance ?? '0' }}%</strong>
+                    </div>
                 </div>
 
-                <div class="flex align-items-center mt-4">
-                    <i style="font-size: 0.8rem;" class="pi pi-calendar mr-2"></i>
-
-                    <label htmlFor="created_at">
-                        {{ selectedProject?.created_at | date:'dd/MM/yyyy':'UTC' }}
-                    </label>
-
-                    <i class="pi pi-clock mr-2 ml-2" style="font-size: 0.8rem;"></i>
-
-                    <label htmlFor="created_at">
-                        {{ selectedProject?.created_at | date:'HH:mm':'UTC' }}
-                    </label>
+                <div class="auditing-info-card">
+                    <div class="auditing-info-card__icon"><i class="pi pi-info-circle"></i></div>
+                    <div>
+                        <span class="auditing-label">ESTADO</span>
+                        <p-tag
+                            [value]="selectedProject?.status || 'Sin estado'"
+                            [severity]="utilsService.getSeverityProjectTechnical(selectedProject?.status)"
+                        ></p-tag>
+                    </div>
                 </div>
-            </div>
+            </section>
 
-            <div class="i-log">
-                <i class="pi pi-folder-open" style="color: #0056b3; font-size: 30px;"></i>
-            </div>
-        </div>
-
-        <div class="div-responsive mt-2 gap-2">
-            <div class="flex flex-column w-full card-info">
-                <i class="pi pi-briefcase mb-3" style="color: #0056b3;"></i>
-                <label class="font-bold cab-label" htmlFor="name">PROYECTO: </label>
-                <label class="det-label" htmlFor="name">{{ selectedProject?.name ?? 'N/A' }}</label>
-            </div>
-
-            <div class="flex flex-column w-full card-info">
-                <i class="pi pi-building mb-3" style="color: #0056b3;"></i>
-                <label class="font-bold cab-label" htmlFor="client">CLIENTE: </label>
-                <label class="det-label" htmlFor="client">{{ selectedProject?.client ?? 'N/A' }}</label>
-            </div>
-
-            <div class="flex flex-column w-full card-info">
-                <i class="pi pi-map-marker mb-3" style="color: #0056b3;"></i>
-                <label class="font-bold cab-label" htmlFor="location">UBICACIÓN: </label>
-                <label class="det-label" htmlFor="location">{{ selectedProject?.location ?? 'N/A' }}</label>
-            </div>
-
-            <div class="flex flex-column w-full card-info">
-                <i class="pi pi-list mb-3" style="color: #0056b3;"></i>
-                <label class="font-bold cab-label" htmlFor="records">REGISTROS TÉCNICOS: </label>
-                <label class="det-label" htmlFor="records">{{ countRecords(selectedProject) }}</label>
-            </div>
-
-            <div class="flex flex-column w-full card-info">
-                <i class="pi pi-file-edit mb-3" style="color: #0056b3;"></i>
-                <label class="font-bold cab-label" htmlFor="description">DESCRIPCIÓN: </label>
-                <label class="det-label" htmlFor="description">{{ selectedProject?.description || 'N/A' }}</label>
-            </div>
-        </div>
-
-        <div class="flex flex-column card-info mt-2 gap-3">
-
-            <div class="flex gap-2 w-full">
-                <div class="det-avatar">
-                    <i class="pi pi-user-edit" style="color: #0056b3;"></i>
+            <section class="auditing-metadata-card" aria-label="Información general">
+                <div class="auditing-meta-item">
+                    <div class="auditing-meta-item__icon"><i class="pi pi-calendar"></i></div>
+                    <div>
+                        <span class="auditing-label">FECHA DE CREACIÓN</span>
+                        <span class="auditing-value">
+                            {{ selectedProject?.created_at ? (selectedProject?.created_at | date:'dd/MM/yyyy HH:mm':'UTC') : 'N/A' }}
+                        </span>
+                    </div>
                 </div>
-                <div class="flex flex-column">
-                    <label class="font-bold cab-label" htmlFor="created_by">CREADO POR: </label>
-                    <label class="det-label" htmlFor="created_by">{{ selectedProject?.created_by ?? 'N/A' }}</label>
+
+                <div class="auditing-meta-item">
+                    <div class="auditing-meta-item__icon"><i class="pi pi-user-edit"></i></div>
+                    <div>
+                        <span class="auditing-label">AUDITOR</span>
+                        <span class="auditing-value">{{ selectedProject?.created_by ?? 'N/A' }}</span>
+                    </div>
                 </div>
+
+                <div class="auditing-meta-item">
+                    <div class="auditing-meta-item__icon"><i class="pi pi-building"></i></div>
+                    <div>
+                        <span class="auditing-label">CLIENTE</span>
+                        <span class="auditing-value">{{ selectedProject?.client_name ?? 'N/A' }}</span>
+                    </div>
+                </div>
+
+                <div class="auditing-meta-item">
+                    <div class="auditing-meta-item__icon"><i class="pi pi-map-marker"></i></div>
+                    <div>
+                        <span class="auditing-label">UBICACIÓN</span>
+                        <span class="auditing-value">{{ selectedProject?.location_name ?? 'N/A' }}</span>
+                    </div>
+                </div>
+
+                <div class="auditing-meta-item">
+                    <div class="auditing-meta-item__icon"><i class="pi pi-user"></i></div>
+                    <div>
+                        <span class="auditing-label">RESPONSABLE</span>
+                        <span class="auditing-value">{{ selectedProject?.responsible ?? 'N/A' }}</span>
+                    </div>
+                </div>
+            </section>
+
+            <div class="auditing-columns">
+                <section class="auditing-section-card">
+                    <div class="auditing-section-title">
+                        <i class="pi pi-pencil"></i>
+                        <h3>Firmas</h3>
+                    </div>
+
+                    @if (selectedProject?.images_signature?.length) {
+                        <div class="signature-list">
+                            <ng-container *ngFor="let signatures of selectedProject?.images_signature">
+                                <div class="signature-item">
+                                    <span class="auditing-label">AUDITOR</span>
+                                    @if (signatures?.auditor_image) {
+                                        <p-image [src]="'https://n8n.telearseg.net' + signatures.auditor_image"
+                                            alt="Firma del auditor" width="170" height="72" [preview]="true"
+                                            appendTo="body" imageClass="signature-image"></p-image>
+                                    } @else {
+                                        <span class="auditing-value">N/A</span>
+                                    }
+                                </div>
+
+                                <div class="signature-item">
+                                    <span class="auditing-label">CLIENTE</span>
+                                    @if (signatures?.client_image) {
+                                        <p-image [src]="'https://n8n.telearseg.net' + signatures.client_image"
+                                            alt="Firma del cliente" width="170" height="72" [preview]="true"
+                                            appendTo="body" imageClass="signature-image"></p-image>
+                                    } @else {
+                                        <span class="auditing-value">N/A</span>
+                                    }
+                                </div>
+
+                                <div class="signature-item">
+                                    <span class="auditing-label">RESPONSABLE</span>
+                                    @if (signatures?.responsible_image) {
+                                        <p-image [src]="'https://n8n.telearseg.net' + signatures.responsible_image"
+                                            alt="Firma del responsable" width="170" height="72" [preview]="true"
+                                            appendTo="body" imageClass="signature-image"></p-image>
+                                    } @else {
+                                        <span class="auditing-value">N/A</span>
+                                    }
+                                </div>
+                            </ng-container>
+                        </div>
+                        <span class="image-preview-hint"><i class="pi pi-search-plus"></i> Haz clic en una imagen para ampliarla</span>
+                    } @else {
+                        <div class="auditing-empty-state">No hay firmas disponibles.</div>
+                    }
+                </section>
+
+                <section class="auditing-section-card">
+                    <div class="auditing-section-title">
+                        <i class="pi pi-exclamation-triangle"></i>
+                        <h3>Hallazgos</h3>
+                    </div>
+
+                    @if (selectedProject?.findings?.length) {
+                        <div class="findings-list">
+                            <article class="finding-card" *ngFor="let finding of selectedProject?.findings">
+                                <div class="finding-description">
+                                    <span class="auditing-label">DESCRIPCIÓN</span>
+                                    <span class="auditing-value">{{ finding?.description || 'N/A' }}</span>
+                                </div>
+
+                                <div class="finding-data-grid">
+                                    <div>
+                                        <span class="auditing-label">CRITICIDAD</span>
+                                        <span class="criticality-badge"
+                                            [class.criticality-badge--high]="finding?.criticality?.toLowerCase() === 'alta'"
+                                            [class.criticality-badge--medium]="finding?.criticality?.toLowerCase() === 'media'"
+                                            [class.criticality-badge--low]="finding?.criticality?.toLowerCase() === 'baja'">
+                                            {{ finding?.criticality || 'N/A' }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span class="auditing-label">RESPONSABLE</span>
+                                        <span class="auditing-value">{{ finding?.responsible || 'N/A' }}</span>
+                                    </div>
+                                    <div>
+                                        <span class="auditing-label">COMPROMISO</span>
+                                        <span class="auditing-value">{{ finding?.commitment || 'N/A' }}</span>
+                                    </div>
+                                </div>
+
+                                @if (finding?.images?.length) {
+                                    <div class="finding-images">
+                                        <span class="auditing-label">IMÁGENES</span>
+                                        <div class="finding-images__grid">
+                                            <p-image *ngFor="let image of finding?.images"
+                                                [src]="'https://n8n.telearseg.net' + image" loading="lazy"
+                                                alt="Evidencia del hallazgo" width="150" height="105"
+                                                [preview]="true" appendTo="body" imageClass="finding-image"></p-image>
+                                        </div>
+                                        <span class="image-preview-hint"><i class="pi pi-search-plus"></i> Haz clic para ampliar</span>
+                                    </div>
+                                }
+                            </article>
+                        </div>
+                    } @else {
+                        <div class="auditing-empty-state">
+                            <i class="pi pi-check-circle"></i>
+                            No se registraron hallazgos.
+                        </div>
+                    }
+                </section>
             </div>
 
-            <div class="flex gap-2 w-full">
-                <div class="det-avatar">
-                    <i class="pi pi-user" style="color: #0056b3;"></i>
+            <section class="auditing-section-card responses-card">
+                <div class="responses-header">
+                    <div class="auditing-section-title auditing-section-title--borderless">
+                        <i class="pi pi-list"></i>
+                        <h3>Respuestas</h3>
+                    </div>
+                    <div class="response-legend" aria-label="Leyenda de respuestas">
+                        <span><i class="response-dot response-dot--yes"></i>Sí</span>
+                        <span><i class="response-dot response-dot--no"></i>No</span>
+                        <span><i class="response-dot response-dot--na"></i>N/A</span>
+                    </div>
                 </div>
-                <div class="flex flex-column">
-                    <label class="font-bold cab-label" htmlFor="updated_by">ÚLTIMA ACTUALIZACIÓN: </label>
-                    <label class="det-label" htmlFor="updated_by">
-                        {{ selectedProject?.updated_by ?? 'N/A' }} -
-                        {{ selectedProject?.updated_at ? (selectedProject?.updated_at | date:'dd/MM/yyyy HH:mm':'UTC') : 'N/A' }}
-                    </label>
-                </div>
-            </div>
 
+                @if (selectedProject?.responses?.length) {
+                    <div class="responses-table-wrapper">
+                        <table class="responses-table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Sección</th>
+                                    <th scope="col">Ítem</th>
+                                    <th scope="col">Respuesta</th>
+                                    <th scope="col">Observación</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let response of selectedProject?.responses">
+                                    <td data-label="Sección">{{ response?.item?.section?.name ?? 'N/A' }}</td>
+                                    <td data-label="Ítem">{{ response?.item?.name ?? 'N/A' }}</td>
+                                    <td data-label="Respuesta">
+                                        <span class="response-badge"
+                                            [class.response-badge--yes]="response?.response?.toUpperCase() === 'SI'"
+                                            [class.response-badge--no]="response?.response?.toUpperCase() === 'NO'"
+                                            [class.response-badge--na]="response?.response?.toUpperCase() !== 'SI' && response?.response?.toUpperCase() !== 'NO'">
+                                            {{ response?.response || 'N/A' }}
+                                        </span>
+                                    </td>
+                                    <td data-label="Observación">{{ response?.observation || 'N/A' }}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                } @else {
+                    <div class="auditing-empty-state">No hay respuestas disponibles.</div>
+                }
+            </section>
         </div>
     </ng-template>
 
     <ng-template pTemplate="footer">
-        <div class="flex justify-content-center gap-3 mt-3" style="font-size: 15px;">
-            <p-button label="Cerrar" (onClick)="closeModalProject()" styleClass="bg-btn-cancel w-full">
+        <div class="auditing-modal-footer">
+            <p-button label="Cerrar" (onClick)="closeModalProject()" styleClass="bg-btn-cancel auditing-close-action">
             </p-button>
         </div>
     </ng-template>

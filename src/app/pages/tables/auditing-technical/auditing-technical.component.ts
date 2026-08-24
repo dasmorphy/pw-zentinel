@@ -19,6 +19,7 @@ import { UserService } from "src/app/services/user.service";
 import { UtilsService } from "src/app/services/utils.service";
 import { TagModule } from "primeng/tag";
 import { CalendarModule } from "primeng/calendar";
+import { ImageModule } from "primeng/image";
 
 
 
@@ -43,7 +44,8 @@ import { CalendarModule } from "primeng/calendar";
         TooltipModule,
         SplitButtonModule,
         TagModule,
-        CalendarModule
+        CalendarModule,
+        ImageModule
     ],
     templateUrl: './auditing-technical.component.html',
     styleUrls: ['./auditing-technical.component.sass'],
