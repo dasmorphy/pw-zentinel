@@ -20,6 +20,7 @@ import { UtilsService } from "src/app/services/utils.service";
 import { TagModule } from "primeng/tag";
 import { CalendarModule } from "primeng/calendar";
 import { ImageModule } from "primeng/image";
+import { Router } from "@angular/router";
 
 
 
@@ -54,6 +55,7 @@ export class AuditingTechnicalComponent {
     public readonly utilsService = inject(UtilsService);
     public readonly userService = inject(UserService);
     private readonly projectTechnicalService = inject(ProjectTechnicalService);
+    private readonly router = inject(Router);
 
     showModal: boolean = false;
     showModalRecord: boolean = false;
@@ -126,6 +128,10 @@ export class AuditingTechnicalComponent {
 
     reloadData() {
         this.fetchAuditingTechnical();
+    }
+
+    createAuditing() {
+        void this.router.navigate(['/nueva-fiscalizacion']);
     }
 
     optionsProject(project: any) {

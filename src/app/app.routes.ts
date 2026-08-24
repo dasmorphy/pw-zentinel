@@ -20,6 +20,7 @@ import { PurchaseOrderComponent } from './pages/tables/purchase-order/purchase-o
 import { ProjectTechnicalComponent } from './pages/tables/project-technical/project-technical.component';
 import { AuditingTechnicalComponent } from './pages/tables/auditing-technical/auditing-technical.component';
 import { NotificationsComponent } from './pages/notifications/notifications.component';
+import { NewAuditingComponent } from './pages/forms/new-auditing/new-auditing.component';
 
 export const routes: Routes = [
     {
@@ -113,6 +114,11 @@ export const routes: Routes = [
             {
                 path: "fiscalizaciones",
                 loadComponent: () => AuditingTechnicalComponent,
+                canActivate: [AuthGuard]
+            },
+            {
+                path: "nueva-fiscalizacion",
+                loadComponent: () => NewAuditingComponent,
                 canActivate: [AuthGuard]
             },
             {

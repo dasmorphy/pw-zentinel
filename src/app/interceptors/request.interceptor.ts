@@ -28,15 +28,19 @@ export const httpInterceptorRequest: HttpInterceptorFn = (req: HttpRequest<unkno
     // idGroup = user_session_json?.groups[0]?.id
   }
 
+  const body = req.method !== 'GET' && req.method !== 'DELETE'
+    ? req.body instanceof FormData
+      ? req.body
+      : { ...(req.body || {}), channel: "ZENTINEL_WEB", externalTransactionId: uuidv4() }
+    : req.body;
+
   const clone = req.clone({
     setHeaders: {
       Token: token,
       channel: 'ZENTINEL_WEB',
       externalTransactionId: uuidv4()
     },
-    body: req.method !== 'GET' && req.method !== 'DELETE'
-      ? { ...(req.body || {}), channel: "ZENTINEL_WEB", externalTransactionId: uuidv4() }
-      : req.body
+    body
   });
 
   return next(clone)
