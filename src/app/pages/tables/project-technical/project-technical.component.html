@@ -386,8 +386,10 @@
                                     <ng-template pTemplate="body" let-record>
                                         <tr>
                                             <td>
-                                                <i class="pi pi-eye cursor-pointer" pTooltip="Ver detalles" tooltipPosition="top"
+                                                <i class="pi pi-eye cursor-pointer mr-4" pTooltip="Ver detalles" tooltipPosition="top"
                                                     (click)="viewDetailsRecord(record, project)"></i>
+                                                <i class="pi pi-file-pdf cursor-pointer" pTooltip="Descargar informe" tooltipPosition="top"
+                                                    (click)="generatePdf(record)"></i>
                                             </td>
                                             <td data-titulo="Fecha:" [ngxTippy]="'Hora de registro: ' + (record?.created_at | date:'HH:mm')">
                                                 {{ record?.created_at | date:'dd/MM/yyyy':'UTC' }}

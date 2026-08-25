@@ -241,4 +241,18 @@ export class ProjectTechnicalComponent {
         this.commentaryUpdateStatus = null;
     }
 
+    generatePdf(tech_record: any) {
+        this.isLoading = true;
+        this.projectTechnicalService.generateTechnicalRecordPdf(tech_record?.id_record).subscribe({
+            next: (response: any) => {
+                this.isLoading = false;
+                this.utilsService.downloadFile(response, 'reporte_pdf');
+            },
+            error: () => {
+                this.isLoading = false;
+                this.utilsService.onError('Error al generar el archivo');
+            }
+        });
+    }
+
 }

@@ -594,36 +594,36 @@ export class NewAuditingComponent implements OnInit, OnDestroy {
                 response: this.responseControl(item.id_item).value as ResponseValue,
             }));
 
-        // const findingImageKeys = this.findingImages.map((images, findingIndex) =>
-        //     images.map((_image, imageIndex) => `finding_${findingIndex}_${imageIndex}`),
-        // );
+        const findingImageKeys = this.findingImages.map((images, findingIndex) =>
+            images.map((_image, imageIndex) => `finding_${findingIndex}_${imageIndex}`),
+        );
 
-        const findings: FindingPayload[] = this.findingControls.map((finding) => {
+        const findings: FindingPayload[] = this.findingControls.map((finding, findingIndex) => {
             const value = finding.getRawValue();
             return {
                 commitment: value.commitment.trim(),
                 criticality: value.criticality,
                 description: value.description.trim(),
-                // images: findingImageKeys[findingIndex],
+                images: findingImageKeys[findingIndex],
                 responsible: value.responsible.trim(),
             };
         });
 
         return {
-            findings,
+            // findings,
             // payload: {
                 // auditor_img: 'auditor_img',
                 channel: 'ZENTINEL',
                 // client_img: 'client_img',
-                // data: {
-                    // findings,
+                data: {
+                    findings,
                     location_id: formValue.location_id,
                     responses,
                     responsible: formValue.responsible.trim(),
                     status: 'Pendiente',
                     task_id: formValue.task_id,
                     user: this.userJson?.user ?? 'Desconocido',
-                // },
+                },
                 // externalTransactionId: transactionId,
                 // El backend actual lee snake_case dentro del archivo JSON multipart.
                 external_transaction_id: transactionId,

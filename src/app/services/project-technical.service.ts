@@ -83,6 +83,17 @@ export class ProjectTechnicalService {
         );
     }
 
+    generateTechnicalRecordPdf(id_record: number) {
+        const params = new HttpParams().set('id-record', id_record)
+        return this.http.get(`${environment.apiTechnical}/rest/technical-control-api/v1.0/technical_record/pdf`, 
+            {
+                params,
+                responseType: 'blob',
+                observe: 'response'
+            }
+        )
+    }
+
     getResumeGraphsTechnical(filter?: any) {
         let params = new HttpParams();
         let headers = new HttpHeaders();
