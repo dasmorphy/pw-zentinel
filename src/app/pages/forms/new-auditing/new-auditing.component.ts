@@ -61,7 +61,7 @@ interface FindingPayload {
     commitment: string;
     criticality: string;
     description: string;
-    images: string[];
+    // images: string[];
     responsible: string;
 }
 
@@ -527,7 +527,8 @@ export class NewAuditingComponent implements OnInit, OnDestroy {
             return;
         }
 
-        const { payload, findingImageKeys } = this.buildRequestPayload();
+        const payload = this.buildRequestPayload();
+        console.log(payload)
         const formData = new FormData();
         formData.append(
             'data',
@@ -535,9 +536,21 @@ export class NewAuditingComponent implements OnInit, OnDestroy {
             'auditing.json',
         );
 
+        // this.findingImages.forEach((images, findingIndex) => {
+        //     images.forEach((image, imageIndex) => {
+        //         formData.append(findingImageKeys[findingIndex][imageIndex], image, image.name);
+        //     });
+        // });
+
         this.findingImages.forEach((images, findingIndex) => {
             images.forEach((image, imageIndex) => {
-                formData.append(findingImageKeys[findingIndex][imageIndex], image, image.name);
+                const key = `finding_${findingIndex}_${imageIndex}`;
+
+                formData.append(
+                key,
+                image,
+                `finding_${findingIndex}_${imageIndex}.webp`,
+                );
             });
         });
 
@@ -570,7 +583,7 @@ export class NewAuditingComponent implements OnInit, OnDestroy {
         });
     }
 
-    private buildRequestPayload(): { payload: any; findingImageKeys: string[][] } {
+    private buildRequestPayload() {
         const formValue = this.generalForm.getRawValue();
         const transactionId = uuidv4();
         const responses: AuditingResponsePayload[] = this.sections
@@ -581,41 +594,41 @@ export class NewAuditingComponent implements OnInit, OnDestroy {
                 response: this.responseControl(item.id_item).value as ResponseValue,
             }));
 
-        const findingImageKeys = this.findingImages.map((images, findingIndex) =>
-            images.map((_image, imageIndex) => `finding_${findingIndex + 1}_image_${imageIndex + 1}`),
-        );
+        // const findingImageKeys = this.findingImages.map((images, findingIndex) =>
+        //     images.map((_image, imageIndex) => `finding_${findingIndex}_${imageIndex}`),
+        // );
 
-        const findings: FindingPayload[] = this.findingControls.map((finding, findingIndex) => {
+        const findings: FindingPayload[] = this.findingControls.map((finding) => {
             const value = finding.getRawValue();
             return {
                 commitment: value.commitment.trim(),
                 criticality: value.criticality,
                 description: value.description.trim(),
-                images: findingImageKeys[findingIndex],
+                // images: findingImageKeys[findingIndex],
                 responsible: value.responsible.trim(),
             };
         });
 
         return {
-            findingImageKeys,
-            payload: {
-                auditor_img: 'auditor_img',
-                channel: 'Tech control',
-                client_img: 'client_img',
-                data: {
-                    findings,
+            findings,
+            // payload: {
+                // auditor_img: 'auditor_img',
+                channel: 'ZENTINEL',
+                // client_img: 'client_img',
+                // data: {
+                    // findings,
                     location_id: formValue.location_id,
                     responses,
                     responsible: formValue.responsible.trim(),
                     status: 'Pendiente',
                     task_id: formValue.task_id,
                     user: this.userJson?.user ?? 'Desconocido',
-                },
-                externalTransactionId: transactionId,
+                // },
+                // externalTransactionId: transactionId,
                 // El backend actual lee snake_case dentro del archivo JSON multipart.
                 external_transaction_id: transactionId,
-                responsible_img: 'responsible_img',
-            },
+                // responsible_img: 'responsible_img',
+            // },
         };
     }
 

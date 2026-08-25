@@ -149,6 +149,13 @@ export class MenuComponent implements OnInit {
             routerLink: ['fiscalizaciones'],
             command: () => { this.clickHiddenToggle() }
           },
+          {
+            label: 'Nueva fiscalización',
+            icon: 'pi pi-file-check',
+            visible: this.user_permissions_signal()?.includes('NUEVA_FISCALIZACION'),
+            routerLink: ['nueva-fiscalizacion'],
+            command: () => { this.clickHiddenToggle() }
+          }
         ]
       },
       {
