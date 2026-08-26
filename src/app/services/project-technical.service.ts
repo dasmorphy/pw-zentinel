@@ -110,4 +110,12 @@ export class ProjectTechnicalService {
             { headers, params }
         )
     }
+
+    deleteTechnicalRecord(id_record: number) {
+        return this.http.delete(`http://localhost:2124/rest/technical-control-api/v1.0/technical_record/${id_record}`)
+    }
+
+    deleteTechnicalProject(id_task: number) {
+        return this.http.delete(`http://localhost:2124/rest/technical-control-api/v1.0/project/${id_task}`)
+    }
 }

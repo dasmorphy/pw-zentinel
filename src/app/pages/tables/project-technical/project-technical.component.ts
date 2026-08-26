@@ -77,6 +77,9 @@ export class ProjectTechnicalComponent {
     dataProjects: any[] = [];
     isLoading: boolean = false;
     showUpdate: boolean = false;
+    showDeleteProject: boolean = false;
+    showDeleteRecord: boolean = false;
+    
     typeRequest: string = '';
     commentaryUpdateStatus: string | null = null;
 
@@ -117,6 +120,11 @@ export class ProjectTechnicalComponent {
                 this.showUpdate = true
                 this.typeRequest = 'Rechazar solicitud'
             }
+        },
+        {
+            label: 'Eliminar',
+            icon: 'pi pi-trash',
+            command: () => this.showDeleteProject = true
         },
     ];
 
@@ -251,6 +259,43 @@ export class ProjectTechnicalComponent {
             error: () => {
                 this.isLoading = false;
                 this.utilsService.onError('Error al generar el archivo');
+            }
+        });
+    }
+
+    optionDeleteRecord(record: any) {
+        this.selectedRecord = record;
+        this.showDeleteRecord = true;
+    }
+
+    deleteTechRecord(tech_record: any) {
+        this.isLoading = true;
+        this.showDeleteRecord = false;
+        this.projectTechnicalService.deleteTechnicalRecord(tech_record?.id_record).subscribe({
+            next: (response: any) => {
+                this.isLoading = false;
+                this.utilsService.onSuccess('Registro eliminado');
+                this.fetchProjectsTechnical()
+            },
+            error: () => {
+                this.isLoading = false;
+                this.utilsService.onError('Error al eliminar el registro');
+            }
+        });
+    }
+
+    deleteTechProject(tech_record: any) {
+        this.isLoading = true;
+        this.showDeleteProject = false;
+        this.projectTechnicalService.deleteTechnicalProject(tech_record?.id_record).subscribe({
+            next: (response: any) => {
+                this.isLoading = false;
+                this.utilsService.onSuccess('Registro eliminado');
+                this.fetchProjectsTechnical()
+            },
+            error: () => {
+                this.isLoading = false;
+                this.utilsService.onError('Error al eliminar el registro');
             }
         });
     }

@@ -1,5 +1,52 @@
 <p-toast></p-toast>
 
+<p-dialog header="Header" id="deleteProject" [closable]="false" [(visible)]="showDeleteProject" [draggable]="false" [modal]="true"
+    [style]="{ 'width': '23vw', 'border-radius': '32px'}">
+    <ng-template pTemplate="header">
+        <div style="display: grid; place-items: center;">
+            <i class="pi pi-exclamation-circle mt-4" style="color: #EB6506; font-size: 40px;"></i>
+            <h1 style="margin: 0; font-size: 22px;" class="text-center mt-3">
+                ¿Está seguro de continuar?
+            </h1>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-center gap-3 mt-3" style="font-size: 15px;">
+            <p-button label="Guardar" (onClick)="deleteTechProject(selectedProject)"
+                styleClass="bg-btn-primary w-full">
+            </p-button>
+            <p-button label="Cancelar" (onClick)="showDeleteProject = false"
+                styleClass="bg-btn-cancel w-full">
+            </p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
+<p-dialog header="Header" id="deleteRecord" [closable]="false" [(visible)]="showDeleteRecord" [draggable]="false" [modal]="true"
+    [style]="{ 'width': '23vw', 'border-radius': '32px'}">
+    <ng-template pTemplate="header">
+        <div style="display: grid; place-items: center;">
+            <i class="pi pi-exclamation-circle mt-4" style="color: #EB6506; font-size: 40px;"></i>
+            <h1 style="margin: 0; font-size: 22px;" class="text-center mt-3">
+                ¿Está seguro de continuar?
+            </h1>
+        </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+        <div class="flex justify-content-center gap-3 mt-3" style="font-size: 15px;">
+            <p-button label="Guardar" (onClick)="deleteTechRecord(selectedRecord)"
+                styleClass="bg-btn-primary w-full">
+            </p-button>
+            <p-button label="Cancelar" (onClick)="showDeleteRecord = false"
+                styleClass="bg-btn-cancel w-full">
+            </p-button>
+        </div>
+    </ng-template>
+</p-dialog>
+
+
 <p-dialog header="Header" id="aprobar" [closable]="false" [(visible)]="showUpdate" [draggable]="false" [modal]="true"
     [style]="{ 'width': '23vw', 'border-radius': '32px'}">
     <ng-template pTemplate="header">
@@ -386,10 +433,12 @@
                                     <ng-template pTemplate="body" let-record>
                                         <tr>
                                             <td>
-                                                <i class="pi pi-eye cursor-pointer mr-4" pTooltip="Ver detalles" tooltipPosition="top"
+                                                <i class="pi pi-eye cursor-pointer mr-2" pTooltip="Ver detalles" tooltipPosition="top"
                                                     (click)="viewDetailsRecord(record, project)"></i>
-                                                <i class="pi pi-file-pdf cursor-pointer" pTooltip="Descargar informe" tooltipPosition="top"
+                                                <i class="pi pi-file-pdf cursor-pointer mr-2" pTooltip="Descargar informe" tooltipPosition="top"
                                                     (click)="generatePdf(record)"></i>
+                                                <i class="pi pi-trash cursor-pointer" pTooltip="Eliminar" tooltipPosition="top"
+                                                    (click)="optionDeleteRecord(record)"></i>
                                             </td>
                                             <td data-titulo="Fecha:" [ngxTippy]="'Hora de registro: ' + (record?.created_at | date:'HH:mm')">
                                                 {{ record?.created_at | date:'dd/MM/yyyy':'UTC' }}
