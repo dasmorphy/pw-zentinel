@@ -32,7 +32,7 @@ export class ProjectTechnicalService {
             params = params.set('status', filter.status);
         }
 
-        return this.http.get(`${environment.apiTechnical}/rest/technical-control-api/v1.0/project`,
+        return this.http.get(`http://localhost:2124/rest/technical-control-api/v1.0/project`,
             { headers, params }
         )
     }

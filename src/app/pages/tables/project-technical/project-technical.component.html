@@ -157,6 +157,21 @@
                 <label class="font-bold cab-label" htmlFor="description">DESCRIPCIÓN: </label>
                 <label class="det-label" htmlFor="description">{{ selectedProject?.description || 'N/A' }}</label>
             </div>
+
+            @if (selectedProject?.technicals_assignments && selectedProject.technicals_assignments.length > 0) {
+                <div class="flex flex-column w-full card-info">
+                    <i class="pi pi-users mb-3" style="color: #0056b3;"></i>
+                    <label class="font-bold cab-label" htmlFor="description">TÉCNICOS ASIGNADOS: </label>    
+                    <ul class="ml-4 p-0">
+                        @for(technical of selectedProject.technicals_assignments; track technical.id_assignment;) {
+                            <li>
+                                {{technical.fullname_user}}
+                            </li>
+                        }
+                    </ul>
+    
+                </div>
+            }
         </div>
 
         <div class="flex flex-column card-info mt-2 gap-3">
