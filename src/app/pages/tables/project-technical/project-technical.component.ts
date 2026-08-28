@@ -87,8 +87,10 @@ export class ProjectTechnicalComponent {
     selectedRecord: any;
 
     statusOptions: string[] = [
-        "Pendiente aprobación", "Finalizado", "Aprobado", "Rechazado"
+        "Pendiente aprobación", "Finalizado", "Aprobado", "Rechazado", "En ejecución"
     ];
+    typeOptions: string[] = ["Proyecto", "Soporte"]
+    selectedType: string[] = [];
     selectedStatus: string[] = [];
     dateRangeFilter: Date[] | null = null;
     messageEmpty: string = "No hay opciones disponibles";
@@ -200,6 +202,10 @@ export class ProjectTechnicalComponent {
 
         if (this.selectedStatus.length > 0) {
             filter_date.status = this.selectedStatus.join(',');
+        }
+        console.log(22222)
+        if (this.selectedType.length == 1) {
+            filter_date.support = this.selectedType.includes("Soporte") ? true : false;
         }
 
         this.filters = filter_date;

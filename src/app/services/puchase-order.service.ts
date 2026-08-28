@@ -25,7 +25,7 @@ export class PurchaseOrderService {
             params = params.set('end_date', filters.end_date);
         }
 
-        return this.http.get(`http://localhost:2120/rest/zent-logbook-api/v1.0/purchase-order-receipts`,
+        return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/purchase-order-receipts`,
             { headers, params }
         )
     }
@@ -90,7 +90,7 @@ export class PurchaseOrderService {
             params = params.set('destiny_id', filter?.destiny_id)
         }
 
-        return this.http.get(`http://localhost:2120/rest/zent-logbook-api/v1.0/purchase-order`,
+        return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/purchase-order`,
             { headers, params }
         )
     }
@@ -101,14 +101,14 @@ export class PurchaseOrderService {
     }
 
     assignReceiptsToOrder(data: any) {
-        return this.http.patch(`http://localhost:2120/rest/zent-logbook-api/v1.0/assign-order-to-receipt`, {data});
+        return this.http.patch(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/assign-order-to-receipt`, {data});
     }
 
     uploadExcelOrders(formData: FormData) {
         let headers = new HttpHeaders().set('Token', localStorage.getItem('sb_token') || '');
         headers = headers.set('channel', 'ZENTINEL_WEB');
         headers = headers.set('externalTransactionId', uuidv4());
-        return this.http.post(`http://localhost:2120/rest/zent-logbook-api/v1.0/import-orders`, formData, { headers });
+        return this.http.post(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/import-orders`, formData, { headers });
     }
 
     excelOrders(filter?: any) {
@@ -127,7 +127,7 @@ export class PurchaseOrderService {
             params = params.set('destiny_id', filter?.destiny_id)
         }
 
-        return this.http.get(`http://localhost:2120/rest/zent-logbook-api/v1.0/report_orders`,
+        return this.http.get(`${environment.apiUrl}/rest/zent-logbook-api/v1.0/report_orders`,
             {
                 headers, params,
                 responseType: 'blob',

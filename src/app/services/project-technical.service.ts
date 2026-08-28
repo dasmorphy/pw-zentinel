@@ -28,11 +28,17 @@ export class ProjectTechnicalService {
             params = params.set('client_id', filter.client_id);
         }
 
+        if (filter && Object.prototype.hasOwnProperty.call(filter, 'support') &&
+            filter.support !== null
+        ) {
+            params = params.set('support', filter.support);
+        }
+
         if (filter?.status) {
             params = params.set('status', filter.status);
         }
 
-        return this.http.get(`http://localhost:2124/rest/technical-control-api/v1.0/project`,
+        return this.http.get(`${environment.apiTechnical}/rest/technical-control-api/v1.0/project`,
             { headers, params }
         )
     }
@@ -112,10 +118,10 @@ export class ProjectTechnicalService {
     }
 
     deleteTechnicalRecord(id_record: number) {
-        return this.http.delete(`http://localhost:2124/rest/technical-control-api/v1.0/technical_record/${id_record}`)
+        return this.http.delete(`${environment.apiTechnical}/rest/technical-control-api/v1.0/technical_record/${id_record}`)
     }
 
     deleteTechnicalProject(id_task: number) {
-        return this.http.delete(`http://localhost:2124/rest/technical-control-api/v1.0/project/${id_task}`)
+        return this.http.delete(`${environment.apiTechnical}/rest/technical-control-api/v1.0/project/${id_task}`)
     }
 }

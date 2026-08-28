@@ -273,9 +273,18 @@
             </div>
 
             <div class="flex flex-column w-full card-info">
-                <i class="pi pi-align-left mb-3" style="color: #0056b3;"></i>
-                <label class="font-bold cab-label" htmlFor="resume">RESUMEN: </label>
-                <label class="det-label" htmlFor="resume">{{ selectedRecord?.resume || 'N/A' }}</label>
+                <i class="pi pi-truck mb-3" style="color: #0056b3;"></i>
+                <label class="font-bold cab-label" htmlFor="resume">VEHÍCULO: </label>
+                <label class="det-label" htmlFor="resume">{{ selectedRecord?.vehicle || 'N/A' }}</label>
+            </div>
+        </div>
+
+        <div class="flex flex-column card-info mt-2 gap-2">
+            <div class="flex gap-2 w-full">
+                <div class="flex flex-column">
+                    <label class="font-bold cab-label" htmlFor="created_by_record">RESUMEN: </label>
+                    <label class="det-label mt-2" htmlFor="created_by_record">{{ selectedRecord?.resume ?? 'N/A' }}</label>
+                </div>
             </div>
         </div>
 
@@ -356,6 +365,16 @@
                                             [style]="{ boxShadow: 'none' }"
                                             styleClass="border-round w-full"
                                             id="optionStatus"
+                                            [options]="typeOptions"
+                                            [(ngModel)]="selectedType"
+                                            placeholder="Tipo"
+                                            [emptyMessage]="messageEmpty"
+                                        ></p-multiSelect>
+                                        
+                                        <p-multiSelect
+                                            [style]="{ boxShadow: 'none' }"
+                                            styleClass="border-round w-full"
+                                            id="optionStatus"
                                             [options]="statusOptions"
                                             [(ngModel)]="selectedStatus"
                                             placeholder="Seleccione un estado"
@@ -399,6 +418,7 @@
                         <th scope="col">Fecha</th>
                         <th scope="col">Código</th>
                         <th scope="col">Proyecto</th>
+                        <th scope="col">Tipo</th>
                         <th scope="col">N. registros</th>
                         <th scope="col">Cliente</th>
                         <th scope="col">Ubicación</th>
@@ -424,6 +444,7 @@
                         </td>
                         <td data-titulo="Código:">{{ project?.code ?? 'N/A' }}</td>
                         <td data-titulo="Proyecto:">{{ project?.name ?? 'N/A' }}</td>
+                        <td data-titulo="Tipo:">{{ project?.is_support ? 'Soporte' : 'Proyecto' }}</td>
                         <td data-titulo="N. registros:">{{ project?.record_technical?.length ?? 0 }}</td>
                         <td data-titulo="Cliente:">{{ project?.client ?? 'N/A' }}</td>
                         <td data-titulo="Ubicación:">{{ project?.location ?? 'N/A' }}</td>
@@ -434,15 +455,16 @@
                 </ng-template>
                 <ng-template pTemplate="rowexpansion" let-project>
                     <tr>
-                        <td colspan="9">
+                        <td colspan="10">
                             <div class="p-3 flex w-full">
                                 <p-table [value]="project.record_technical ?? []" dataKey="id_record" class="w-full" styleClass="w-full">
                                     <ng-template pTemplate="header">
                                         <tr>
-                                            <th>Acciones</th>
-                                            <th>Fecha</th>
-                                            <th>Resumen</th>
-                                            <th>Registrado por</th>
+                                            <th scope="col">Acciones</th>
+                                            <th scope="col">Fecha</th>
+                                            <th scope="col">Resumen</th>
+                                            <th scope="col">Registrado por</th>
+                                            <th scope="col">Estado</th>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="body" let-record>
@@ -460,6 +482,9 @@
                                             </td>
                                             <td>{{ record?.resume || 'N/A' }}</td>
                                             <td>{{ record?.created_by ?? 'N/A' }}</td>
+                                            <td data-titulo="Estado:">
+                                                <p-tag [value]="record?.status" [severity]="utilsService.getSeverityPurchaseOrder(record?.status)"></p-tag>
+                                            </td>
                                         </tr>
                                     </ng-template>
                                     <ng-template pTemplate="emptymessage">
