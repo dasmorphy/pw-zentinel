@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, inject } from "@angular/core";
+import { Component, computed, inject } from "@angular/core";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { NgxTippyModule } from "ngx-tippy-wrapper";
 import { ButtonModule } from "primeng/button";
@@ -28,6 +28,7 @@ import { BadgeModule } from 'primeng/badge';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { InputTextareaModule } from 'primeng/inputtextarea';
 import { ImageModule } from "primeng/image";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
     selector: 'app-project-technical',
@@ -68,7 +69,12 @@ export class ProjectTechnicalComponent {
     public readonly utilsService = inject(UtilsService);
     public readonly userService = inject(UserService);
     private readonly projectTechnicalService = inject(ProjectTechnicalService);
+    public readonly authService = inject(AuthService);
+    
 
+    user_permissions_signal = computed(() => this.authService.user_permissions_signal());
+
+    
     showModal: boolean = false;
     showModalRecord: boolean = false;
 
@@ -108,7 +114,7 @@ export class ProjectTechnicalComponent {
         {
             label: 'Aprobar finalización',
             icon: 'pi pi-check',
-            visible: () => this.selectedProject?.status === 'Pendiente aprobación',
+            visible: () => this.user_permissions_signal().includes('APROBAR_FINALIZACION') && this.selectedProject?.status === 'Pendiente aprobación',
             command: () => {
                 this.showUpdate = true
                 this.typeRequest = 'Aprobar solicitud'
@@ -125,6 +131,7 @@ export class ProjectTechnicalComponent {
         },
         {
             label: 'Eliminar',
+            visible: () => this.user_permissions_signal().includes('ELIMINAR_PROYECTO'),
             icon: 'pi pi-trash',
             command: () => this.showDeleteProject = true
         },

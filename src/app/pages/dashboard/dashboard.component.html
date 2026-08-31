@@ -61,7 +61,7 @@
     <app-biomar-dashboard class="w-full"></app-biomar-dashboard>
   } -->
 
-  @if (user_permissions_signal().includes('VER_DASHBOARD_TECNICO')) {
+  @if (user_permissions_signal().includes('VER_DASHBOARD_TECNICO') || optionDashboardSelected == 'Técnicos') {
     <app-technical-dashboard class="w-full" [filtersGraph]="filters"></app-technical-dashboard>
   }
 
